@@ -233,6 +233,14 @@ button{font-family:inherit;cursor:pointer}
 .agp-name{font-size:17px;font-weight:600;letter-spacing:-.01em;line-height:1.2}
 .agp-role{font-size:11px;color:var(--text-neutral);text-transform:uppercase;letter-spacing:.06em}
 .agp-head .right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.agp-switch{display:flex;align-items:center;gap:6px;margin-left:14px;padding-left:14px;border-left:1px solid var(--border)}
+.agp-switch .asw{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--border);background:var(--background);
+  border-radius:9999px;padding:4px 11px 4px 4px;font-family:inherit;font-size:12px;font-weight:500;color:var(--muted-foreground)}
+.agp-switch .asw:hover{border-color:var(--border-strong);color:var(--foreground)}
+.agp-switch .asw.on{border-color:var(--foreground);color:var(--foreground);font-weight:600;box-shadow:var(--shadow-card)}
+.agp-switch .asw .aav{width:22px;height:22px;border-radius:50%;color:#fff;font-size:10px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+@media(max-width:760px){.agp-switch{margin-left:0;padding-left:0;border-left:0;width:100%;order:3}}
 /* UiPath-style stage plan */
 .plan-wrap{background:#fbfbfc;background-image:radial-gradient(#e2e5ea 1px,transparent 1px);background-size:20px 20px;
   border:1px solid var(--border);border-radius:var(--radius-xl);padding:22px 20px 14px;margin-bottom:16px;overflow-x:auto}
@@ -401,8 +409,13 @@ button{font-family:inherit;cursor:pointer}
 .gcard .gf{margin-top:10px;padding-top:9px;border-top:1px solid var(--border-light);display:flex;gap:6px;flex-wrap:wrap}
 .entryfoot{display:flex;justify-content:center;margin-top:22px}
 /* board shell */
-.wf-shell{display:grid;grid-template-columns:262px minmax(0,1fr) 344px;gap:14px;align-items:stretch;
-  height:calc(100vh - 118px);min-height:560px}
+.wf-shell{display:grid;grid-template-columns:var(--wf-lib,262px) minmax(0,1fr) var(--wf-insp,344px);gap:14px;
+  align-items:stretch;height:calc(100vh - 118px);min-height:560px;transition:grid-template-columns .18s}
+.wf-shell.no-lib{--wf-lib:0px;gap:0 14px}
+.wf-shell.no-lib>aside.wf-pane:first-of-type{opacity:0;pointer-events:none;overflow:hidden}
+.wf-shell.no-insp{--wf-insp:0px;gap:0 14px}
+.wf-shell.no-insp>aside.wf-pane:last-of-type{opacity:0;pointer-events:none;overflow:hidden}
+.wf-shell.no-lib.no-insp{gap:0}
 .wf-pane{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-xl);
   box-shadow:var(--shadow-card);display:flex;flex-direction:column;overflow:hidden;min-height:0}
 .lib-search{padding:12px;border-bottom:1px solid var(--border-light)}
@@ -615,6 +628,8 @@ button{font-family:inherit;cursor:pointer}
   display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--border-light)}
 .zstack button:last-child{border-bottom:0;font-size:11px}
 .zstack button:hover{background:var(--surface-hover);color:var(--foreground)}
+.zstack .zv{font-size:10px;font-weight:600;color:var(--text-neutral);text-align:center;padding:4px 0 5px;
+  border-top:1px solid var(--border-light);font-variant-numeric:tabular-nums;background:var(--surface-grey)}
 .minimap{position:absolute;right:14px;bottom:52px;width:104px;height:82px;z-index:6;border:1px solid var(--border);
   border-radius:8px;background:rgba(255,255,255,.9);overflow:hidden;box-shadow:var(--shadow-card)}
 .minimap i{position:absolute;border-radius:2px;background:#c9cfd8;display:block}
@@ -687,6 +702,36 @@ button{font-family:inherit;cursor:pointer}
 .tradeoff b{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--pill-warning-fg);margin-bottom:7px}
 .tradeoff p{font-size:11.5px;line-height:1.55;color:var(--pill-warning-fg)}
 .simacts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+
+.sysc .vend{font-weight:400;color:var(--text-neutral);font-size:10.5px}
+/* ledger surface */
+.led-top{display:flex;align-items:center;gap:11px;margin-bottom:16px;flex-wrap:wrap}
+.led-top .right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.kpis4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+@media(max-width:900px){.kpis4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-xl);
+  box-shadow:var(--shadow-card);padding:14px 16px}
+.kpi-l{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-neutral)}
+.kpi-v{font-size:25px;font-weight:600;letter-spacing:-.02em;margin:7px 0 3px;font-variant-numeric:tabular-nums;
+  font-family:'Geist Mono',ui-monospace,monospace}
+.kpi-s{font-size:11.5px;color:var(--muted-foreground);line-height:1.45}
+.abar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border-light);flex-wrap:wrap}
+.asearch{flex:1 1 240px;min-width:190px}
+.asearch input{width:100%;font-family:inherit;font-size:12.5px;padding:8px 12px;border:1px solid var(--input);
+  border-radius:8px;outline:none;background:var(--background);color:inherit}
+.asearch input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(100,64,182,.12)}
+.fchip{border:1px solid var(--border);background:var(--background);border-radius:9999px;font-family:inherit;
+  font-size:11.5px;padding:5px 13px;color:var(--muted-foreground)}
+.fchip:hover{border-color:var(--border-strong);color:var(--foreground)}
+.fchip.on{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:600}
+.acount{margin-left:auto;font-size:11px;color:var(--text-neutral);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tfoot{padding:11px 16px;border-top:1px solid var(--border-light);font-size:11.5px;color:var(--muted-foreground);
+  background:var(--surface-grey);border-radius:0 0 var(--radius-xl) var(--radius-xl)}
+.chainok{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;line-height:1.5;color:var(--foreground);
+  border:1px solid #cfe6d4;background:#f2f9f4;border-radius:10px;padding:11px 13px}
+.chainok:before{content:'';width:8px;height:8px;border-radius:50%;background:var(--success,#2f8f52);
+  flex:0 0 auto;margin-top:5px;box-shadow:0 0 0 3px rgba(47,143,82,.16)}
+.ledger thead th{position:sticky;top:0;background:var(--surface-grey);z-index:1}
 /* ledger */
 .ledwrap{overflow-x:auto}
 .ledger{width:100%;border-collapse:collapse;min-width:920px}
@@ -851,12 +896,12 @@ button{font-family:inherit;cursor:pointer}
           <div class="tpane" id="tp-systems">
             <div class="card" style="padding:16px 18px">
               <div class="sys">
-                <span class="sysc"><span class="st"></span><b>Fusion</b> 214r · 41w ✓</span>
-                <button class="sysc warn" onclick="openRetry()"><span class="st"></span><b>OMP</b> 96r · 3w · 1 retrying</button>
-                <span class="sysc"><span class="st"></span><b>Manhattan</b> 61r · 2w ✓</span>
-                <span class="sysc"><span class="st"></span><b>Project44</b> read-only</span>
-                <span class="sysc"><span class="st"></span><b>Product master</b> 44r</span>
-                <span class="sysc"><span class="st"></span><b>Databricks</b> 213w ✓</span>
+                <span class="sysc"><span class="st"></span><b>ERP</b> <span class="vend">Oracle Fusion</span> 214r · 41w ✓</span>
+                <button class="sysc warn" onclick="openRetry()"><span class="st"></span><b>Planning</b> <span class="vend">OMP</span> 96r · 3w · 1 retrying</button>
+                <span class="sysc"><span class="st"></span><b>Warehouse</b> <span class="vend">Manhattan</span> 61r · 2w ✓</span>
+                <span class="sysc"><span class="st"></span><b>Transport visibility</b> <span class="vend">project44</span> read-only</span>
+                <span class="sysc"><span class="st"></span><b>Product master</b> <span class="vend">PIM</span> 44r</span>
+                <span class="sysc"><span class="st"></span><b>Data platform</b> <span class="vend">Databricks</span> 213w ✓</span>
               </div>
               <div class="nr-s" style="margin-top:12px">Every write is confirmed by the target system before a case closes. Scopes and recovery rules live in <button class="linky" onclick="nav('govern');gvTab('sys')">Governance → Systems &amp; recovery</button>.</div>
             </div>
@@ -897,6 +942,7 @@ button{font-family:inherit;cursor:pointer}
         <button class="back" onclick="towerHome()" aria-label="Back to Control Tower">←</button>
         <div class="av" id="agp-av">I</div>
         <div><div class="agp-name" id="agp-name">Iris</div><div class="agp-role" id="agp-role">Planning agent</div></div>
+        <div class="agp-switch" id="agp-switch" role="tablist" aria-label="Switch agent"></div>
         <div class="right">
           <span class="pill" id="agp-pill">running</span>
           <button class="btn" onclick="nav('govern');gvTab('auth')">Modify in Governance</button>
@@ -1009,7 +1055,7 @@ button{font-family:inherit;cursor:pointer}
             <div class="growc"><div class="gm"><div class="gt">Manhattan — warehouse</div>
               <div class="gs"><span class="mono">read + write</span> · on-hand, soft holds, delivery booking</div></div>
               <div class="gr"><span class="pill warn">Write</span></div></div>
-            <div class="growc"><div class="gm"><div class="gt">Project44 · Product master</div>
+            <div class="growc"><div class="gm"><div class="gt">Transport visibility · Product master</div>
               <div class="gs"><span class="mono">read</span> · tracking, phase-out flags, supersessions, MOQ</div></div>
               <div class="gr"><span class="pill nu">Read only</span></div></div>
             <div class="growc"><div class="gm"><div class="gt">Purchase orders to vendors</div>
@@ -1043,11 +1089,11 @@ button{font-family:inherit;cursor:pointer}
               <div class="card-sub">One OMP write is retrying right now</div></div></div>
             <div class="card-b">
               <div class="sys">
-                <span class="sysc"><span class="st"></span><b>Fusion</b> ok</span>
-                <button class="sysc warn" onclick="openRetry()"><span class="st"></span><b>OMP</b> retry 2 of 5</button>
-                <span class="sysc"><span class="st"></span><b>Manhattan</b> ok</span>
-                <span class="sysc"><span class="st"></span><b>Project44</b> ok</span>
-                <span class="sysc"><span class="st"></span><b>Databricks</b> ok</span>
+                <span class="sysc"><span class="st"></span><b>ERP</b> <span class="vend">Oracle Fusion</span> ok</span>
+                <button class="sysc warn" onclick="openRetry()"><span class="st"></span><b>Planning</b> <span class="vend">OMP</span> retry 2 of 5</button>
+                <span class="sysc"><span class="st"></span><b>Warehouse</b> <span class="vend">Manhattan</span> ok</span>
+                <span class="sysc"><span class="st"></span><b>Transport visibility</b> <span class="vend">project44</span> ok</span>
+                <span class="sysc"><span class="st"></span><b>Data platform</b> <span class="vend">Databricks</span> ok</span>
               </div>
             </div>
           </div>
@@ -1087,7 +1133,7 @@ button{font-family:inherit;cursor:pointer}
 
     <!-- board -->
     <div class="view" id="w-board">
-      <div class="wf-shell">
+      <div class="wf-shell" id="wfShell">
         <aside class="wf-pane">
           <div class="lib-search">
             <input class="lib-input" id="wfq" placeholder="Search or ask…" autocomplete="off">
@@ -1103,12 +1149,14 @@ button{font-family:inherit;cursor:pointer}
         </aside>
         <section class="wf-pane">
           <header class="cv-head">
+            <button class="icobtn" onclick="wfLibToggle()" aria-label="Toggle flow library" title="Toggle flow library"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M9 4v16"></path><rect x="3" y="4" width="6" height="16" rx="2" fill="currentColor" stroke="none"></rect></svg></button>
             <button class="cv-back" onclick="wfHome()" aria-label="Back to start">←</button>
             <div style="min-width:0">
               <div class="cv-title" id="cvTitle"></div>
               <div class="cv-sub" id="cvSub"></div>
             </div>
             <div class="cv-stats" id="cvStats"></div>
+            <button class="icobtn" onclick="wfInspToggle()" aria-label="Toggle details panel" title="Toggle details panel"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M15 4v16"></path><rect x="15" y="4" width="6" height="16" rx="2" fill="currentColor" stroke="none"></rect></svg></button>
           </header>
           <div class="cv-key">
             <span class="lg-row"><span class="lg-line" style="border-color:#a1a1aa"></span>expression</span>
@@ -1121,11 +1169,11 @@ button{font-family:inherit;cursor:pointer}
               <svg class="wfwires" id="wfWires"></svg>
               <div id="wfNodes"></div>
             </div>
-            <div class="zoompill">
-              <button onclick="wfZoom(-1)" aria-label="Zoom out">−</button>
-              <span class="zv" id="wfzv">100%</span>
+            <div class="zstack">
               <button onclick="wfZoom(1)" aria-label="Zoom in">+</button>
-              <button onclick="wfFit()" aria-label="Fit" style="font-size:12px">⤢</button>
+              <button onclick="wfZoom(-1)" aria-label="Zoom out">−</button>
+              <button onclick="wfFit()" aria-label="Fit">⤢</button>
+              <span class="zv" id="wfzv" aria-live="polite">100%</span>
             </div>
           </div>
         </section>
@@ -1210,10 +1258,21 @@ button{font-family:inherit;cursor:pointer}
 
     <!-- ledger -->
     <div class="view" id="a-list">
-      <div class="gv-head" style="margin-bottom:16px">
-        <h1>Every action, in the order it happened</h1>
-        <p>One record per step, agent or human, hash-chained so an edited or deleted row breaks the chain rather than
-          disappearing quietly. Open any record to jump to its case thread.</p>
+      <div class="led-top">
+        <div class="gv-head" style="flex:1;min-width:0">
+          <h1>Every action, in the order it happened</h1>
+          <p>One record per step, agent or human, hash-chained so an edited or deleted row breaks the chain rather than
+            disappearing quietly. Open any record to jump to its case thread.</p>
+        </div>
+        <div class="right">
+          <span class="live"><span class="dot"></span> live</span>
+          <div class="seg">
+            <button data-m="route" onclick="ctMode('route')">Live route</button>
+            <button data-m="explain" onclick="ctMode('explain')">Explain</button>
+            <button data-m="simulate" onclick="ctMode('simulate')">Simulate</button>
+            <button data-m="ledger" class="on" onclick="ctMode('ledger')">Ledger</button>
+          </div>
+        </div>
       </div>
       <div class="kpis4">
         <div class="kpi"><div class="kpi-l">Records today</div><div class="kpi-v">43,120</div><div class="kpi-s">agent and human actions across 49 nodes</div></div>
@@ -1497,6 +1556,9 @@ function openAgent(k){
   var g=AG[k],w=AGDATA[k];
   $('agp-av').textContent=g.av;$('agp-av').style.background=g.bg;
   $('agp-name').textContent=g.n;$('agp-role').textContent=g.r;
+  $('agp-switch').innerHTML=Object.keys(AG).map(function(x){var a=AG[x];
+    return '<button class="asw'+(x===k?' on':'')+'" role="tab" aria-selected="'+(x===k)+'" onclick="openAgent(\''+x+'\')">'+
+      '<span class="aav" style="background:'+a.bg+'">'+a.av+'</span>'+a.n+'</button>'}).join('');
   $('agp-pill').className='pill '+(S.paused[k]?'nu':'ok');
   $('agp-pill').textContent=S.paused[k]?'paused':'running';
   $('agp-sw').classList.toggle('off',!!S.paused[k]);
@@ -2159,11 +2221,15 @@ function wfFit(){
   var z=Math.min(1,Math.max(.55,(c.clientWidth-48)/maxX));
   S.wfz=z;S.wfx=Math.max(12,(c.clientWidth-maxX*z)/2);S.wfy=14;wfApply();
 }
+function wfLibToggle(){var s=$('wfShell');if(!s)return;s.classList.toggle('no-lib');
+  setTimeout(function(){wfFit()},200)}
+function wfInspToggle(){var s=$('wfShell');if(!s)return;s.classList.toggle('no-insp');
+  setTimeout(function(){wfFit()},200)}
 (function(){
   var c=$('wfCanvas');if(!c)return;
   var drag=null;
   c.addEventListener('pointerdown',function(e){
-    if(e.target.closest('.wnode,.zoompill'))return;
+    if(e.target.closest('.wnode,.zstack'))return;
     drag={x:e.clientX,y:e.clientY,bx:S.wfx,by:S.wfy};
     c.classList.add('grabbing');try{c.setPointerCapture(e.pointerId)}catch(_){}
   });
@@ -2172,7 +2238,14 @@ function wfFit(){
   function end(){drag=null;c.classList.remove('grabbing')}
   c.addEventListener('pointerup',end);c.addEventListener('pointercancel',end);
   c.addEventListener('wheel',function(e){e.preventDefault();
-    var r=c.getBoundingClientRect();wfZoom(e.deltaY<0?1:-1,e.clientX-r.left,e.clientY-r.top)},{passive:false});
+    var r=c.getBoundingClientRect();
+    if(e.ctrlKey){ // trackpad pinch (macOS) / ctrl+scroll → zoom at cursor
+      var f=Math.exp(-e.deltaY*0.01),old=S.wfz,nz=Math.min(1.8,Math.max(.35,old*f));
+      var cx=e.clientX-r.left,cy=e.clientY-r.top;
+      S.wfx=cx-(cx-S.wfx)*(nz/old);S.wfy=cy-(cy-S.wfy)*(nz/old);S.wfz=nz;wfApply();
+    }else{ // two-finger scroll → pan the board, like Figma
+      S.wfx-=e.deltaX;S.wfy-=e.deltaY;wfApply();
+    }},{passive:false});
 })();
 
 /* ============ case thread · data ============ */
@@ -2710,7 +2783,7 @@ function renderStepInsp(id){
 }
 /* ---- modes ---- */
 function ctMode(m){
-  document.querySelectorAll('#a-board .seg button').forEach(function(b){b.classList.toggle('on',b.dataset.m===m)});
+  document.querySelectorAll('#a-board .seg button,#a-list .seg button').forEach(function(b){b.classList.toggle('on',b.dataset.m===m)});
   if(m==='ledger'){
     S.audit='list';['board','list','trail'].forEach(function(k){$('a-'+k).classList.toggle('on',k==='list')});
     drawLedger();return;
@@ -2810,7 +2883,14 @@ function ctFit(){
   function end(){drag=null;c.classList.remove('grabbing')}
   c.addEventListener('pointerup',end);c.addEventListener('pointercancel',end);
   c.addEventListener('wheel',function(e){e.preventDefault();
-    var r=c.getBoundingClientRect();ctZoom(e.deltaY<0?1:-1,e.clientX-r.left,e.clientY-r.top)},{passive:false});
+    var r=c.getBoundingClientRect();
+    if(e.ctrlKey){ // trackpad pinch (macOS) / ctrl+scroll → zoom at cursor
+      var f=Math.exp(-e.deltaY*0.01),old=S.ctz,nz=Math.min(1.7,Math.max(.3,old*f));
+      var cx=e.clientX-r.left,cy=e.clientY-r.top;
+      S.ctx=cx-(cx-S.ctx)*(nz/old);S.cty=cy-(cy-S.cty)*(nz/old);S.ctz=nz;ctApply();
+    }else{ // two-finger scroll → pan the board, like Figma
+      S.ctx-=e.deltaX;S.cty-=e.deltaY;ctApply();
+    }},{passive:false});
 })();
 
 /* ============ ledger ============ */
