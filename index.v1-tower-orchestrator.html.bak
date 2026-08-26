@@ -1,0 +1,2141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Navanta Agent Experience</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* ===== Navanta Design System tokens (@navanta-ai/design-system) ===== */
+:root{
+  --background:#ffffff; --foreground:#09090b; --card:#ffffff;
+  --primary:#232122; --primary-foreground:#ffffff;
+  --secondary:#f4f4f5; --secondary-foreground:#27272a;
+  --muted:#f4f4f5; --muted-foreground:#4b5563;
+  --destructive:#dc2626; --success:#16a34a; --warning:#f59e0b; --info:#0ea5e9;
+  --border:#e4e4e7; --input:#d4d4d8; --ring:#c4c4c8;
+  --radius:.5rem; --radius-md:.375rem; --radius-lg:.5rem; --radius-xl:.75rem; --radius-full:9999px;
+  --brand:#6440b6; --brand-deep:#3b0764;
+  --surface-raised:#f8fafc; --surface-grey:#fafafa; --surface-hover:#f4f4f5;
+  --surface-accent:color-mix(in oklab,#6440b6 10%,#fff);
+  --text-neutral:#6b7280; --text-heading:#1e1e1e; --text-link:#005b89;
+  --border-light:#f1f3f5; --border-strong:#71717b;
+  --switch-on:#0087ce; --switch-off:rgba(60,60,67,.3);
+  --pill-info-bg:#eff6ff; --pill-info-fg:#1e40af;
+  --pill-danger-bg:#fff1f2; --pill-danger-fg:#a7000f;
+  --pill-warning-bg:#fffbeb; --pill-warning-fg:#92400e;
+  --pill-neutral-bg:#f4f4f5; --pill-neutral-fg:#18181b;
+  --pill-success-bg:#f0fdf4; --pill-success-fg:#166534;
+  --shadow-card:0 1px 3px 0 rgb(0 0 0/.1),0 1px 2px -1px rgb(0 0 0/.1);
+  --shadow-menu:0 4px 6px -1px rgb(0 0 0/.1),0 2px 4px -2px rgb(0 0 0/.1);
+  --shadow-modal:0 20px 25px -5px rgb(0 0 0/.1),0 8px 10px -6px rgb(0 0 0/.1);
+  --gradient-brand:linear-gradient(135deg,#6440b6 0%,#3b0764 100%);
+  --gradient-christy:linear-gradient(154.42deg,#1d4a86 1.66%,#3d348b 83.4%);
+  --progress-track:#e4e4e7;
+  --gp-blue:linear-gradient(90deg,#89a9e5 0%,#89a9e5 54%,#234687 100%);
+  --gp-green:linear-gradient(90deg,#86efac 0%,#86efac 54%,#166534 100%);
+  --mercer:#6440b6; --iris:#00648f; --christy:#3d348b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#f4f4f5}
+body{font-family:'Geist',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--foreground);
+  font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.mono{font-family:'Geist Mono',ui-monospace,monospace}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--ring);outline-offset:2px;border-radius:var(--radius-md);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--ring) 35%,transparent)}
+
+/* ===== shell ===== */
+.app{max-width:1560px;margin:0 auto;min-height:100vh;background:var(--background);
+  box-shadow:0 0 0 1px var(--border);display:flex;flex-direction:column}
+.top{background:var(--background);border-bottom:1px solid var(--border);padding:0 26px;
+  display:flex;align-items:center;gap:20px;position:sticky;top:0;z-index:40}
+.brand{display:flex;align-items:center;gap:11px;padding:13px 0}
+.mk{width:30px;height:30px;border-radius:8px;background:var(--gradient-brand);
+  color:#fff;font-weight:600;font-size:15px;display:flex;align-items:center;justify-content:center}
+.bt{font-size:15px;font-weight:600;letter-spacing:-.01em;line-height:1.2}
+.bs{font-size:11px;color:var(--muted-foreground)}
+.ptabs{display:flex;gap:18px;margin-left:16px;align-self:stretch}
+.ptab{border:0;background:none;font-size:13.5px;font-weight:500;color:var(--muted-foreground);
+  padding:0 2px;position:relative;display:flex;align-items:center}
+.ptab::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:3px;border-radius:3px 3px 0 0;background:transparent}
+.ptab:hover{color:var(--foreground)}
+.ptab.on{color:var(--foreground);font-weight:600}
+.ptab.on::after{background:var(--primary)}
+.top-r{margin-left:auto;display:flex;align-items:center;gap:14px}
+.live{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted-foreground)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--success);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.pol{font-family:'Geist Mono',monospace;font-size:11px;color:var(--muted-foreground);
+  background:var(--secondary);padding:3px 9px;border-radius:5px}
+.view{display:none}.view.on{display:block;animation:fade .2s ease}
+@keyframes fade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+
+/* ===== primitives ===== */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-xl);box-shadow:var(--shadow-card)}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;
+  padding:2px 9px;border-radius:var(--radius-full);white-space:nowrap}
+.pill.warn{background:var(--pill-warning-bg);color:var(--pill-warning-fg)}
+.pill.dng{background:var(--pill-danger-bg);color:var(--pill-danger-fg)}
+.pill.ok{background:var(--pill-success-bg);color:var(--pill-success-fg)}
+.pill.info{background:var(--pill-info-bg);color:var(--pill-info-fg)}
+.pill.nu{background:var(--pill-neutral-bg);color:var(--pill-neutral-fg)}
+.pill.br{background:var(--surface-accent);color:var(--brand)}
+.btn{border:1px solid var(--border);background:var(--background);color:var(--foreground);
+  font-size:12.5px;font-weight:500;height:32px;padding:0 14px;border-radius:var(--radius-md);
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.btn:hover{background:var(--surface-hover)}
+.btn.pr{background:var(--primary);border-color:var(--primary);color:var(--primary-foreground)}
+.btn.pr:hover{background:#000}
+.btn.dng{border-color:#fecaca;color:var(--destructive)}
+.btn.dng:hover{background:var(--pill-danger-bg)}
+.btn.sm{height:26px;padding:0 10px;font-size:11.5px}
+.btn.w{width:100%}
+.btn:disabled{opacity:.55;cursor:default}
+.lab{font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-neutral);margin-bottom:10px}
+.sw{position:relative;width:36px;height:21px;border-radius:99px;background:var(--switch-on);border:0;flex:0 0 auto}
+.sw::after{content:'';position:absolute;top:2px;left:17px;width:17px;height:17px;border-radius:50%;background:#fff;
+  box-shadow:0 1px 2px rgba(0,0,0,.25);transition:left .2s}
+.sw.off{background:var(--switch-off)}
+.sw.off::after{left:2px}
+
+/* ===== CONTROL TOWER ===== */
+.body{padding:20px 26px 40px;flex:1}
+.subbar{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.seg{display:flex;background:var(--secondary);border-radius:9px;padding:3px}
+.seg button{border:0;background:none;font-size:12.5px;font-weight:500;color:var(--muted-foreground);padding:6px 16px;border-radius:7px}
+.seg button.on{background:var(--background);color:var(--foreground);font-weight:600;box-shadow:var(--shadow-card)}
+.subhint{font-size:12px;color:var(--muted-foreground)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-xl);padding:14px 16px;box-shadow:var(--shadow-card)}
+.kpi.alert{border-color:#fcd34d;background:#fffdf5;cursor:pointer}
+.kpi.alert:hover{border-color:var(--warning)}
+.kpi-l{font-size:11.5px;color:var(--muted-foreground);margin-bottom:4px}
+.kpi-v{font-family:'Geist Mono',monospace;font-size:22px;font-weight:500;letter-spacing:-.02em;line-height:1.2}
+.kpi-s{font-size:11px;color:var(--text-neutral);margin-top:3px}
+.agrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:18px}
+.ag{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-xl);
+  padding:14px 16px;box-shadow:var(--shadow-card);border-top:3px solid var(--ac);cursor:pointer;text-align:left;width:100%}
+.ag:hover{border-color:var(--border-strong);border-top-color:var(--ac)}
+.ag.paused{background:var(--surface-grey);border-color:var(--input)}
+.ag.paused .now{color:var(--pill-warning-fg);background:var(--pill-warning-bg);border-color:#f5e2b8}
+.ag.paused .now i{animation:none;background:var(--warning)}
+.ag.paused .av,.ag.paused .hl,.ag.paused .auto{opacity:.6}
+.ag-h{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.av{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-weight:600;font-size:13px;color:#fff;flex:0 0 auto}
+.ag-n{font-size:15px;font-weight:600;line-height:1.15}
+.ag-r{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-neutral)}
+.hl{margin-left:auto;text-align:right}
+.hl b{font-family:'Geist Mono',monospace;font-size:16px;font-weight:500}
+.hl span{display:block;font-size:9.5px;color:var(--text-neutral);letter-spacing:.05em;text-transform:uppercase}
+.now{font-size:12px;color:var(--muted-foreground);background:var(--surface-grey);border:1px solid var(--border-light);
+  border-radius:7px;padding:6px 10px;margin-bottom:9px;display:flex;gap:7px;align-items:center;min-height:32px}
+.now i{width:6px;height:6px;border-radius:50%;background:var(--ac);animation:pulse 1.6s infinite;flex:0 0 auto}
+.ag-m{display:flex;gap:14px;font-size:11.5px;color:var(--muted-foreground);margin-bottom:9px}
+.ag-m b{font-family:'Geist Mono',monospace;font-weight:500;color:var(--foreground)}
+.auto{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.auto .trk{flex:1;height:6px;background:var(--progress-track);border-radius:4px;overflow:hidden}
+.auto .trk i{display:block;height:100%;border-radius:4px;background:var(--gp-blue)}
+.auto span{font-size:10.5px;color:var(--muted-foreground);white-space:nowrap}
+.ag-f{display:flex;gap:8px;align-items:center}
+.ag-f .sw{margin-left:auto}
+.paused-note{font-size:10.5px;color:var(--pill-warning-fg);margin-top:7px;display:none}
+.ag.paused .paused-note{display:block}
+.nrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;padding:13px 18px;border-bottom:1px solid var(--border-light)}
+.nrow:last-child{border-bottom:0}
+.nrow:hover{background:var(--surface-grey)}
+.nr-t{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:2px}
+.nr-id{font-family:'Geist Mono',monospace;font-size:12px;font-weight:500;color:var(--text-link)}
+.nr-name{font-size:13.5px;font-weight:600}
+.nr-s{font-size:12px;color:var(--muted-foreground)}
+.nr-a{display:flex;gap:8px}
+.strips{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.strip{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-xl);padding:14px 18px;box-shadow:var(--shadow-card)}
+.sys{display:flex;gap:8px;flex-wrap:wrap}
+.sysc{display:flex;align-items:center;gap:7px;font-size:12px;background:var(--surface-grey);
+  border:1px solid var(--border-light);border-radius:7px;padding:5px 11px;font-family:inherit;color:inherit}
+.sysc b{font-weight:600;font-size:12px}
+.sysc .st{width:7px;height:7px;border-radius:50%;background:var(--success)}
+.sysc.warn{cursor:pointer}
+.sysc.warn .st{background:var(--warning);animation:pulse 1.4s infinite}
+.ov{font-size:12.5px;padding:8px 0;border-bottom:1px solid var(--border-light);line-height:1.5}
+.ov:last-child{border-bottom:0}
+.ov .why{color:var(--muted-foreground);font-style:italic}
+.ov .fed{font-size:11.5px;color:var(--brand);margin-top:2px}
+.val{display:flex;gap:22px;flex-wrap:wrap}
+.val div b{display:block;font-family:'Geist Mono',monospace;font-size:19px;font-weight:500}
+.val div span{font-size:11px;color:var(--muted-foreground)}
+.wfbar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.fch{border:1px solid var(--border);background:var(--background);border-radius:99px;font-size:12px;font-weight:500;color:var(--muted-foreground);padding:5px 14px}
+.fch:hover{background:var(--surface-hover)}
+.fch.on{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:600}
+.legend{margin-left:auto;display:flex;gap:14px;font-size:11px;color:var(--muted-foreground);flex-wrap:wrap}
+.legend b{width:9px;height:9px;border-radius:3px;display:inline-block;vertical-align:-1px;margin-right:4px;font-weight:400}
+.wf{overflow-x:auto}
+.wf-grid{min-width:980px}
+.wf-head{display:grid;grid-template-columns:130px repeat(7,1fr);gap:6px;padding:0 0 8px}
+.wf-head div{font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--text-neutral);text-align:center}
+.wf-head div:first-child{text-align:left}
+.lane{display:grid;grid-template-columns:130px repeat(7,1fr);gap:6px;padding:10px 0;border-top:1px solid var(--border-light);align-items:stretch}
+.lane-ag{display:flex;align-items:center;gap:9px}
+.lane-ag .av{width:26px;height:26px;border-radius:7px;font-size:11px}
+.lane-ag b{font-size:13px;font-weight:600;display:block;line-height:1.15}
+.lane-ag span{font-size:9.5px;color:var(--text-neutral);text-transform:uppercase;letter-spacing:.05em}
+.cell{background:var(--surface-grey);border:1px dashed var(--border);border-radius:8px;min-height:52px;
+  padding:5px;display:flex;flex-direction:column;gap:4px;justify-content:center}
+.cell.gate{border-style:solid;border-color:#f0e2b6;background:#fffdf3}
+.inst{border:1px solid var(--border);background:var(--background);border-radius:6px;padding:4px 8px;
+  font-size:11px;line-height:1.35;box-shadow:0 1px 1px rgba(0,0,0,.04);text-align:left;width:100%;font-family:inherit;color:inherit;display:block}
+.inst[onclick]{cursor:pointer}
+.inst[onclick]:hover{border-color:var(--border-strong);background:var(--surface-grey)}
+.inst .id{font-family:'Geist Mono',monospace;font-size:10px;font-weight:500;color:var(--text-link)}
+.inst .what{color:var(--muted-foreground);display:block}
+.inst.held{border-color:#fcd34d;background:var(--pill-warning-bg)}
+.inst.held .id{color:var(--pill-warning-fg)}
+.inst.done{border-color:#bbe7c9;background:var(--pill-success-bg)}
+.inst .act{margin-top:3px}
+.ho-strip{display:flex;gap:10px;padding:4px 0 4px 136px;align-items:center}
+.ho{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--border);background:var(--background);
+  border-radius:99px;font-size:11px;padding:3px 11px;color:var(--muted-foreground);box-shadow:0 1px 1px rgba(0,0,0,.04)}
+.ho:hover{border-color:var(--brand);color:var(--brand)}
+.ho b{font-family:'Geist Mono',monospace;font-weight:500;font-size:10.5px;color:var(--brand)}
+.stagecards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.stc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 13px;box-shadow:var(--shadow-card)}
+.stc h5{font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--text-neutral);margin-bottom:5px}
+.stc p{font-size:11.5px;color:var(--muted-foreground);line-height:1.45;margin-bottom:8px;min-height:48px}
+.stc .last{font-size:10.5px;color:var(--text-neutral);border-top:1px solid var(--border-light);padding-top:6px;margin-top:6px}
+
+/* ===== TOWER · Augury-style layout ===== */
+.statusstrip{display:flex;align-items:center;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--muted-foreground)}
+.statusstrip .sd{display:flex;align-items:center;gap:7px}
+.statusstrip .sd i{width:7px;height:7px;border-radius:50%;background:var(--success)}
+.statusstrip .sd.w i{background:var(--warning)}
+.statusstrip .sd.f i{background:var(--input)}
+.statusstrip b{font-weight:600;color:var(--foreground)}
+.statusstrip .div{width:1px;height:14px;background:var(--border)}
+.tower-split{display:grid;grid-template-columns:minmax(0,1fr) 344px;gap:16px;align-items:start}
+.askpanel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-xl);
+  padding:16px 18px;box-shadow:var(--shadow-card);margin-bottom:18px}
+.askpanel .ah{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.askpanel .ah .sp{width:22px;height:22px;border-radius:7px;background:var(--gradient-brand);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:12px}
+.askpanel .ah h3{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.askpanel .ai{display:flex;gap:9px}
+.askpanel input{flex:1;border:1px solid var(--input);border-radius:var(--radius-md);font-family:inherit;
+  font-size:13.5px;padding:10px 13px;color:var(--foreground);min-width:0}
+.askpanel input:focus{outline:none;border-color:var(--brand)}
+.askpanel .ac{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.askpanel .ac button{border:1px solid var(--border);background:var(--surface-grey);border-radius:99px;
+  font-size:11.5px;padding:5px 12px;color:var(--muted-foreground)}
+.askpanel .ac button:hover{border-color:var(--brand);color:var(--brand)}
+.workband{border:1px solid var(--border);border-radius:var(--radius-xl);padding:14px;background:var(--surface-grey);margin-bottom:18px}
+.workband .wl{font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-neutral);margin-bottom:11px}
+.agcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(212px,1fr));gap:11px}
+.agc{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-card);
+  overflow:hidden;text-align:left;width:100%;font-family:inherit;color:inherit;display:flex;flex-direction:column}
+.agc:hover{border-color:var(--border-strong)}
+.agc .tab{background:var(--ac);color:#fff;font-size:10.5px;font-weight:600;padding:4px 11px;
+  border-radius:0 0 9px 0;align-self:flex-start;letter-spacing:.01em}
+.agc .cb{padding:11px 13px 12px;display:flex;flex-direction:column;flex:1}
+.agc h4{font-size:13.5px;font-weight:600;line-height:1.3;margin-bottom:7px;letter-spacing:-.005em}
+.agc .stpill{align-self:flex-start;margin-bottom:10px}
+.agc .mini{font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--text-neutral);margin-bottom:6px}
+.agc .mrow{display:flex;gap:12px;margin-bottom:10px}
+.agc .mrow div{text-align:left}
+.agc .mrow b{display:block;font-family:'Geist Mono',monospace;font-size:17px;font-weight:500;line-height:1.15}
+.agc .mrow span{font-size:9.5px;color:var(--text-neutral)}
+.agc .hbar{height:5px;border-radius:3px;background:var(--progress-track);overflow:hidden;margin-bottom:9px}
+.agc .hbar i{display:block;height:100%;border-radius:3px;background:var(--gp-blue)}
+.agc .ft{margin-top:auto;padding-top:10px;border-top:1px solid var(--border-light);
+  display:flex;align-items:center;gap:8px;font-size:10.5px;color:var(--text-neutral)}
+.agc .ft .lk{margin-left:auto;color:var(--text-link);font-weight:600;font-size:11.5px}
+.agc.paused{background:var(--surface-grey)}
+.agc.paused .tab{background:var(--input)}
+.tabsrow{display:flex;gap:18px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.tabsrow button{border:0;background:none;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-neutral);padding:0 2px 10px;position:relative}
+.tabsrow button::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:transparent}
+.tabsrow button.on{color:var(--foreground)}
+.tabsrow button.on::after{background:var(--primary)}
+.tpane{display:none}.tpane.on{display:block}
+/* right rail */
+.rail{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-xl);
+  padding:16px 18px;box-shadow:var(--shadow-card);position:sticky;top:73px}
+.rail .rd{font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--text-neutral);margin-bottom:6px}
+.rail h3{font-size:16px;font-weight:600;letter-spacing:-.01em;line-height:1.3;margin-bottom:9px}
+.rail .tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.rail .tags span{font-size:11px;border:1px solid var(--border);border-radius:7px;padding:3px 9px;
+  color:var(--muted-foreground);background:var(--surface-grey)}
+.rl{font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--text-neutral);margin:16px 0 8px}
+.finding{border:1px solid #f3c6c6;background:#fff5f5;border-radius:11px;padding:12px 14px}
+.finding.warn{border-color:#f5d78a;background:var(--pill-warning-bg)}
+.finding .fh{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--pill-warning-fg);margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.finding ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+.finding li{font-size:12px;line-height:1.45;color:var(--foreground);padding-left:13px;position:relative}
+.finding li::before{content:'▪';position:absolute;left:0;color:var(--pill-warning-fg)}
+.finding .ff{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:9px;border-top:1px solid #f0dcae;font-size:11px;color:var(--muted-foreground)}
+.plan{display:flex;flex-direction:column}
+.pstep{display:flex;gap:11px;padding-bottom:14px;position:relative}
+.pstep:last-child{padding-bottom:0}
+.pstep::before{content:'';position:absolute;left:13px;top:28px;bottom:0;width:1px;background:var(--border)}
+.pstep:last-child::before{display:none}
+.pstep .pn{width:27px;height:27px;border-radius:8px;background:var(--secondary);color:var(--muted-foreground);
+  display:flex;align-items:center;justify-content:center;font-size:12px;flex:0 0 auto;z-index:1}
+.pstep.now .pn{background:var(--brand);color:#fff}
+.pstep .pc{flex:1;min-width:0}
+.pstep .pw{font-size:10.5px;color:var(--text-neutral);margin-bottom:2px}
+.pstep .pb{border:1px solid var(--border);background:var(--surface-grey);border-radius:9px;padding:9px 11px}
+.pstep .pb b{display:block;font-size:12.5px;font-weight:600;line-height:1.3;margin-bottom:2px}
+.pstep .pb span{font-size:11.5px;color:var(--muted-foreground);line-height:1.4;display:block}
+.pstep .pb .chk{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--pill-success-fg);
+  background:var(--pill-success-bg);border-radius:6px;padding:2px 8px;margin-top:6px}
+.execbtn{width:100%;margin-top:14px;height:40px;font-size:13.5px;font-weight:600}
+@media(max-width:1180px){.tower-split{grid-template-columns:1fr}.rail{position:static}}
+
+/* ===== tower workflow · infinite canvas ===== */
+.vwf{position:relative;height:calc(100vh - 212px);min-height:520px;overflow:hidden;
+  border:1px solid var(--border);border-radius:var(--radius-xl);background:#fbfbfc;
+  background-image:radial-gradient(#dfe3e9 1.1px,transparent 1.1px);background-size:22px 22px;
+  cursor:grab;touch-action:none;box-shadow:inset 0 1px 3px rgba(0,0,0,.03)}
+.vwf.grabbing{cursor:grabbing}
+.vwf-stage{position:absolute;top:0;left:0;transform-origin:0 0;padding:30px 36px 60px;width:1180px}
+.vwf-wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0}
+.vwf-wires path{fill:none;stroke-width:1.8}
+.vwf-wires path.spine{stroke:#c8cfd8}
+.vwf-wires path.ho{stroke:var(--brand);stroke-dasharray:6 5;opacity:.85}
+.vroot{display:flex;justify-content:center;margin-bottom:32px;position:relative;z-index:1}
+.vroot .rn{display:inline-flex;align-items:center;gap:11px;background:var(--card);
+  border:1.5px solid var(--brand);border-radius:12px;padding:11px 18px;box-shadow:var(--shadow-menu)}
+.vroot .rn .ri{width:30px;height:30px;border-radius:8px;background:var(--gradient-brand);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;flex:0 0 auto}
+.vroot .rn b{font-size:14px;font-weight:600;display:block;line-height:1.2}
+.vroot .rn .sub{font-size:11px;color:var(--muted-foreground)}
+.vroot .rn .rs{margin-left:10px;padding-left:14px;border-left:1px solid var(--border);
+  font-family:'Geist Mono',monospace;font-size:12px;color:var(--muted-foreground)}
+.vwf-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;position:relative;z-index:1}
+.vcol{display:flex;flex-direction:column;gap:9px}
+.vhead{background:var(--card);border:1px solid var(--border);border-radius:11px;
+  padding:0 0 10px;box-shadow:var(--shadow-card);overflow:hidden}
+.vhead .hbarline{display:flex;height:3px}
+.vhead .hbarline i{display:block;height:100%}
+.vhead .hin{display:flex;align-items:center;gap:9px;padding:10px 12px 0}
+.vhead .av{width:26px;height:26px;border-radius:7px;font-size:11px}
+.vhead b{font-size:13.5px;font-weight:600;display:block;line-height:1.15}
+.vhead .role{font-size:9.5px;color:var(--text-neutral);text-transform:uppercase;letter-spacing:.05em}
+.vhead .cnt{margin-left:auto;font-family:'Geist Mono',monospace;font-size:15px;font-weight:500;color:var(--muted-foreground)}
+.vhead .hsub{display:flex;gap:10px;padding:7px 12px 0;font-size:10.5px;color:var(--text-neutral);flex-wrap:wrap}
+.vhead .hsub b{display:inline;font-size:10.5px;font-weight:600;color:var(--muted-foreground)}
+.vstage{border:1px solid var(--border-light);background:rgba(255,255,255,.7);border-radius:10px;padding:8px 10px}
+.vstage.busy{background:var(--card);border-color:var(--border)}
+.vstage.gate{background:#fffdf3;border-color:#f0e2b6}
+.vstage .vsh{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.vstage .vsn{font-size:10.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-neutral)}
+.vstage.busy .vsn{color:var(--muted-foreground)}
+.vstage .vsc{margin-left:auto;font-family:'Geist Mono',monospace;font-size:10px;color:var(--text-neutral)}
+.vstage .empty{font-size:11px;color:var(--input)}
+.vinst{border:1px solid var(--border);background:var(--background);border-radius:8px;padding:8px 10px;
+  width:100%;text-align:left;font-family:inherit;color:inherit;display:block;margin-bottom:6px;
+  box-shadow:0 1px 1px rgba(0,0,0,.04)}
+.vinst:last-child{margin-bottom:0}
+.vinst:hover{border-color:var(--border-strong)}
+.vinst .cat{font-size:9.5px;color:var(--text-neutral);display:block;margin-bottom:1px}
+.vinst .ttl{font-size:12.5px;font-weight:600;line-height:1.25;display:block}
+.vinst .val{font-size:11.5px;color:var(--muted-foreground);line-height:1.35;display:block;margin-top:1px}
+.vinst .sfoot{display:flex;align-items:center;gap:6px;margin-top:7px;padding-top:6px;
+  border-top:1px solid var(--border-light);font-size:9.5px;color:var(--text-neutral);flex-wrap:wrap}
+.vinst .sdot{width:6px;height:6px;border-radius:50%;flex:0 0 auto}
+.vinst .sst{font-weight:600}
+.vinst .sref{font-family:'Geist Mono',monospace}
+.vinst .sconf{margin-left:auto;font-family:'Geist Mono',monospace}
+.vinst.done{border-color:#bbe7c9;background:var(--pill-success-bg)}
+.vinst.done .sdot{background:var(--success)}.vinst.done .sst{color:var(--pill-success-fg)}
+.vinst.held{border-color:#fcd34d;background:var(--pill-warning-bg)}
+.vinst.held .sdot{background:var(--warning)}.vinst.held .sst{color:var(--pill-warning-fg)}
+.vinst.run .sdot{background:var(--brand)}.vinst.run .sst{color:var(--brand)}
+.vinst.wait .sdot{background:var(--input)}.vinst.wait .sst{color:var(--muted-foreground)}
+.holabel{position:absolute;transform:translate(-50%,-50%);z-index:2;background:var(--background);
+  border:1px solid var(--brand);color:var(--brand);border-radius:99px;font-family:'Geist Mono',monospace;
+  font-size:9.5px;font-weight:500;padding:3px 9px;white-space:nowrap;box-shadow:var(--shadow-card)}
+.holabel:hover{background:var(--surface-accent)}
+.vlegend{position:absolute;right:14px;bottom:14px;background:var(--card);border:1px solid var(--border);
+  border-radius:11px;padding:11px 13px;box-shadow:var(--shadow-menu);z-index:6;min-width:168px}
+.vlegend .lgh{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;margin-bottom:7px;
+  width:100%;background:none;border:0;font-family:inherit;color:inherit;padding:0}
+.vlegend .lgh .cv{margin-left:auto;color:var(--text-neutral);font-size:11px}
+.vlegend .lgb div{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted-foreground);padding:2px 0}
+.vlegend.min .lgb{display:none}
+.vlegend.min .lgh{margin-bottom:0}
+.vlegend i{width:7px;height:7px;border-radius:50%;flex:0 0 auto}
+.zoompill{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:6;display:flex;
+  align-items:center;gap:2px;background:var(--card);border:1px solid var(--border);border-radius:99px;
+  padding:3px;box-shadow:var(--shadow-menu)}
+.zoompill button{width:28px;height:28px;border-radius:99px;border:0;background:none;font-size:15px;
+  color:var(--muted-foreground);display:flex;align-items:center;justify-content:center}
+.zoompill button:hover{background:var(--surface-hover);color:var(--foreground)}
+.zoompill .zv{font-family:'Geist Mono',monospace;font-size:11.5px;color:var(--muted-foreground);min-width:44px;text-align:center}
+.canvashint{position:absolute;left:14px;bottom:14px;z-index:6;font-size:11px;color:var(--muted-foreground);
+  background:var(--card);border:1px solid var(--border);border-radius:99px;padding:5px 12px;box-shadow:var(--shadow-card)}
+
+/* ===== zoom cluster ===== */
+.zoomer{position:absolute;left:14px;top:12px;z-index:8;display:flex;align-items:center;gap:4px;
+  background:var(--background);border:1px solid var(--border);border-radius:9px;padding:3px;box-shadow:var(--shadow-card)}
+.zoomer button{width:27px;height:27px;border-radius:6px;border:0;background:none;font-size:14px;
+  color:var(--muted-foreground);display:flex;align-items:center;justify-content:center}
+.zoomer button:hover{background:var(--surface-hover);color:var(--foreground)}
+.zoomer .zl{font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--muted-foreground);
+  min-width:38px;text-align:center;padding:0 2px}
+.zoomer .zdiv{width:1px;height:16px;background:var(--border);margin:0 2px}
+
+/* ================= ORCHESTRATOR ================= */
+/* --- entry --- */
+.entry{max-width:1000px;margin:0 auto;padding:44px 26px 60px}
+.entry h1{font-size:30px;font-weight:600;letter-spacing:-.02em;line-height:1.15;margin-bottom:8px;text-align:center}
+.entry .sub{font-size:14.5px;color:var(--muted-foreground);text-align:center;margin-bottom:30px}
+.askbox{border:1.5px solid var(--brand);border-radius:14px;padding:14px 16px;background:var(--background);
+  box-shadow:0 0 0 4px var(--surface-accent);margin-bottom:14px}
+.askbox .al{font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--brand);margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.askbox .al i{width:14px;height:14px;border-radius:4px;background:var(--gradient-brand);display:inline-block}
+.askrow{display:flex;gap:9px;align-items:flex-start}
+.askrow input{flex:1;border:1px solid var(--input);border-radius:var(--radius-md);font-family:inherit;
+  font-size:14px;padding:10px 13px;color:var(--foreground);min-width:0}
+.askrow input:focus{outline:none;border-color:var(--brand)}
+.askrow .btn{height:40px}
+.exq{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.exq button{border:1px solid var(--border);background:var(--surface-grey);border-radius:99px;
+  font-size:11.5px;padding:4px 12px;color:var(--muted-foreground)}
+.exq button:hover{border-color:var(--brand);color:var(--brand)}
+.ordiv{display:flex;align-items:center;gap:14px;margin:24px 0 18px;color:var(--text-neutral);font-size:11.5px;
+  font-weight:600;letter-spacing:.09em;text-transform:uppercase}
+.ordiv::before,.ordiv::after{content:'';flex:1;height:1px;background:var(--border)}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.mcard{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-xl);
+  padding:18px 18px 16px;box-shadow:var(--shadow-card);text-align:left;position:relative;width:100%;font-family:inherit;color:inherit}
+.mcard:hover{border-color:var(--brand);box-shadow:var(--shadow-menu)}
+.mcard.def{border-color:var(--brand);background:var(--surface-accent)}
+.mcard .mi{width:34px;height:34px;border-radius:10px;background:var(--secondary);color:var(--brand);
+  display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:11px}
+.mcard.def .mi{background:var(--brand);color:#fff}
+.mcard h4{font-size:15px;font-weight:600;letter-spacing:-.01em;margin-bottom:4px}
+.mcard p{font-size:12.5px;color:var(--muted-foreground);line-height:1.45;min-height:52px}
+.mcard .mf{display:flex;align-items:center;gap:7px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border-light);flex-wrap:wrap}
+.mcard .defbadge{position:absolute;top:14px;right:14px;font-size:9.5px;font-weight:600;letter-spacing:.07em;
+  text-transform:uppercase;background:var(--brand);color:#fff;padding:2px 8px;border-radius:99px}
+
+/* --- flow workspace --- */
+.ws{display:flex;height:calc(100vh - 57px);overflow:hidden}
+.pane{background:var(--surface-grey);border-right:1px solid var(--border);width:264px;flex:0 0 264px;
+  display:flex;flex-direction:column;transition:width .2s ease,flex-basis .2s ease;overflow:hidden}
+.pane.right{border-right:0;border-left:1px solid var(--border);width:312px;flex-basis:312px;background:var(--background)}
+.pane.collapsed{width:48px;flex-basis:48px}
+.pane-h{display:flex;align-items:center;gap:9px;padding:13px 14px;border-bottom:1px solid var(--border);min-height:49px}
+.pane-h .pt{font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--text-neutral);white-space:nowrap}
+.pane.collapsed .pt,.pane.collapsed .pane-b{display:none}
+.pane-x{border:1px solid var(--border);background:var(--background);border-radius:7px;width:26px;height:26px;
+  display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--muted-foreground);flex:0 0 auto}
+.pane-x:hover{background:var(--surface-hover)}
+.pane.right .pane-x{order:-1}
+.pane.right .pt{order:0}
+.pane-b{flex:1;overflow-y:auto;padding:14px}
+.pane.collapsed .pane-h{padding:13px 10px;justify-content:center}
+.grp-l{font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--text-neutral);margin:2px 0 8px}
+.grp-l.mt{margin-top:18px}
+.mitem{display:flex;align-items:center;gap:9px;width:100%;border:1px solid transparent;background:none;
+  border-radius:9px;padding:8px 10px;font-size:13px;text-align:left;color:var(--muted-foreground);font-family:inherit;margin-bottom:2px}
+.mitem:hover{background:var(--surface-hover)}
+.mitem.on{background:var(--background);border-color:var(--border);color:var(--foreground);font-weight:600;box-shadow:var(--shadow-card)}
+.mitem .ic{width:22px;height:22px;border-radius:6px;background:var(--secondary);color:var(--brand);
+  display:flex;align-items:center;justify-content:center;font-size:12px;flex:0 0 auto}
+.mitem.on .ic{background:var(--brand);color:#fff}
+.mitem .ct{margin-left:auto;font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--text-neutral)}
+.citem{display:block;width:100%;border:1px solid var(--border);background:var(--background);border-radius:10px;
+  padding:10px 12px;text-align:left;margin-bottom:7px;font-family:inherit;color:inherit;box-shadow:var(--shadow-card)}
+.citem:hover{border-color:var(--border-strong)}
+.citem.on{border-color:var(--brand);background:var(--surface-accent)}
+.citem .ch{display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap}
+.citem .cid{font-family:'Geist Mono',monospace;font-size:11px;font-weight:500;color:var(--text-link)}
+.citem .cn{font-size:12.5px;font-weight:600;line-height:1.3;display:block;margin-bottom:3px}
+.citem .cm{font-size:11px;color:var(--muted-foreground);display:flex;gap:8px;flex-wrap:wrap}
+
+/* --- centre canvas --- */
+.stagewrap{flex:1;min-width:0;display:flex;flex-direction:column;background:#fbfbfc;
+  background-image:radial-gradient(#e2e5ea 1px,transparent 1px);background-size:20px 20px}
+.canvas-h{background:var(--background);border-bottom:1px solid var(--border);padding:12px 20px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.canvas-h .ci{min-width:0}
+.canvas-h .cid{font-family:'Geist Mono',monospace;font-size:12px;font-weight:500;color:var(--text-link)}
+.canvas-h h3{font-size:16px;font-weight:600;letter-spacing:-.01em;line-height:1.25}
+.canvas-h .cs{font-size:12px;color:var(--muted-foreground);margin-top:1px}
+.canvas-h .cmeta{margin-left:auto;display:flex;gap:20px;flex-wrap:wrap}
+.canvas-h .cmeta div{font-size:11px;color:var(--muted-foreground)}
+.canvas-h .cmeta b{display:block;font-family:'Geist Mono',monospace;font-size:13.5px;font-weight:500;color:var(--foreground)}
+.flowscroll{flex:1;overflow:auto;padding:26px 20px 46px}
+.flowcanvas{position:relative;width:640px;margin:0 auto}
+.flowwires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0}
+.flowwires path{fill:none;stroke:#cbd2da;stroke-width:1.8;stroke-linecap:round}
+.flowwires path.dash{stroke-dasharray:5 6;stroke-width:1.4}
+.flowwires path.hot{stroke:var(--brand);stroke-width:2.1}
+.flowrow{display:flex;flex-direction:column;align-items:flex-start;gap:38px;width:100%;position:relative;z-index:1}
+.stagerow{display:flex;align-items:center;gap:0;width:100%}
+.scard{width:340px;flex:0 0 auto;background:var(--card);border:1px solid var(--border);border-radius:12px;
+  box-shadow:var(--shadow-card);overflow:hidden}
+.scard.done{border-color:#c9e7d4}
+.scard.done .sc-h{background:var(--pill-success-bg)}
+.scard.active{border-color:var(--brand);box-shadow:0 0 0 3px var(--surface-accent),var(--shadow-card)}
+.scard.active .sc-h{background:var(--surface-accent)}
+.scard.held{border-color:#f5d78a}
+.scard.held .sc-h{background:var(--pill-warning-bg)}
+.scard.pending{border-style:dashed;background:var(--surface-grey);opacity:.85}
+.sc-h{padding:9px 12px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:8px}
+.sc-h .si{width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+  font-size:11px;background:var(--secondary);color:var(--muted-foreground);flex:0 0 auto}
+.scard.done .sc-h .si{background:#bbe7c9;color:var(--pill-success-fg)}
+.scard.active .sc-h .si{background:var(--brand);color:#fff}
+.scard.held .sc-h .si{background:var(--warning);color:#fff}
+.sc-h .sn{font-size:12.5px;font-weight:600;letter-spacing:-.005em}
+.sc-h .st{margin-left:auto;font-family:'Geist Mono',monospace;font-size:10px;color:var(--text-neutral)}
+.sc-o{display:flex;align-items:center;gap:7px;padding:8px 12px 0;font-size:11px;color:var(--muted-foreground)}
+.sc-o .oav{width:18px;height:18px;border-radius:5px;color:#fff;font-size:9.5px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.sc-b{padding:8px 12px 12px;display:flex;flex-direction:column;gap:6px}
+.titem{border:1px solid var(--border);background:var(--background);border-radius:8px;padding:7px 10px;
+  text-align:left;font-family:inherit;color:inherit;width:100%;font-size:11.5px;line-height:1.4}
+.titem:hover{border-color:var(--brand);background:var(--surface-accent)}
+.titem b{display:block;font-weight:600;font-size:11.5px;margin-bottom:1px}
+.titem span{color:var(--muted-foreground);font-size:11px}
+.titem.ok{border-color:#c9e7d4;background:var(--pill-success-bg)}
+.titem.warn{border-color:#f5d78a;background:var(--pill-warning-bg)}
+.titem.warn b{color:var(--pill-warning-fg)}
+.branch{width:250px;flex:0 0 auto;position:relative;padding-left:34px}
+.branch::before{content:'';position:absolute;left:0;top:50%;width:34px;border-top:1px dashed var(--input)}
+.bcard{border:1px dashed var(--input);background:var(--surface-grey);border-radius:10px;padding:9px 12px}
+.bcard .bh{font-size:11.5px;font-weight:600;color:var(--muted-foreground);margin-bottom:2px;display:flex;align-items:center;gap:6px}
+.bcard .bw{font-size:11px;color:var(--text-neutral);font-style:italic;line-height:1.4}
+.horow{display:flex;align-items:center;gap:10px;width:340px;padding:8px 0;justify-content:center}
+.hoflag{background:var(--background);border:1px solid var(--brand);color:var(--brand);
+  border-radius:99px;font-family:'Geist Mono',monospace;font-size:10.5px;font-weight:500;
+  padding:5px 13px;white-space:nowrap;display:inline-flex;align-items:center;gap:7px}
+.hoflag:hover{background:var(--surface-accent)}
+.hoflag .hl2{font-family:'Geist',sans-serif;font-size:10.5px;color:var(--muted-foreground);font-weight:400}
+.hoflag:hover .hl2{color:var(--brand)}
+.nowflag{background:var(--brand);color:#fff;font-size:9px;font-weight:600;letter-spacing:.08em;
+  padding:2px 7px;border-radius:99px;text-transform:uppercase}
+.emptyflow{text-align:center;padding:60px 20px;color:var(--muted-foreground);font-size:13.5px}
+
+/* right panel content */
+.ptabs2{display:flex;gap:3px;background:var(--secondary);border-radius:9px;padding:3px;margin-bottom:14px}
+.ptabs2 button{flex:1;border:0;background:none;font-size:12px;font-weight:500;color:var(--muted-foreground);
+  padding:6px 4px;border-radius:7px}
+.ptabs2 button.on{background:var(--background);color:var(--foreground);font-weight:600;box-shadow:var(--shadow-card)}
+.apane{display:none}.apane.on{display:block}
+.askmini{border:1px solid var(--input);border-radius:10px;padding:10px 11px;background:var(--surface-grey);margin-bottom:14px}
+.askmini .aml{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);margin-bottom:7px}
+.askmini textarea{width:100%;border:1px solid var(--input);border-radius:7px;font-family:inherit;font-size:12px;
+  padding:8px 10px;min-height:56px;resize:vertical;background:var(--background);color:var(--foreground)}
+.askmini textarea:focus{outline:none;border-color:var(--brand)}
+.askmini .amf{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.sugg{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.sugg button{border:1px solid var(--border);background:var(--background);border-radius:99px;
+  font-size:11px;padding:4px 10px;color:var(--muted-foreground)}
+.sugg button:hover{border-color:var(--brand);color:var(--brand)}
+.tl{position:relative;padding-left:20px}
+.tl::before{content:'';position:absolute;left:5px;top:6px;bottom:6px;width:1px;background:var(--border)}
+.tle{position:relative;padding:0 0 14px}
+.tle:last-child{padding-bottom:0}
+.tle::before{content:'';position:absolute;left:-18px;top:5px;width:9px;height:9px;border-radius:50%;
+  background:var(--background);border:2px solid var(--border)}
+.tle.ok::before{border-color:var(--success);background:var(--success)}
+.tle.warn::before{border-color:var(--warning);background:var(--warning)}
+.tle.now::before{border-color:var(--brand);background:var(--brand);box-shadow:0 0 0 3px var(--surface-accent)}
+.tle .tt{font-size:10px;font-family:'Geist Mono',monospace;color:var(--text-neutral);margin-bottom:1px}
+.tle .tb{font-size:12.5px;font-weight:600;line-height:1.35}
+.tle .ts{font-size:11.5px;color:var(--muted-foreground);line-height:1.45;margin-top:1px}
+.note-i{border:1px solid var(--border);background:var(--surface-grey);border-radius:9px;padding:9px 11px;margin-bottom:8px}
+.note-i .nh{font-size:10px;font-family:'Geist Mono',monospace;color:var(--text-neutral);margin-bottom:3px}
+.note-i .nb{font-size:12px;line-height:1.45}
+.empty-s{font-size:12px;color:var(--text-neutral);font-style:italic;padding:10px 0}
+.act-block{margin-bottom:18px}
+.act-block h5{font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--text-neutral);margin-bottom:9px}
+.act-card{border:1px solid #fcd34d;background:#fffdf5;border-radius:11px;padding:13px 14px;margin-bottom:10px}
+.act-card h6{font-size:13px;font-weight:600;margin-bottom:4px;line-height:1.35}
+.act-card p{font-size:11.5px;color:var(--muted-foreground);line-height:1.5;margin-bottom:10px}
+.act-card .btnrow{display:flex;gap:7px;flex-wrap:wrap}
+.act-card.calm{border-color:var(--border);background:var(--surface-grey)}
+.fkv{display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:6px 0;border-bottom:1px solid var(--border-light)}
+.fkv:last-child{border-bottom:0}
+.fkv span{color:var(--muted-foreground)}
+.fkv b{font-family:'Geist Mono',monospace;font-weight:500;text-align:right;font-size:11.5px}
+.qa{display:flex;flex-direction:column;gap:7px}
+
+/* ===== drawer / modal / toast ===== */
+.scrim{position:fixed;inset:0;background:rgba(9,9,11,.35);z-index:50;display:none}
+.scrim.on{display:block}
+.drawer{position:fixed;top:0;right:-440px;width:420px;max-width:94vw;height:100vh;background:var(--background);
+  border-left:1px solid var(--border);box-shadow:var(--shadow-modal);z-index:60;transition:right .25s ease;
+  padding:22px 24px;overflow:auto}
+.drawer.on{right:0}
+.dr-k{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-neutral);margin-bottom:8px}
+.dr-t{font-size:17px;font-weight:600;letter-spacing:-.01em;margin-bottom:4px}
+.dr-s{font-size:12.5px;color:var(--muted-foreground);margin-bottom:14px;line-height:1.5}
+.kv{display:flex;justify-content:space-between;gap:12px;font-size:12.5px;padding:7px 0;border-bottom:1px solid var(--border-light)}
+.kv:last-child{border-bottom:0}
+.kv span{color:var(--muted-foreground)}
+.kv b{font-family:'Geist Mono',monospace;font-weight:500;text-align:right;font-size:12px}
+.dr-x{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--background);font-size:14px}
+.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-46%) scale(.98);width:560px;max-width:94vw;
+  max-height:88vh;overflow:auto;background:var(--background);border:1px solid var(--border);border-radius:14px;
+  box-shadow:var(--shadow-modal);z-index:70;padding:24px 26px;display:none}
+.modal.on{display:block;animation:pop .18s ease forwards}
+@keyframes pop{to{transform:translate(-50%,-50%) scale(1)}}
+.m-t{font-size:16px;font-weight:600;margin-bottom:2px}
+.m-s{font-size:12px;color:var(--muted-foreground);margin-bottom:14px}
+.opt{border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:9px}
+.opt.rec{border-color:var(--brand);background:var(--surface-accent)}
+.opt h6{font-size:12.5px;font-weight:600;display:flex;gap:8px;align-items:center}
+.opt p{font-size:11.5px;color:var(--muted-foreground);margin-top:2px;line-height:1.45}
+.m-f{display:flex;gap:9px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+.rzn{width:100%;border:1px solid var(--input);border-radius:var(--radius-md);font-family:inherit;font-size:12.5px;
+  padding:9px 11px;min-height:64px;resize:vertical;display:none;margin-top:4px}
+.rzn.on{display:block}
+.rz-err{display:none;font-size:11.5px;color:var(--destructive);margin-top:4px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(70px);background:#18181b;
+  color:#fafafa;font-size:12.5px;padding:10px 18px;border-radius:9px;z-index:90;transition:transform .25s ease;
+  box-shadow:var(--shadow-modal);max-width:90vw}
+.toast.on{transform:translateX(-50%) translateY(0)}
+
+@media(max-width:1100px){
+  .pane{position:absolute;z-index:20;height:100%;box-shadow:var(--shadow-menu)}
+  .pane.right{right:0}
+}
+@media(max-width:900px){.strips{grid-template-columns:1fr}.nrow{grid-template-columns:1fr}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="brand"><div class="mk">N</div>
+      <div><div class="bt">Navanta Lens</div><div class="bs">Agent operations</div></div></div>
+    <div class="ptabs">
+      <button class="ptab on" data-p="tower">Control Tower</button>
+      <button class="ptab" data-p="orch">Orchestrator</button>
+    </div>
+    <div class="top-r">
+      <span class="pol">policy v4.2</span>
+      <div class="live"><span class="dot"></span> live</div>
+    </div>
+  </div>
+
+  <!-- ============ CONTROL TOWER ============ -->
+  <div class="view on" id="p-tower">
+   <div class="body">
+    <div class="subbar">
+      <div class="seg">
+        <button class="on" id="tv-status" onclick="towerView('status')">Today</button>
+        <button id="tv-workflow" onclick="towerView('workflow')">Workflow</button>
+      </div>
+      <div class="statusstrip">
+        <span class="sd"><i></i><b id="ss-run">3</b> running</span>
+        <span class="div"></span>
+        <span class="sd w"><i></i><b id="ss-held">1</b> waiting on you</span>
+        <span class="div"></span>
+        <span class="sd f"><i></i><b>0</b> faults</span>
+        <span class="div"></span>
+        <span>$339k at risk · 5 open cases</span>
+      </div>
+    </div>
+
+    <div class="view on" id="t-status">
+     <div class="tower-split">
+      <div>
+        <div class="askpanel">
+          <div class="ah"><span class="sp">✦</span><h3>Work with your agents</h3></div>
+          <div class="ai">
+            <input id="towerAsk" placeholder="What do you want to get done?" onkeydown="if(event.key==='Enter')towerAskGo()">
+            <button class="btn pr" onclick="towerAskGo()">Go</button>
+          </div>
+          <div class="ac">
+            <button onclick="towerAskEx('what needs my attention?')">What needs my attention?</button>
+            <button onclick="towerAskEx('anything about to break?')">Anything about to break?</button>
+            <button onclick="towerAskEx('why was the $214k held?')">Why was the $214k held?</button>
+            <button onclick="towerAskEx('what did we recover today?')">What did we recover today?</button>
+          </div>
+        </div>
+
+        <div class="workband">
+          <div class="wl">Working for you today</div>
+          <div class="agcards" id="agCards"></div>
+        </div>
+
+        <div class="tabsrow">
+          <button class="on" data-t="activity" onclick="towerTab('activity')">Recent activity</button>
+          <button data-t="systems" onclick="towerTab('systems')">Systems</button>
+          <button data-t="overrides" onclick="towerTab('overrides')">Overrides</button>
+          <button data-t="value" onclick="towerTab('value')">Value</button>
+        </div>
+
+        <div class="tpane on" id="tp-activity">
+          <div class="card">
+            <div class="nrow" id="row-4472">
+              <div>
+                <div class="nr-t"><span class="nr-id">EX-4472</span><span class="nr-name">Coverage gap, 6 DCs</span>
+                  <span class="pill warn" id="p-4472">held · $214,000</span></div>
+                <div class="nr-s" id="s-4472">Iris raised 3 requisitions — two auto-ran, the third is above your $150k limit. Waiting on you 2h 11m · delay costs ≈ $1.8k/day.</div>
+              </div>
+              <div class="nr-a" id="a-4472">
+                <button class="btn pr" onclick="openPacket()">Open packet</button>
+                <button class="btn" onclick="goFlow('investigate','EX-4472')">Open flow</button>
+              </div>
+            </div>
+            <div class="nrow" id="row-4474">
+              <div>
+                <div class="nr-t"><span class="nr-id">EX-4474</span><span class="nr-name">Damaged delivery claim · SO-48219</span>
+                  <span class="pill info" id="p-4474">credit issuing · customer confirming</span></div>
+                <div class="nr-s" id="s-4474">Christy validated the claim from the POD and photos. The $8,400 credit is issuing; alternate stock soft-held 48h — 17h left.</div>
+              </div>
+              <div class="nr-a">
+                <button class="btn" id="nudge-4474" onclick="nudge4474()">Nudge customer</button>
+                <button class="btn" onclick="goFlow('investigate','EX-4474')">Open flow</button>
+              </div>
+            </div>
+            <div class="nrow">
+              <div>
+                <div class="nr-t"><span class="nr-id">EX-4468</span><span class="nr-name">Phase-out cover — overridden</span>
+                  <span class="pill br" id="row-4468-pill">learning proposed</span></div>
+                <div class="nr-s">Dana R. rejected with a reason. Proposed change: read the phase-out flag before any cover recommendation.</div>
+              </div>
+              <div class="nr-a"><button class="btn" onclick="openProposal()">Review change</button></div>
+            </div>
+            <div class="nrow">
+              <div>
+                <div class="nr-t"><span class="nr-id">EX-4471</span><span class="nr-name">Vendor lead time +10 days</span>
+                  <span class="pill ok">resolved · verified</span></div>
+                <div class="nr-s">7 writes confirmed by the target systems. Case closed in 6.1s of agent time; customer re-committed.</div>
+              </div>
+              <div class="nr-a"><button class="btn" onclick="goFlow('audit','EX-4471')">Audit</button></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tpane" id="tp-systems">
+          <div class="card" style="padding:16px 18px">
+            <div class="sys">
+              <span class="sysc"><span class="st"></span><b>Fusion</b> 214r · 41w ✓</span>
+              <button class="sysc warn" onclick="openRetry()"><span class="st"></span><b>OMP</b> 96r · 3w · 1 retrying</button>
+              <span class="sysc"><span class="st"></span><b>Manhattan</b> 61r · 2w ✓</span>
+              <span class="sysc"><span class="st"></span><b>Project44</b> read-only</span>
+              <span class="sysc"><span class="st"></span><b>Product master</b> 44r</span>
+              <span class="sysc"><span class="st"></span><b>Databricks</b> 213w ✓</span>
+            </div>
+            <div class="nr-s" style="margin-top:12px">Every write is confirmed by the target system before a case closes. One OMP write is retrying — click it to see the attempt history.</div>
+          </div>
+        </div>
+
+        <div class="tpane" id="tp-overrides">
+          <div class="card" style="padding:16px 18px">
+            <div id="ovfeed">
+              <div class="ov"><b>14:22 · Dana R. rejected EX-4468</b> — <span class="why">"SKU 44-2213 phases out in Q4 — don't build cover we'll write off."</span>
+                <div class="fed">↻ fed back: phase-out check proposed before any cover recommendation</div></div>
+              <div class="ov"><b>11:07 · Marcus O. adjusted EX-4455</b> — <span class="why">"Delay only hits the imported range — applied to 40 of 61 SKUs."</span>
+                <div class="fed">↻ fed back: lead-time updates now scoped by source origin</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tpane" id="tp-value">
+          <div class="card" style="padding:16px 18px">
+            <div class="val">
+              <div><b>$129k</b><span>protected today</span></div>
+              <div><b>$67k</b><span>Mercer · service</span></div>
+              <div><b>$41k</b><span>Iris · stock-outs</span></div>
+              <div><b>$21k</b><span>Christy · promises</span></div>
+              <div><b>38h</b><span>planner hours saved</span></div>
+            </div>
+            <div class="nr-s" style="margin-top:12px">Measured against the 3.5-day manual baseline — not against agent activity counts.</div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="rail" id="towerRail"></aside>
+     </div>
+    </div>
+
+    <div class="view" id="t-workflow">
+      <div class="wfbar">
+        <button class="fch on" data-f="all" onclick="wfFilter('all')">All agents</button>
+        <button class="fch" data-f="mercer" onclick="wfFilter('mercer')">Mercer</button>
+        <button class="fch" data-f="iris" onclick="wfFilter('iris')">Iris</button>
+        <button class="fch" data-f="christy" onclick="wfFilter('christy')">Christy</button>
+        
+      </div>
+
+      <div id="wf-all">
+        <div class="vwf" id="vwf">
+          <div class="vwf-stage" id="vwfStage">
+            <svg class="vwf-wires" id="vwfWires"></svg>
+            <div class="vroot"><div class="rn">
+              <span class="ri">N</span>
+              <span><b>Today's operation</b><span class="sub">3 agents · 5 open cases · policy v4.2</span></span>
+              <span class="rs" id="vrootStat">$339k at risk</span>
+            </div></div>
+            <div class="vwf-cols" id="vwfCols"></div>
+          </div>
+          <div class="zoompill">
+            <button onclick="vzoom(-1)" aria-label="Zoom out">−</button>
+            <span class="zv" id="vzv">100%</span>
+            <button onclick="vzoom(1)" aria-label="Zoom in">+</button>
+            <button onclick="vfit()" aria-label="Fit to screen" style="font-size:12px">⤢</button>
+          </div>
+          <div class="canvashint">drag to pan · scroll to zoom</div>
+          <div class="vlegend" id="vlegend">
+            <button class="lgh" onclick="toggleLegend()">Reading this board<span class="cv" id="lgcv">▾</span></button>
+            <div class="lgb">
+              <div><i style="background:var(--success)"></i>Verified by the system</div>
+              <div><i style="background:var(--brand)"></i>Running now</div>
+              <div><i style="background:var(--warning)"></i>Needs your decision</div>
+              <div><i style="background:var(--input)"></i>Waiting on someone</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="wf-single" style="display:none">
+        <div class="card" style="padding:16px 18px;margin-bottom:12px">
+          <div class="ag-h" style="margin-bottom:4px">
+            <div class="av" id="sf-av">M</div>
+            <div><div class="ag-n" id="sf-name">Mercer</div><div class="ag-r" id="sf-role">Buying agent</div></div>
+            <div class="hl"><b id="sf-health">94</b><span>health</span></div>
+          </div>
+          <div class="nr-s" id="sf-desc"></div>
+        </div>
+        <div class="stagecards" id="sf-stages"></div>
+      </div>
+    </div>
+   </div>
+  </div>
+
+  <!-- ============ ORCHESTRATOR ============ -->
+  <div class="view" id="p-orch">
+
+    <!-- ENTRY -->
+    <div id="o-entry">
+      <div class="entry">
+        <h1>What do you need to see?</h1>
+        <p class="sub">Ask in your own words, or pick what you're here for.</p>
+
+        <div class="askbox">
+          <div class="al"><i></i>Ask the orchestrator</div>
+          <div class="askrow">
+            <input id="askInput" placeholder="e.g. why was the $214k requisition held?" onkeydown="if(event.key==='Enter')runAsk()">
+            <button class="btn pr" onclick="runAsk()">Show me</button>
+          </div>
+          <div class="exq">
+            <button onclick="askEx('why was the $214k requisition held?')">why was the $214k held?</button>
+            <button onclick="askEx('show me the damage claim')">show me the damage claim</button>
+            <button onclick="askEx('what if the PR limit were higher?')">what if the limit were higher?</button>
+            <button onclick="askEx('prove what happened on EX-4471')">prove what happened on EX-4471</button>
+          </div>
+        </div>
+
+        <div class="ordiv">or pick a starting point</div>
+        <div class="mgrid" id="mgrid"></div>
+      </div>
+    </div>
+
+    <!-- WORKSPACE -->
+    <div class="ws" id="o-ws" style="display:none">
+      <!-- LEFT: motives + cases -->
+      <aside class="pane" id="paneL">
+        <div class="pane-h">
+          <button class="pane-x" onclick="togglePane('L')" aria-label="Collapse panel" id="paneLx">‹</button>
+          <span class="pt">What you're here for</span>
+        </div>
+        <div class="pane-b">
+          <div class="grp-l">Motive</div>
+          <div id="motiveList"></div>
+          <div class="grp-l mt" id="caseListLabel">Cases</div>
+          <div id="caseList"></div>
+          <button class="btn w" style="margin-top:12px" onclick="backToEntry()">← Start over</button>
+        </div>
+      </aside>
+
+      <!-- CENTRE: the flow -->
+      <main class="stagewrap">
+        <div class="canvas-h" id="canvasH"></div>
+        <div class="flowscroll" id="flowScroll"></div>
+      </main>
+
+      <!-- RIGHT: actions -->
+      <aside class="pane right" id="paneR">
+        <div class="pane-h">
+          <button class="pane-x" onclick="togglePane('R')" aria-label="Collapse panel" id="paneRx">›</button>
+          <span class="pt">Actions</span>
+        </div>
+        <div class="pane-b" id="actionsBody"></div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="scrim" onclick="closeAll()"></div>
+<div class="drawer" id="drawer"><button class="dr-x" onclick="closeAll()">✕</button><div id="drbody"></div></div>
+<div class="modal" id="modal"><div id="modalBody"></div></div>
+<div class="toast" id="toastEl"></div>
+
+<script>
+var $=function(id){return document.getElementById(id)};
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+var S={p:'tower',tower:'status',filter:'all',motive:null,caseId:null,held:true,rejectMode:false,
+       paused:{},proposal:null,nudged4474:false,pendingLimit:null,paneL:false,paneR:false,limit:150000,
+       zoom:1,atab:'act',notes:{},vx:0,vy:12,vz:1};
+
+/* ============ nav ============ */
+document.querySelectorAll('.ptab').forEach(function(t){
+  t.onclick=function(){
+    S.p=t.dataset.p;
+    document.querySelectorAll('.ptab').forEach(function(x){x.classList.toggle('on',x===t)});
+    $('p-tower').classList.toggle('on',S.p==='tower');
+    $('p-orch').classList.toggle('on',S.p==='orch');
+  };
+});
+function towerView(v){
+  S.tower=v;
+  $('tv-status').classList.toggle('on',v==='status');
+  $('tv-workflow').classList.toggle('on',v==='workflow');
+  $('t-status').classList.toggle('on',v==='status');
+  $('t-workflow').classList.toggle('on',v==='workflow');
+  if(v==='workflow'&&S.filter==='all')renderVWF();
+}
+function agentFlow(a){towerView('workflow');wfFilter(a)}
+function wfFilter(f){
+  S.filter=f;
+  document.querySelectorAll('.fch').forEach(function(c){c.classList.toggle('on',c.dataset.f===f)});
+  $('wf-all').style.display=f==='all'?'':'none';
+  $('wf-single').style.display=f==='all'?'none':'';
+  if(f!=='all')renderSingle(f); else renderVWF();
+}
+
+/* ============ agents ============ */
+var AG={
+ mercer:{n:'Mercer',r:'Buying agent',h:94,av:'M',bg:'var(--gradient-brand)',c:'var(--mercer)',
+  d:'Owns the supplier lane: lead times, promise dates, vendor data. Acts alone inside LT ≤ 15 days and < $50k exposure.',
+  st:[['Detect','Watches the supplier feed and PO promise dates for changes.','EX-4479 · 3 signals from VN-2210','last: EX-4471 caught in 0.8s'],
+   ['Assess','Which open orders does the change actually touch?','EX-4479 · checking 47 open POs','last: 41 of 47 slipped'],
+   ['Impact','Which customers and install dates are exposed?','—','last: 3 installs at risk'],
+   ['Recommend','Options costed: expedite, re-source, or absorb & notify.','—','last: absorb & notify chosen'],
+   ['Decide ◇','Policy check: LT ≤15d · <$50k · conf ≥0.85 → act alone, else hold.','policy ✓ within limits','last: acted alone at 0.94'],
+   ['Act','Writes lead time + PO dates to Fusion; every write verified.','EX-4471 · 41 PO dates ✓','last: hand-off HO-8831 → Iris'],
+   ['Learn','Outcome vs baseline logged; detection tuned.','outcome logged ↻','last: 6.1s vs 3.5-day baseline']]},
+ iris:{n:'Iris',r:'Planning agent',h:88,av:'I',bg:'var(--iris)',c:'var(--iris)',
+  d:'Owns coverage and requisitions: replans DCs, raises PRs inside your $150k limit, holds anything above it.',
+  st:[['Detect','Picks up handoffs and coverage signals.','—','last: HO-8831 accepted 08:14:09'],
+   ['Assess','Where does cover break, and when?','EX-4480 · new coverage check','last: 3 SKUs break, day 12–15'],
+   ['Impact','Service loss vs working capital, both sides costed.','EX-4480 · trade-off','last: 4.1% service vs $214k'],
+   ['Recommend','Safety stock + the PRs to execute it.','—','last: +18% on 3 SKUs'],
+   ['Decide ◇','PR ≤ $150k auto · above → drafted and held for you.','EX-4472 · $214k HELD ⚠','last: 2 auto, 1 held'],
+   ['Act','Writes stock + PRs; queues the held one with full reasoning.','EX-4472 · 2 PRs $96.4k ✓','last: verified by Fusion'],
+   ['Learn','Override reasons reshape the next recommendation.','—','last: phase-out check proposed']]},
+ christy:{n:'Christy',r:'Service agent',h:91,av:'C',bg:'var(--gradient-christy)',c:'var(--christy)',
+  d:'Owns the customer promise: honest options, claims from records already held. The customer decides; she never does.',
+  st:[['Detect','Watches promises vs revised dates; claims from PODs + photos.','CL-2210 · awaiting photos','last: EX-4474 caught from order record'],
+   ['Assess','Is the claim real? POD, photos and vendor score checked.','—','last: damage confirmed conf 0.93'],
+   ['Impact','What the customer actually loses, in their terms.','EX-4474 · 2 pallets written off','last: $8,400 exposure'],
+   ['Recommend','Credit, replacement, or both — costed honestly.','EX-4474 · credit + return','last: credit chosen'],
+   ['Decide ◇','Credit ≤$10k and absorb ≤5% auto — bigger calls go to a person.','—','last: auto-approved at $8.4k'],
+   ['Act','Issues credits, re-commits dates, opens claims.','EX-4474 · credit issued ✓','last: Fusion confirmed'],
+   ['Learn','Which offers customers take, by segment.','choice logged ↻','last: waits on supersessions']]}
+};
+/* ===== tower: agent cards + right rail ===== */
+var AGWORK={
+ mercer:{head:'Watching 47 open orders on VN-2210',pill:'<span class="pill ok">on it</span>',
+   m:[['89','handled'],['7','held'],['1','overridden']],bar:86,barl:'autonomy L2 · 86% to L3',
+   ft:'started 4 min ago'},
+ iris:{head:'A $214,000 requisition needs you',pill:'<span class="pill warn">input needed</span>',
+   m:[['64','handled'],['19','held'],['4','overridden']],bar:52,barl:'autonomy L2 · holding',
+   ft:'ready since 08:14'},
+ christy:{head:'Credit issued, customer confirming',pill:'<span class="pill info">on track</span>',
+   m:[['60','handled'],['8','held'],['1','overridden']],bar:74,barl:'autonomy L3 · widest limits',
+   ft:'updated 34s ago'}};
+function renderAgCards(){
+  var el=$('agCards');if(!el)return;
+  el.innerHTML=['mercer','iris','christy'].map(function(k){
+    var g=AG[k],w=AGWORK[k],p=S.paused[k];
+    var head=p?'Paused — finishing in-flight work':(k==='iris'&&!S.held?'All requisitions cleared':w.head);
+    var pill=p?'<span class="pill nu">paused</span>':(k==='iris'&&!S.held?'<span class="pill ok">on it</span>':w.pill);
+    var held=k==='iris'?($('iris-held')?$('iris-held').textContent:w.m[1][0]):w.m[1][0];
+    return '<button class="agc'+(p?' paused':'')+'" style="--ac:'+g.c+'" id="agc-'+k+'" onclick="agentFlow(\''+k+'\')">'+
+      '<span class="tab">'+g.n+' · '+g.r.split(' ')[0]+'</span>'+
+      '<div class="cb">'+
+        '<h4>'+head+'</h4>'+
+        '<span class="stpill">'+pill+'</span>'+
+        '<div class="mini">Today</div>'+
+        '<div class="mrow"><div><b>'+w.m[0][0]+'</b><span>'+w.m[0][1]+'</span></div>'+
+          '<div><b>'+held+'</b><span>held</span></div>'+
+          '<div><b>'+w.m[2][0]+'</b><span>'+w.m[2][1]+'</span></div></div>'+
+        '<div class="hbar"><i style="width:'+w.bar+'%'+(k==='christy'?';background:var(--gp-green)':'')+'"></i></div>'+
+        '<div style="font-size:10.5px;color:var(--text-neutral);margin-bottom:2px">'+w.barl+'</div>'+
+        '<div class="ft">'+(p?'paused':w.ft)+
+          '<span class="lk" onclick="event.stopPropagation();openLimits(\''+k+'\')">Limits</span>'+
+          '<span class="sw'+(p?' off':'')+'" role="switch" aria-checked="'+(!p)+'" tabindex="0" '+
+            'onclick="event.stopPropagation();togglePause(\''+k+'\')" id="sw-'+k+'"></span></div>'+
+      '</div></button>';
+  }).join('');
+  makeKeyboardReachable();
+}
+function renderRail(){
+  var el=$('towerRail');if(!el)return;
+  var d=new Date();
+  var day=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
+  var stamp=day+' '+d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+
+    ' · '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  if(S.held){
+    el.innerHTML='<div class="rd">Today · '+stamp+'</div>'+
+     '<h3>Coverage gap across 6 DCs</h3>'+
+     '<div class="tags"><span>EX-4472</span><span>Iris · planning</span><span>parent EX-4471</span></div>'+
+     '<div class="rl">Findings</div>'+
+     '<div class="finding warn"><div class="fh">⚠ Held — needs your decision</div><ul>'+
+       '<li>Cover breaks on 3 SKUs across 6 DCs from day 12</li>'+
+       '<li>The $214,000 requisition sits above your $150,000 limit</li>'+
+       '<li>Two smaller requisitions already ran and were verified</li>'+
+       '<li>Confidence 0.88 cleared the 0.85 floor — authority stopped it, not doubt</li>'+
+     '</ul><div class="ff">Waiting 2h 11m<span class="pill warn" style="margin-left:auto">$1.8k/day</span></div></div>'+
+     '<div class="rl">Recommended plan</div>'+
+     '<div class="plan">'+
+       '<div class="pstep now"><div class="pn">1</div><div class="pc"><div class="pw">Now · waiting on you</div>'+
+         '<div class="pb"><b>Approve the $214,000 requisition</b><span>Raises cover on 3 SKUs before the window closes</span>'+
+         '<span class="chk">✓ two alternatives costed in the packet</span></div></div></div>'+
+       '<div class="pstep"><div class="pn">2</div><div class="pc"><div class="pw">Immediately after</div>'+
+         '<div class="pb"><b>Iris writes to Fusion and OMP</b><span>Closes only once both systems confirm</span></div></div></div>'+
+       '<div class="pstep"><div class="pn">3</div><div class="pc"><div class="pw">Ongoing</div>'+
+         '<div class="pb"><b>Outcome logged against the baseline</b><span>Feeds the next coverage recommendation</span></div></div></div>'+
+     '</div>'+
+     '<button class="btn pr execbtn" onclick="openPacket()">Open the decision packet</button>';
+  }else{
+    el.innerHTML='<div class="rd">Today · '+stamp+'</div>'+
+     '<h3>Nothing is waiting on you</h3>'+
+     '<div class="tags"><span>all cases inside limits</span><span>or waiting on someone outside</span></div>'+
+     '<div class="rl">Findings</div>'+
+     '<div class="finding" style="border-color:#bbe7c9;background:var(--pill-success-bg)">'+
+       '<div class="fh" style="color:var(--pill-success-fg)">✓ Clear — agents acting inside their limits</div><ul>'+
+       '<li>EX-4472 answered — the outcome is on its flow</li>'+
+       '<li>EX-4474 credit issued and verified; customer confirming</li>'+
+       '<li>One OMP write retrying with a duplicate guard</li>'+
+     '</ul></div>'+
+     '<div class="rl">Worth a look</div>'+
+     '<div class="plan">'+
+       '<div class="pstep now"><div class="pn">1</div><div class="pc"><div class="pw">Proposed</div>'+
+         '<div class="pb"><b>Phase-out check before cover</b><span>From Dana R.’s override · 3 repeats suppressed in backtest</span></div></div></div>'+
+       '<div class="pstep"><div class="pn">2</div><div class="pc"><div class="pw">Optional</div>'+
+         '<div class="pb"><b>Revisit the $150,000 limit</b><span>5 requisitions were above the line this month</span></div></div></div>'+
+     '</div>'+
+     '<button class="btn execbtn" onclick="openProposal()">Review the proposed change</button>';
+  }
+}
+function towerTab(t){
+  document.querySelectorAll('.tabsrow button').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});
+  ['activity','systems','overrides','value'].forEach(function(k){$('tp-'+k).classList.toggle('on',k===t)});
+}
+function towerAskEx(q){$('towerAsk').value=q;towerAskGo()}
+function towerAskGo(){
+  var q=($('towerAsk').value||'').toLowerCase().trim();
+  if(!q){toast('Tell the agents what you need, or tap a suggestion.');return}
+  if(/attention|need|waiting/.test(q)){if(S.held){openPacket()}else{toast('Nothing is waiting on you right now.')}return}
+  if(/break|risk|about to/.test(q)){towerTab('activity');toast('Ranked by exposure — EX-4472 is the one that needs you.');return}
+  if(/214|held|why/.test(q))return goFlow('trace','TR-held');
+  if(/recover|value|saved|today/.test(q)){towerTab('value');toast('$129k protected today, against the 3.5-day manual baseline.');return}
+  if(/claim|damage/.test(q))return goFlow('investigate','EX-4474');
+  goFlow('monitor');
+}
+/* ===== tower workflow · three vertical agent lanes ===== */
+var TWF={
+ stages:['Detect','Assess','Impact','Recommend','Decide ◇','Act','Learn'],
+ work:{
+  mercer:{'Detect':[{id:'EX-4479',t:'Three new signals',v:'VN-2210 supplier feed',st:'run',ref:'EDI 824',cf:'0.99',o:'EX-4479'}],
+          'Assess':[{id:'EX-4479',t:'Checking exposure',v:'31 of 47 open orders so far',st:'run',ref:'Fusion p1',cf:'0.96',o:'EX-4479b'}],
+          'Decide ◇':[{id:'policy',t:'Inside limits',v:'lead time ≤ 15 days',st:'done',ref:'policy v4.2',cf:'—'}],
+          'Act':[{id:'EX-4471',t:'41 PO dates written',v:'confirmed by Fusion',st:'done',ref:'Fusion p4',cf:'0.94',o:'EX-4471w'}],
+          'Learn':[{id:'↻',t:'Outcome logged',v:'6.1s vs 3.5-day baseline',st:'done',ref:'Databricks',cf:'—'}]},
+  iris:{'Assess':[{id:'EX-4480',t:'Coverage re-checked',v:'6 DCs against the new date',st:'run',ref:'OMP p2',cf:'0.92',o:'EX-4480'}],
+        'Impact':[{id:'EX-4480',t:'Trade-off costed',v:'4.1% service loss vs $214k stock',st:'run',ref:'OMP p7',cf:'0.90',o:'EX-4480b'}],
+        'Decide ◇':[{id:'EX-4472',t:'Above your limit',v:'$214,000 vs $150,000 cap',st:'held',ref:'policy v4.2',cf:'0.88',hold:true}],
+        'Act':[{id:'EX-4472',t:'Two requisitions run',v:'$96,400 · verified',st:'done',ref:'Fusion p9',cf:'0.88'}]},
+  christy:{'Detect':[{id:'CL-2210',t:'Claim opened',v:'waiting on customer photos',st:'wait',ref:'POD ref',cf:'—',o:'CL-2210'}],
+        'Impact':[{id:'EX-4474',t:'Damage validated',v:'photos match the POD',st:'done',ref:'Manhattan p3',cf:'0.93',o:'EX-4474'}],
+        'Recommend':[{id:'EX-4474',t:'Credit proposed',v:'$8,400 plus a return',st:'done',ref:'Pricing p2',cf:'0.93',o:'EX-4474b'}],
+        'Decide ◇':[{id:'limit',t:'Inside limits',v:'credit ≤ $10,000',st:'done',ref:'policy v4.2',cf:'—'}],
+        'Act':[{id:'EX-4474',t:'Credit issued',v:'confirmed by Fusion',st:'done',ref:'Fusion p12',cf:'0.93',o:'EX-4474b'}],
+        'Learn':[{id:'↻',t:'Choice pattern logged',v:'by offer type and segment',st:'done',ref:'Databricks',cf:'—'}]}},
+ hos:[{id:'HO-8831',from:'mercer',fs:'Act',to:'iris',ts:'Assess'},
+      {id:'HO-8832',from:'iris',fs:'Act',to:'christy',ts:'Impact'}]
+};
+var STLABEL={done:'Verified',held:'Needs you',run:'Running',wait:'Waiting'};
+function renderVWF(){
+  var cols=$('vwfCols');if(!cols)return;
+  cols.innerHTML=['mercer','iris','christy'].map(function(k){
+    var g=AG[k],w=TWF.work[k],p=S.paused[k];
+    var all=[];TWF.stages.forEach(function(st){(w[st]||[]).forEach(function(i){all.push(i)})});
+    var mix={done:0,held:0,run:0,wait:0};
+    all.forEach(function(i){var st=i.hold?(S.held?'held':'done'):i.st;mix[st]=(mix[st]||0)+1});
+    var tot=all.length||1;
+    var col={done:'var(--success)',held:'var(--warning)',run:'var(--brand)',wait:'var(--input)'};
+    var bar=['done','run','held','wait'].filter(function(x){return mix[x]}).map(function(x){
+      return '<i style="width:'+(mix[x]/tot*100)+'%;background:'+col[x]+'"></i>'}).join('');
+    return '<div class="vcol" data-col="'+k+'">'+
+      '<div class="vhead">'+
+        '<div class="hbarline">'+bar+'</div>'+
+        '<div class="hin"><span class="av" style="background:'+g.bg+'">'+g.av+'</span>'+
+          '<span><b>'+g.n+'</b><span class="role">'+g.r.replace(' agent','')+'</span></span>'+
+          '<span class="cnt">'+all.length+'</span></div>'+
+        '<div class="hsub"><span><b>'+mix.done+'</b> verified</span>'+
+          (mix.held?'<span><b>'+mix.held+'</b> needs you</span>':'')+
+          (mix.run?'<span><b>'+mix.run+'</b> running</span>':'')+
+          (p?'<span style="color:var(--pill-warning-fg)">paused</span>':'')+'</div>'+
+      '</div>'+
+      TWF.stages.map(function(st){
+        var items=w[st]||[];
+        var gate=st.indexOf('Decide')===0;
+        return '<div class="vstage'+(items.length?' busy':'')+(gate&&items.length?' gate':'')+'" data-stage="'+k+'|'+st+'">'+
+          '<div class="vsh"><span class="vsn">'+st+'</span>'+
+          (items.length?'<span class="vsc">'+items.length+'</span>':'')+'</div>'+
+          (items.length?items.map(function(it){
+            var live=it.hold?(S.held?'held':'done'):it.st;
+            var title=it.hold&&!S.held?'Decision answered':it.t;
+            var val=it.hold&&!S.held?'the outcome is on the flow':it.v;
+            var click=(it.hold&&S.held)?'openPacket()':(it.o?'openInst(\''+it.o+'\')':'');
+            return '<'+(click?'button':'div')+' class="vinst '+live+'"'+(click?' onclick="'+click+'"':'')+'>'+
+              '<span class="cat">'+st.replace(' ◇','')+' · '+it.id+'</span>'+
+              '<span class="ttl">'+title+'</span>'+
+              '<span class="val">'+val+'</span>'+
+              '<span class="sfoot"><span class="sdot"></span><span class="sst">'+STLABEL[live]+'</span>'+
+              '<span class="sref">'+it.ref+'</span>'+
+              (it.cf!=='—'?'<span class="sconf">'+it.cf+'</span>':'')+'</span>'+
+            '</'+(click?'button':'div')+'>';
+          }).join(''):'<div class="empty">nothing here</div>')+
+        '</div>';
+      }).join('')+
+    '</div>';
+  }).join('');
+  var lg=$('vwf').querySelector('.vlegend');
+  if(!lg){
+    lg=document.createElement('div');lg.className='vlegend';
+    lg.innerHTML='<h6>Reading this board</h6>'+
+      '<div><i style="background:var(--success)"></i>Verified by the system</div>'+
+      '<div><i style="background:var(--brand)"></i>Running now</div>'+
+      '<div><i style="background:var(--warning)"></i>Needs your decision</div>'+
+      '<div><i style="background:var(--input)"></i>Waiting on someone</div>';
+    $('vwf').appendChild(lg);
+  }
+  requestAnimationFrame(function(){drawVWF();if(!S.vfitted){S.vfitted=1;vfit()}});
+  makeKeyboardReachable();
+}
+function drawVWF(){
+  var stage=$('vwfStage'),svg=$('vwfWires');
+  if(!stage||!svg||!stage.offsetWidth)return;
+  var wb=stage.getBoundingClientRect(),z=S.vz||1;
+  svg.setAttribute('viewBox','0 0 '+stage.offsetWidth+' '+stage.offsetHeight);
+  svg.style.height=stage.offsetHeight+'px';
+  stage.querySelectorAll('.holabel').forEach(function(e){e.remove()});
+  function box(el){var r=el.getBoundingClientRect();
+    return{x:(r.left-wb.left)/z,y:(r.top-wb.top)/z,w:r.width/z,h:r.height/z}}
+  var d='';
+  /* spine: root → each agent header */
+  var root=stage.querySelector('.vroot .rn');
+  if(root){
+    var rb=box(root),rx=rb.x+rb.w/2,ry=rb.y+rb.h;
+    stage.querySelectorAll('.vhead').forEach(function(h){
+      var hb=box(h),hx=hb.x+hb.w/2,hy=hb.y;
+      var k=Math.max(16,(hy-ry)*0.55);
+      d+='<path class="spine" d="M'+rx+' '+ry+' C'+rx+' '+(ry+k)+', '+hx+' '+(hy-k)+', '+hx+' '+hy+'"/>';
+    });
+  }
+  /* handoffs between lanes */
+  TWF.hos.forEach(function(ho){
+    var a=stage.querySelector('[data-stage="'+ho.from+'|'+ho.fs+'"]');
+    var b=stage.querySelector('[data-stage="'+ho.to+'|'+ho.ts+'"]');
+    if(!a||!b)return;
+    var ab=box(a),bb=box(b);
+    var x1=ab.x+ab.w,y1=ab.y+ab.h/2,x2=bb.x,y2=bb.y+bb.h/2,mx=(x1+x2)/2;
+    d+='<path class="ho" d="M'+x1+' '+y1+' C'+mx+' '+y1+', '+mx+' '+y2+', '+x2+' '+y2+'"/>';
+    var lb=document.createElement('button');
+    lb.className='holabel';lb.textContent=ho.id+' ↗';
+    lb.style.left=mx+'px';lb.style.top=((y1+y2)/2)+'px';
+    lb.onclick=function(e){e.stopPropagation();openHO(ho.id)};
+    stage.appendChild(lb);
+  });
+  svg.innerHTML=d;
+}
+/* ---- canvas pan + zoom ---- */
+function vapply(){
+  var st=$('vwfStage');if(!st)return;
+  st.style.transform='translate('+S.vx+'px,'+S.vy+'px) scale('+S.vz+')';
+  var v=$('vwf');
+  if(v)v.style.backgroundPosition=S.vx+'px '+S.vy+'px';
+  var zv=$('vzv');if(zv)zv.textContent=Math.round(S.vz*100)+'%';
+}
+function vzoom(dir,cx,cy){
+  var v=$('vwf');if(!v)return;
+  var old=S.vz;
+  var nz=Math.min(2,Math.max(.35,old*(dir>0?1.12:1/1.12)));
+  var r=v.getBoundingClientRect();
+  cx=(cx==null?r.width/2:cx);cy=(cy==null?r.height/2:cy);
+  S.vx=cx-(cx-S.vx)*(nz/old);
+  S.vy=cy-(cy-S.vy)*(nz/old);
+  S.vz=nz;vapply();
+}
+function vfit(){
+  var v=$('vwf'),st=$('vwfStage');if(!v||!st)return;
+  var prev=st.style.transform;st.style.transform='scale(1)';
+  var w=st.scrollWidth;st.style.transform=prev;
+  /* fit the width like a board, not the full height — you pan down for the rest */
+  var z=Math.min(1.1,Math.max(.5,(v.clientWidth-32)/w));
+  S.vz=z;S.vx=Math.max(8,(v.clientWidth-w*z)/2);S.vy=10;
+  vapply();
+}
+function toggleLegend(){
+  var l=$('vlegend');l.classList.toggle('min');
+  $('lgcv').textContent=l.classList.contains('min')?'▸':'▾';
+}
+(function(){
+  var v=$('vwf');if(!v)return;
+  var drag=null;
+  v.addEventListener('pointerdown',function(e){
+    if(e.target.closest('.vinst,.holabel,.zoompill,.vlegend,.canvashint'))return;
+    drag={x:e.clientX,y:e.clientY,vx:S.vx,vy:S.vy};
+    v.classList.add('grabbing');
+    try{v.setPointerCapture(e.pointerId)}catch(_){}
+  });
+  v.addEventListener('pointermove',function(e){
+    if(!drag)return;
+    S.vx=drag.vx+(e.clientX-drag.x);S.vy=drag.vy+(e.clientY-drag.y);vapply();
+  });
+  function end(){drag=null;v.classList.remove('grabbing')}
+  v.addEventListener('pointerup',end);
+  v.addEventListener('pointercancel',end);
+  v.addEventListener('wheel',function(e){
+    e.preventDefault();
+    var r=v.getBoundingClientRect();
+    vzoom(e.deltaY<0?1:-1,e.clientX-r.left,e.clientY-r.top);
+  },{passive:false});
+})();
+window.addEventListener('resize',function(){if(S.tower==='workflow'&&S.filter==='all'){requestAnimationFrame(function(){drawVWF();vfit()})}});
+function renderSingle(a){
+  var g=AG[a];
+  $('sf-av').textContent=g.av; $('sf-av').style.background=g.bg;
+  $('sf-name').textContent=g.n; $('sf-role').textContent=g.r;
+  $('sf-health').textContent=g.h; $('sf-desc').textContent=g.d;
+  $('sf-stages').innerHTML=g.st.map(function(s){
+    var cell=s[2];
+    if(a==='iris'&&cell.indexOf('HELD')>-1&&!S.held)cell='EX-4472 · decided ✓';
+    var held=cell.indexOf('HELD')>-1, done=cell.indexOf('✓')>-1;
+    return '<div class="stc"><h5>'+s[0]+'</h5><p>'+s[1]+'</p>'+
+      (cell!=='—'?'<'+(held?'button':'div')+' class="inst'+(held?' held':(done?' done':''))+'" '+(held?'onclick="openPacket()"':'')+'><span class="what">'+cell+'</span></'+(held?'button':'div')+'>'
+        :'<div style="font-size:11px;color:var(--muted-foreground)">nothing here right now</div>')+
+      '<div class="last">'+s[3]+'</div></div>';
+  }).join('');
+  makeKeyboardReachable();
+}
+function togglePause(a){
+  S.paused[a]=!S.paused[a];
+  if(S.filter===a&&$('wf-single').style.display!=='none')renderSingle(a);
+  if(S.filter==='all'&&S.tower==='workflow')renderVWF();
+  renderAgCards();
+  var run=$('ss-run');
+  if(run)run.textContent=3-Object.keys(S.paused).filter(function(k){return S.paused[k]}).length;
+  toast(S.paused[a]?AG[a].n+' paused — takes no new cases; in-flight work finishes safely.':AG[a].n+' active again.');
+}
+
+/* ============ ORCHESTRATOR: motives ============ */
+var MOTIVES=[
+ {id:'monitor',icon:'◎',t:'See what needs me',p:'Everything moving right now, with whatever is waiting on your decision pulled to the top.',def:true,
+  badge:function(){return S.held?'<span class="pill warn">1 waiting on you</span>':'<span class="pill ok">nothing waiting</span>'},
+  cases:['EX-4472','EX-4474','EX-4479','CL-2210']},
+ {id:'investigate',icon:'⌕',t:'Understand a case',p:'Follow one case stage by stage — what each agent did, and the routes it chose not to take.',
+  badge:function(){return '<span class="pill nu">4 open cases</span>'},
+  cases:['EX-4474','EX-4472','EX-4479','CL-2210']},
+ {id:'trace',icon:'⑃',t:'Question a decision',p:'Pick a moment that surprised you and see the rule, the evidence, and who was allowed to make it.',
+  badge:function(){return '<span class="pill nu">4 decisions</span>'},
+  cases:['TR-held','TR-warranty','TR-alone','TR-customer']},
+ {id:'test',icon:'⇄',t:'Try a change safely',p:'Move a limit and replay real history before anything changes. Nothing goes live without approval.',
+  badge:function(){return S.pendingLimit?'<span class="pill warn">1 proposal pending</span>':'<span class="pill nu">sandbox</span>'},
+  cases:['SIM-pr']},
+ {id:'audit',icon:'▤',t:'Prove what happened',p:'A closed case as an evidence bundle: every decision, every verified write, every human moment.',
+  badge:function(){return '<span class="pill ok">1 closed today</span>'},
+  cases:['EX-4471']}
+];
+function renderEntry(){
+  $('mgrid').innerHTML=MOTIVES.map(function(m){
+    return '<button class="mcard'+(m.def?' def':'')+'" onclick="goFlow(\''+m.id+'\')">'+
+      (m.def?'<span class="defbadge">start here</span>':'')+
+      '<div class="mi">'+m.icon+'</div><h4>'+m.t+'</h4><p>'+m.p+'</p>'+
+      '<div class="mf">'+m.badge()+'</div></button>';
+  }).join('');
+}
+
+/* ============ case data ============ */
+var CASES={
+ 'EX-4472':{title:'Coverage gap across 6 DCs',sub:'a $214,000 requisition is waiting on your decision',
+  meta:[['Exposure','$214,000'],['Waiting','2h 11m'],['Owner','Iris'],['Cost of delay','$1.8k/day']],
+  stages:[
+   {n:'Signal',i:'⚑',s:'done',t:'0.8s',own:'mercer',items:[
+     {b:'Vendor lead time +10 days',s:'VN-3391 · EDI 824 · parent case EX-4471',k:'',d:'signal'}]},
+   {n:'Assess',i:'⌕',s:'done',t:'1.1s',own:'mercer',items:[
+     {b:'41 of 47 POs slip',s:'checked every open PO against the new date',k:'',d:'assess1'},
+     {b:'Lead time written to Fusion',s:'verified ✓ · acted alone at conf 0.94',k:'ok',d:'write1'}]},
+   {ho:'HO-8831',hoLabel:'new lead time + 41 POs → Iris'},
+   {n:'Replan',i:'◱',s:'done',t:'2.4s',own:'iris',items:[
+     {b:'3 SKUs break across 6 DCs',s:'Dalton and Cartersville break first, day 12',k:'',d:'assess2'},
+     {b:'Trade-off costed both ways',s:'4.1% service loss vs $214k working capital',k:'',d:'tradeoff'},
+     {b:'3 requisitions drafted',s:'$44.1k · $52.3k · $214k',k:'',d:'prs'}]},
+   {n:'Policy gate',i:'◇',s:'held',t:'0.2s',split:true,items:[
+     {b:'2 PRs passed → executed',s:'$44.1k and $52.3k · inside your $150k limit',k:'ok',d:'gate-pass'},
+     {b:'1 PR stopped → you',s:'$214,000 · above the $150k limit. That is the only reason.',k:'warn',d:'gate-hold'}]},
+   {n:'Your decision',i:'◉',s:'active',t:'waiting',now:true,items:[
+     {b:'Decision packet ready',s:'recommendation, two alternatives, cost of waiting',k:'warn',d:'packet'}]},
+   {n:'Act & learn',i:'↻',s:'pending',t:'—',items:[
+     {b:'Approve → executes & verifies',s:'PR released to Fusion, confirmed before closing',k:'',d:'future-a'},
+     {b:'Reject → reason captured',s:'feeds the next recommendation, no silent repeat',k:'',d:'future-r'}]}
+  ]},
+ 'EX-4474':{title:'Damaged delivery claim',sub:'two pallets damaged under wrap · SO-48219',
+  meta:[['Credit','$8,400'],['Confidence','0.93'],['Owner','Christy'],['Customer','confirming']],
+  stages:[
+   {n:'Claim raised',i:'⚑',s:'done',t:'0.4s',own:'christy',items:[
+     {b:'POD + customer photos in',s:'two pallets damaged under the wrap',k:'',d:'claim-in'},
+     {b:'Matched to SO-48219',s:'found in Fusion on first lookup · conf 0.97',k:'',d:'matched'}],
+    branch:{h:'New order search',w:'not taken — the order matched on the first lookup'}},
+   {n:'Validate',i:'⌕',s:'done',t:'0.9s',own:'christy',items:[
+     {b:'Warranty checked',s:'expired 2025-11 — so this is a damage claim',k:'',d:'warranty'},
+     {b:'Photos match the POD',s:'damage pattern consistent · conf 0.93',k:'',d:'photos'},
+     {b:'Vendor score pulled',s:'no pattern of false claims on this account',k:'',d:'vendor'}],
+    branch:{h:'Warranty route',w:'not taken — warranty expired 2025-11'}},
+   {n:'Policy gate',i:'◇',s:'done',t:'0.1s',items:[
+     {b:'Credit $8,400 ≤ $10k limit',s:'inside Christy’s authority — no approval needed',k:'ok',d:'gate-4474'},
+     {b:'Confidence 0.93 ≥ 0.85 floor',s:'both tests passed, so it executes',k:'ok',d:'conf-4474'}],
+    branch:{h:'Reject route',w:'not taken — the POD and photos prove the damage'}},
+   {n:'Act',i:'▸',s:'active',t:'0.7s',own:'christy',now:true,items:[
+     {b:'Credit issued',s:'$8,400 · Fusion write confirmed ✓',k:'ok',d:'credit'},
+     {b:'Invoice corrected',s:'customer notified with the new balance',k:'ok',d:'invoice'}]},
+   {ho:'HO-8834',hoLabel:'return + collection → Iris'},
+   {n:'Close out',i:'↻',s:'pending',t:'—',own:'iris',items:[
+     {b:'Return and collection booked',s:'waiting on the customer to confirm receipt',k:'',d:'return'},
+     {b:'Vendor scorecard updated',s:'feeds the next detection on this lane',k:'',d:'score'}]}
+  ]},
+ 'EX-4479':{title:'New supplier signals',sub:'three lead-time signals on the VN-2210 feed',
+  meta:[['Stage','Assessing'],['Signals','3'],['Owner','Mercer'],['Exposure','not yet known']],
+  stages:[
+   {n:'Signal',i:'⚑',s:'done',t:'0.6s',own:'mercer',items:[
+     {b:'3 lead-time notices',s:'VN-2210 feed · not yet a case',k:'',d:'sig-4479'}]},
+   {n:'Assess',i:'⌕',s:'active',t:'running',own:'mercer',now:true,items:[
+     {b:'Checking 47 open POs',s:'31 of 47 checked so far',k:'',d:'assess-4479'}]},
+   {n:'What comes next',i:'◇',s:'pending',t:'—',items:[
+     {b:'If dates slip → opens a case',s:'and routes to Iris for coverage',k:'',d:'next-4479'},
+     {b:'If nothing slips → closes quietly',s:'logged, no one is interrupted',k:'',d:'quiet-4479'}]}
+  ]},
+ 'CL-2210':{title:'Second damage claim opening',sub:'waiting on customer photos before it can be validated',
+  meta:[['Stage','Detect'],['Owner','Christy'],['Waiting on','photos'],['Age','3h 20m']],
+  stages:[
+   {n:'Claim opened',i:'⚑',s:'done',t:'0.5s',own:'christy',items:[
+     {b:'Opened from records we already hold',s:'the customer was not asked to prove it first',k:'',d:'cl-open'}]},
+   {n:'Waiting',i:'⏱',s:'active',t:'3h 20m',own:'christy',now:true,items:[
+     {b:'Customer photos not in yet',s:'a reminder can be sent from the actions panel',k:'warn',d:'cl-wait'}]},
+   {n:'Then',i:'◇',s:'pending',t:'—',items:[
+     {b:'Validate against POD + vendor score',s:'the same path EX-4474 took',k:'',d:'cl-next'}]}
+  ]}
+};
+var TRACES={
+ 'TR-held':{title:'Why was the $214k requisition held?',sub:'the rule, the evidence, and who was allowed to decide',
+  meta:[['Case','EX-4472'],['Rule','PR ≤ $150,000'],['Confidence','0.88'],['Verdict','authority, not doubt']],
+  stages:[
+   {n:'The decision',i:'◉',s:'done',t:'',items:[{b:'Held, not executed',s:'the $214,000 requisition stopped at the gate',k:'warn',d:'t1'}]},
+   {n:'The rule',i:'§',s:'done',t:'',items:[{b:'Policy v4.2 · PR ≤ $150,000',s:'Iris auto-raises up to $150k. $214k is above it.',k:'',d:'t2'},
+     {b:'Confidence was fine',s:'0.88 ≥ the 0.85 floor — authority stopped it, not doubt',k:'ok',d:'t3'}]},
+   {n:'The evidence',i:'▤',s:'done',t:'',items:[{b:'Cover breaks on 3 SKUs',s:'across 6 DCs from day 12',k:'',d:'t4'},
+     {b:'Both sides costed',s:'~4.1% service loss vs $214k tied up for 3 months',k:'',d:'t5'}]},
+   {n:'What happens next',i:'→',s:'pending',t:'',items:[{b:'It waits for you',s:'as a bounded packet — not a case to re-investigate',k:'warn',d:'t6'}]}
+  ]},
+ 'TR-warranty':{title:'Why did the claim skip warranty?',sub:'route chosen by evidence, not by guesswork',
+  meta:[['Case','EX-4474'],['Rule','warranty window'],['Confidence','0.93'],['Verdict','expired']],
+  stages:[
+   {n:'The decision',i:'◉',s:'done',t:'',items:[{b:'Routed to damage, not warranty',s:'the warranty branch was left grey',k:'',d:'w1'}]},
+   {n:'The rule',i:'§',s:'done',t:'',items:[{b:'Warranty applies inside its window',s:'outside it, a claim is assessed as damage',k:'',d:'w2'}]},
+   {n:'The evidence',i:'▤',s:'done',t:'',items:[{b:'Warranty expired 2025-11',s:'read from the product master',k:'',d:'w3'},
+     {b:'Photos match the POD damage',s:'conf 0.93',k:'ok',d:'w4'}]},
+   {n:'What happened next',i:'→',s:'done',t:'',items:[{b:'Credit auto-issued',s:'$8,400 was inside the ≤$10k limit',k:'ok',d:'w5'}]}
+  ]},
+ 'TR-alone':{title:'Why did Mercer act without asking?',sub:'three tests, all inside the lines people drew',
+  meta:[['Case','EX-4471'],['Change','10 days'],['Exposure','$38,200'],['Confidence','0.94']],
+  stages:[
+   {n:'The decision',i:'◉',s:'done',t:'',items:[{b:'Updated the vendor lead time alone',s:'no person was asked',k:'',d:'a1'}]},
+   {n:'The rule',i:'§',s:'done',t:'',items:[{b:'Change ≤ 15 days',s:'this was 10 ✓',k:'ok',d:'a2'},
+     {b:'Exposure < $50,000',s:'this was $38,200 ✓',k:'ok',d:'a3'},
+     {b:'Confidence ≥ 0.85',s:'this was 0.94 ✓',k:'ok',d:'a4'}]},
+   {n:'The proof',i:'▤',s:'done',t:'',items:[{b:'Every write verified by Fusion',s:'42 writes confirmed by the target system',k:'ok',d:'a5'}]},
+   {n:'The counterfactual',i:'→',s:'pending',t:'',items:[{b:'One number over, and it stops',s:'exactly like EX-4472 did',k:'warn',d:'a6'}]}
+  ]},
+ 'TR-customer':{title:'Who decided the customer’s option?',sub:'some things are never the agent’s call',
+  meta:[['Case','EX-4474'],['Absorb rule','≤ 5%'],['Substitution','never alone'],['Decided by','the customer']],
+  stages:[
+   {n:'The decision',i:'◉',s:'done',t:'',items:[{b:'The customer chose — not Christy',s:'between an alternate product and waiting',k:'',d:'c1'}]},
+   {n:'The rule',i:'§',s:'done',t:'',items:[{b:'Absorbing ≤5% is agent authority',s:'the 4% price gap was inside it',k:'ok',d:'c2'},
+     {b:'Product substitution never is',s:'it sits on the never-alone list',k:'warn',d:'c3'}]},
+   {n:'The evidence',i:'▤',s:'done',t:'',items:[{b:'Both options costed honestly',s:'alternate now vs install moves 6 days',k:'',d:'c4'}]},
+   {n:'The outcome',i:'→',s:'done',t:'',items:[{b:'They chose to wait',s:'date re-committed; the pattern was logged',k:'ok',d:'c5'}]}
+  ]}
+};
+
+/* ============ flow rendering ============ */
+function goFlow(motive,caseId){
+  if(S.p!=='orch')document.querySelector('.ptab[data-p=orch]').click();
+  S.motive=motive;
+  var m=MOTIVES.filter(function(x){return x.id===motive})[0];
+  S.caseId=caseId||m.cases[0];
+  $('o-entry').style.display='none';
+  $('o-ws').style.display='';
+  renderPanes();renderFlow();
+}
+function backToEntry(){
+  S.motive=null;$('o-ws').style.display='none';$('o-entry').style.display='';renderEntry();
+}
+function togglePane(side){
+  var k=side==='L'?'paneL':'paneR';
+  S[k]=!S[k];
+  $('pane'+side).classList.toggle('collapsed',S[k]);
+  $('pane'+side+'x').textContent=side==='L'?(S[k]?'›':'‹'):(S[k]?'‹':'›');
+}
+function renderPanes(){
+  $('motiveList').innerHTML=MOTIVES.map(function(m){
+    return '<button class="mitem'+(m.id===S.motive?' on':'')+'" onclick="goFlow(\''+m.id+'\')">'+
+      '<span class="ic">'+m.icon+'</span>'+m.t+'</button>';
+  }).join('');
+  var m=MOTIVES.filter(function(x){return x.id===S.motive})[0];
+  var label={monitor:'In flight',investigate:'Open cases',trace:'Decisions to question',
+             test:'Sandboxes',audit:'Closed cases'}[S.motive];
+  $('caseListLabel').textContent=label;
+  $('caseList').innerHTML=m.cases.map(function(cid){
+    var c=CASES[cid]||TRACES[cid];
+    if(cid==='SIM-pr')return '<button class="citem'+(cid===S.caseId?' on':'')+'" onclick="pickCase(\''+cid+'\')">'+
+      '<span class="cn">Purchase requisition limit</span><span class="cm">Iris · currently $'+S.limit.toLocaleString()+'</span></button>';
+    if(cid==='EX-4471')return '<button class="citem'+(cid===S.caseId?' on':'')+'" onclick="pickCase(\''+cid+'\')">'+
+      '<div class="ch"><span class="cid">EX-4471</span><span class="pill ok">closed</span></div>'+
+      '<span class="cn">Vendor lead time +10 days</span><span class="cm">6 decisions · 7 verified writes</span></button>';
+    if(!c)return '';
+    var isTrace=!!TRACES[cid];
+    return '<button class="citem'+(cid===S.caseId?' on':'')+'" onclick="pickCase(\''+cid+'\')">'+
+      (isTrace?'':'<div class="ch"><span class="cid">'+cid+'</span>'+statusPill(cid)+'</div>')+
+      '<span class="cn">'+c.title+'</span>'+
+      '<span class="cm">'+(isTrace?c.sub:c.meta.slice(0,2).map(function(x){return x[0]+' '+x[1]}).join(' · '))+'</span></button>';
+  }).join('');
+}
+function statusPill(cid){
+  if(cid==='EX-4472')return S.held?'<span class="pill warn">waiting on you</span>':'<span class="pill ok">decided</span>';
+  if(cid==='EX-4474')return '<span class="pill info">acting</span>';
+  if(cid==='EX-4479')return '<span class="pill nu">early</span>';
+  if(cid==='CL-2210')return '<span class="pill nu">waiting</span>';
+  return '';
+}
+function pickCase(cid){S.caseId=cid;renderPanes();renderFlow()}
+
+function renderFlow(){
+  if(S.motive==='test')return renderTest();
+  var c=CASES[S.caseId]||TRACES[S.caseId];
+  if(!c){$('flowScroll').innerHTML='<div class="emptyflow">Pick something on the left to see its flow.</div>';return}
+
+  // header
+  var isTrace=!!TRACES[S.caseId];
+  $('canvasH').innerHTML='<div class="ci">'+(isTrace?'':'<div class="cid">'+S.caseId+'</div>')+
+    '<h3>'+c.title+'</h3><div class="cs">'+c.sub+'</div></div>'+
+    '<div class="cmeta">'+c.meta.map(function(m){return '<div>'+m[0]+'<b>'+m[1]+'</b></div>'}).join('')+'</div>';
+
+  // stages
+  var parts=[];
+  c.stages.forEach(function(st,i){
+    if(st.ho){
+      parts.push('<div class="horow"><button class="hoflag" onclick="openHO(\''+st.ho+'\')">'+
+        st.ho+' <span class="hl2">'+st.hoLabel+'</span> ↗</button></div>');
+      return;
+    }
+    var own=st.own?AG[st.own]:null;
+    var body='<div class="scard '+st.s+'">'+
+      '<div class="sc-h"><span class="si">'+st.i+'</span><span class="sn">'+st.n+'</span>'+
+      (st.now?'<span class="nowflag" style="margin-left:auto">now</span>':'<span class="st">'+(st.t||'')+'</span>')+'</div>'+
+      (own?'<div class="sc-o"><span class="oav" style="background:'+own.bg+'">'+own.av+'</span>'+own.n+'</div>':'')+
+      '<div class="sc-b">'+st.items.map(function(it){
+        return '<button class="titem '+(it.k||'')+'" onclick="openStep(\''+it.d+'\')" data-step="'+it.d+'"><b>'+it.b+'</b><span>'+it.s+'</span></button>';
+      }).join('')+'</div></div>';
+    var branch=st.branch?'<div class="branch"><div class="bcard"><div class="bh">'+st.branch.h+'</div>'+
+      '<div class="bw">'+st.branch.w+'</div></div></div>':'';
+    parts.push('<div class="stagerow">'+body+branch+'</div>');
+  });
+  $('flowScroll').innerHTML=zoomBar()+
+    '<div class="flowcanvas" id="flowCanvas" style="transform:scale('+S.zoom+');transform-origin:top center">'+
+    '<svg class="flowwires" id="flowWires"></svg>'+
+    '<div class="flowrow">'+parts.join('')+'</div></div>';
+  renderActions();
+  makeKeyboardReachable();
+  requestAnimationFrame(drawWires);
+}
+function zoomBar(){
+  return '<div class="zoomer"><button onclick="zoomFlow(-1)" aria-label="Zoom out">−</button>'+
+    '<span class="zl" id="zLabel">'+Math.round(S.zoom*100)+'%</span>'+
+    '<button onclick="zoomFlow(1)" aria-label="Zoom in">+</button>'+
+    '<span class="zdiv"></span>'+
+    '<button onclick="zoomFlow(0)" aria-label="Reset zoom" style="font-size:11px">⤢</button></div>';
+}
+function zoomFlow(dir){
+  var steps=[0.6,0.7,0.8,0.9,1,1.1,1.25,1.5];
+  if(dir===0)S.zoom=1;
+  else{
+    var i=steps.indexOf(S.zoom);
+    if(i<0)i=steps.indexOf(1);
+    i=Math.min(steps.length-1,Math.max(0,i+dir));
+    S.zoom=steps[i];
+  }
+  var fc=$('flowCanvas');
+  if(fc){fc.style.transform='scale('+S.zoom+')';$('zLabel').textContent=Math.round(S.zoom*100)+'%'}
+}
+/* woven connectors — one clean spine, branches curving off to the right */
+function drawWires(){
+  var wrap=$('flowCanvas'),svg=$('flowWires');
+  if(!wrap||!svg)return;
+  var wb=wrap.getBoundingClientRect();
+  if(!wb.width)return;
+  svg.setAttribute('viewBox','0 0 '+wrap.offsetWidth+' '+wrap.offsetHeight);
+  svg.style.height=wrap.offsetHeight+'px';
+  var nodes=[].slice.call(wrap.querySelectorAll('.scard,.hoflag'));
+  var d='';
+  function box(el){var r=el.getBoundingClientRect();
+    return{x:r.left-wb.left,y:r.top-wb.top,w:r.width,h:r.height}}
+  for(var i=0;i<nodes.length-1;i++){
+    var a=box(nodes[i]),b=box(nodes[i+1]);
+    var x1=a.x+a.w/2,y1=a.y+a.h,x2=b.x+b.w/2,y2=b.y;
+    var k=Math.max(14,(y2-y1)*0.45);
+    var hot=nodes[i+1].classList.contains('active')||nodes[i+1].classList.contains('held');
+    d+='<path class="'+(hot?'hot':'')+'" d="M'+x1+' '+y1+' C'+x1+' '+(y1+k)+', '+x2+' '+(y2-k)+', '+x2+' '+y2+'"/>';
+    d+='<circle cx="'+x2+'" cy="'+y2+'" r="3" fill="'+(hot?'var(--brand)':'#cbd2da')+'"/>';
+  }
+  wrap.querySelectorAll('.stagerow').forEach(function(row){
+    var card=row.querySelector('.scard'),br=row.querySelector('.bcard');
+    if(!card||!br)return;
+    var a=box(card),b=box(br);
+    var x1=a.x+a.w,y1=a.y+a.h/2,x2=b.x,y2=b.y+b.h/2;
+    var mx=(x1+x2)/2;
+    d+='<path class="dash" d="M'+x1+' '+y1+' C'+mx+' '+y1+', '+mx+' '+y2+', '+x2+' '+y2+'"/>';
+  });
+  svg.innerHTML=d;
+}
+window.addEventListener('resize',function(){if(S.motive&&S.motive!=='test')requestAnimationFrame(drawWires)});
+function renderTest(){
+  $('canvasH').innerHTML='<div class="ci"><h3>Purchase requisition limit</h3>'+
+    '<div class="cs">move the line, replay real history — nothing changes until it is approved</div></div>'+
+    '<div class="cmeta"><div>Current<b>$'+ (150000).toLocaleString() +'</b></div>'+
+    '<div>Testing<b id="tm-now">$'+S.limit.toLocaleString()+'</b></div>'+
+    '<div>Agent<b>Iris</b></div></div>';
+  var rows=HOLDS.map(function(h){
+    var auto=h[3]<=S.limit;
+    return '<div class="scard '+(auto?'done':'held')+'" style="width:auto;margin-bottom:8px">'+
+      '<div class="sc-h"><span class="si">'+(auto?'▸':'◇')+'</span><span class="sn">'+h[0]+'</span>'+
+      '<span class="st">'+h[1]+'</span></div>'+
+      '<div class="sc-b"><div class="titem '+(auto?'ok':'warn')+'" style="cursor:default"><b>'+
+      (auto?'would auto-run':'still held for a person')+'</b><span>'+h[2]+'</span></div></div></div>';
+  }).join('');
+  var freed=HOLDS.filter(function(h){return h[3]<=S.limit}).length;
+  $('flowScroll').innerHTML=
+   '<div style="max-width:560px">'+
+   '<div class="card" style="padding:18px 20px;margin-bottom:14px">'+
+     '<div class="lab">Set the limit</div>'+
+     '<input type="range" min="100000" max="300000" step="10000" value="'+S.limit+'" id="limSlider" '+
+       'oninput="setLimit(+this.value)" style="width:100%;accent-color:var(--brand)">'+
+     '<div style="display:flex;justify-content:space-between;font-family:Geist Mono,monospace;font-size:11px;color:var(--text-neutral);margin-top:4px">'+
+       '<span>$100k</span><span id="limNow" style="color:var(--brand);font-weight:600">$'+S.limit.toLocaleString()+(S.limit===150000?' (current)':'')+'</span><span>$300k</span></div>'+
+     '<div style="margin-top:14px;background:var(--surface-accent);border:1px solid #ddd0f2;border-radius:10px;padding:12px 15px;font-size:13px;color:var(--brand-deep)" id="limImpact">'+limCopy(freed)+'</div>'+
+   '</div>'+
+   '<div class="lab">Replayed against this month’s 5 above-limit holds</div>'+rows+
+   '</div>';
+  renderActions();
+}
+function limCopy(freed){
+  if(S.limit===150000)return 'At the current $150k limit: 5 requisitions were above the line this month · $1,018,200 routed to planners.';
+  if(S.limit>150000)return 'At $'+S.limit.toLocaleString()+': '+freed+' of those 5 would have run on their own · your queue shrinks, the agent’s exposure grows.';
+  return 'At $'+S.limit.toLocaleString()+': tighter than today — smaller requisitions that run automatically now would stop for a person instead.';
+}
+var HOLDS=[['EX-4472','$214,000','coverage gap across 6 DCs',214000],
+ ['EX-4451','$182,400','reorder point rebuild',182400],
+ ['EX-4438','$168,000','seasonal build-ahead',168000],
+ ['EX-4429','$296,500','dual-source split',296500],
+ ['EX-4415','$157,300','expedite bundle',157300]];
+function setLimit(v){
+  S.limit=v;
+  $('limNow').textContent='$'+v.toLocaleString()+(v===150000?' (current)':'');
+  $('tm-now').textContent='$'+v.toLocaleString();
+  var freed=HOLDS.filter(function(h){return h[3]<=v}).length;
+  $('limImpact').textContent=limCopy(freed);
+  renderTest();
+  $('limSlider').focus();
+}
+
+/* ============ right panel ============ */
+/* ===== right panel: Act / Activity / Notes ===== */
+var CASE_TL={
+ 'EX-4472':[
+  {t:'08:14:02',b:'Signal picked up',s:'Mercer caught the lead-time change from the supplier feed',k:'ok'},
+  {t:'08:14:04',b:'41 of 47 orders slip',s:'checked every open PO against the new date',k:'ok'},
+  {t:'08:14:09',b:'Handed to Iris',s:'HO-8831 accepted with facts, assumptions and authority',k:'ok'},
+  {t:'08:14:11',b:'Coverage replanned',s:'3 SKUs break across 6 DCs from day 12',k:'ok'},
+  {t:'08:14:12',b:'Two requisitions executed',s:'$96,400 written to Fusion and verified',k:'ok'},
+  {t:'08:14:12',b:'One requisition held',s:'$214,000 is above your $150,000 limit',k:'warn'},
+  {t:'now',b:'Waiting on your decision',s:'2h 11m so far · roughly $1.8k a day',k:'now'}],
+ 'EX-4474':[
+  {t:'09:38:41',b:'Claim raised',s:'POD and customer photos arrived together',k:'ok'},
+  {t:'09:38:42',b:'Matched to SO-48219',s:'found in Fusion on the first lookup',k:'ok'},
+  {t:'09:39:10',b:'Warranty checked first',s:'expired 2025-11, so it was assessed as damage',k:'ok'},
+  {t:'09:39:12',b:'Damage confirmed',s:'photos match the POD pattern · conf 0.93',k:'ok'},
+  {t:'09:39:14',b:'Credit auto-approved',s:'$8,400 sits inside the $10,000 limit',k:'ok'},
+  {t:'now',b:'Customer confirming',s:'17h left on the 48-hour soft hold',k:'now'}],
+ 'EX-4479':[
+  {t:'09:41:02',b:'Three signals picked up',s:'VN-2210 feed · not yet a case',k:'ok'},
+  {t:'now',b:'Assessing exposure',s:'31 of 47 open orders checked so far',k:'now'}],
+ 'CL-2210':[
+  {t:'06:22:10',b:'Claim opened',s:'from records already held — no proof demanded up front',k:'ok'},
+  {t:'now',b:'Waiting on photos',s:'3h 20m · a reminder can be sent',k:'warn'}],
+ 'EX-4471':[
+  {t:'08:14:02',b:'Signal picked up',s:'lead-time notice caught in 0.8s',k:'ok'},
+  {t:'08:14:08',b:'Acted alone',s:'all three tests passed · 42 writes verified',k:'ok'},
+  {t:'10:25:00',b:'Planner rejected the held PR',s:'"SKU 44-2213 phases out in Q4"',k:'warn'},
+  {t:'day 9',b:'Closed and logged',s:'6.1s of agent time vs a 3.5-day baseline',k:'ok'}]
+};
+function renderActions(){
+  var el=$('actionsBody');if(!el)return;
+  if(S.motive==='test'){
+    el.innerHTML='<div class="act-block"><h5>Propose</h5>'+
+      (S.pendingLimit
+        ?'<div class="act-card"><h6>Proposal pending</h6><p>PR limit $'+S.pendingLimit.toLocaleString()+
+          ' sent to the policy owner with the replay attached. The live limit is still $150,000.</p>'+
+          '<div class="btnrow"><button class="btn" onclick="withdrawLimit()">Withdraw</button></div></div>'
+        :'<div class="act-card calm"><h6>Nothing proposed yet</h6><p>Move the limit, then send it to the policy owner with the replay attached.</p>'+
+          '<div class="btnrow"><button class="btn pr" onclick="proposeLimit()">Propose $'+S.limit.toLocaleString()+'</button></div></div>')+
+      '</div><div class="act-block"><h5>Guardrails that never move</h5>'+
+      '<div class="fkv"><span>Confidence floor</span><b>0.85</b></div>'+
+      '<div class="fkv"><span>Never alone</span><b>customer credit</b></div>'+
+      '<div class="fkv"><span>Safety stock move</span><b>&le; 25%</b></div></div>';
+    return;
+  }
+  var c=CASES[S.caseId]||TRACES[S.caseId];
+  if(!c){el.innerHTML='';return}
+  el.innerHTML=
+   '<div class="ptabs2">'+
+     '<button class="'+(S.atab==='act'?'on':'')+'" onclick="actTab(\'act\')">Act</button>'+
+     '<button class="'+(S.atab==='activity'?'on':'')+'" onclick="actTab(\'activity\')">Activity</button>'+
+     '<button class="'+(S.atab==='notes'?'on':'')+'" onclick="actTab(\'notes\')">Notes</button>'+
+   '</div>'+
+   '<div class="apane'+(S.atab==='act'?' on':'')+'" id="ap-act">'+actPane(c)+'</div>'+
+   '<div class="apane'+(S.atab==='activity'?' on':'')+'" id="ap-activity">'+activityPane()+'</div>'+
+   '<div class="apane'+(S.atab==='notes'?' on':'')+'" id="ap-notes">'+notesPane()+'</div>';
+  makeKeyboardReachable();
+}
+function actTab(t){
+  S.atab=t;
+  document.querySelectorAll('.ptabs2 button').forEach(function(b,i){
+    b.classList.toggle('on',['act','activity','notes'][i]===t)});
+  ['act','activity','notes'].forEach(function(k){$('ap-'+k).classList.toggle('on',k===t)});
+}
+function actPane(c){
+  var h='';
+  /* the one thing that needs a person */
+  if(S.caseId==='EX-4472'&&S.held){
+    h+='<div class="act-block"><h5>Needs you now</h5><div class="act-card">'+
+      '<h6>$214,000 requisition</h6><p>Above your $150,000 limit &mdash; the only reason you are being asked. '+
+      'Two alternatives are costed inside the packet.</p>'+
+      '<div class="btnrow"><button class="btn pr" onclick="openPacket()">Open decision packet</button>'+
+      '<button class="btn" onclick="snooze()">Snooze 1h</button></div></div></div>';
+  }else if(S.caseId==='EX-4472'){
+    h+='<div class="act-block"><h5>Decided</h5><div class="act-card calm"><h6>This case is answered</h6>'+
+      '<p>The outcome is on the flow and in the activity tab. Nothing is waiting on you.</p></div></div>';
+  }
+  if(S.caseId==='EX-4474'){
+    h+='<div class="act-block"><h5>Waiting on the customer</h5><div class="act-card'+(S.nudged4474?' calm':'')+'">'+
+      '<h6>'+(S.nudged4474?'Reminder sent':'Confirmation outstanding')+'</h6>'+
+      '<p>The credit is issued. 17h left on the soft hold for the customer to confirm.</p>'+
+      '<div class="btnrow"><button class="btn" onclick="nudge4474()"'+(S.nudged4474?' disabled':'')+'>'+
+      (S.nudged4474?'Reminder sent':'Nudge customer')+'</button>'+
+      '<button class="btn" onclick="escalate()">Escalate to a person</button></div></div></div>';
+  }
+  if(S.caseId==='CL-2210'){
+    h+='<div class="act-block"><h5>Waiting on the customer</h5><div class="act-card">'+
+      '<h6>Photos not in yet</h6><p>Three hours since the claim opened.</p>'+
+      '<div class="btnrow"><button class="btn" onclick="toast(\'Reminder sent — logged on CL-2210.\')">Send reminder</button>'+
+      '<button class="btn" onclick="escalate()">Escalate</button></div></div></div>';
+  }
+
+  /* ask about this case — a real input point */
+  h+='<div class="askmini"><div class="aml">Ask about this case</div>'+
+    '<textarea id="caseAsk" placeholder="e.g. what happens if I do nothing until Monday?"></textarea>'+
+    '<div class="amf"><button class="btn pr sm" onclick="caseAskGo()">Ask</button>'+
+    '<button class="btn sm" onclick="addNote()">Save as note</button></div>'+
+    '<div class="sugg">'+askSuggestions().map(function(q){
+      return '<button onclick="caseAskEx(\''+q.replace(/'/g,"\\'")+'\')">'+q+'</button>'}).join('')+'</div></div>';
+
+  /* things a person can do that are not just reading */
+  h+='<div class="act-block"><h5>Change something</h5><div class="qa">'+
+    (CASES[S.caseId]?'<button class="btn w" onclick="reassign()">Reassign to a person</button>':'')+
+    '<button class="btn w" onclick="correctFact()">Correct a fact the agent used</button>'+
+    '<button class="btn w" onclick="goFlow(\'test\')">Test a limit change</button>'+
+    (S.caseId==='EX-4471'?'<button class="btn w" onclick="copyAudit()">Export the audit bundle</button>':'')+
+    '</div></div>';
+
+  h+='<div class="act-block"><h5>At a glance</h5>'+
+    c.meta.map(function(m){return '<div class="fkv"><span>'+m[0]+'</span><b>'+m[1]+'</b></div>'}).join('')+'</div>';
+  return h;
+}
+function askSuggestions(){
+  return {'EX-4472':['What breaks if I say no?','Why this amount?','Who else could approve?'],
+   'EX-4474':['Can we recover this from the vendor?','Has this customer claimed before?'],
+   'EX-4479':['Which customers are exposed?','When does this become a case?'],
+   'CL-2210':['What if the photos never arrive?'],
+   'EX-4471':['What did this cost us?','What changed after the override?']}[S.caseId]||
+   ['Why did it route this way?','What would change the outcome?'];
+}
+function activityPane(){
+  var tl=CASE_TL[S.caseId];
+  if(!tl)return '<div class="empty-s">No activity recorded for this view.</div>';
+  return '<div class="tl">'+tl.map(function(e){
+    return '<div class="tle '+(e.k||'')+'"><div class="tt">'+e.t+'</div>'+
+      '<div class="tb">'+e.b+'</div><div class="ts">'+e.s+'</div></div>'}).join('')+'</div>';
+}
+function notesPane(){
+  var list=(S.notes[S.caseId]||[]);
+  return '<div class="askmini"><div class="aml">Add a note to this case</div>'+
+    '<textarea id="noteBox" placeholder="Context the agents cannot see — a supplier call, a decision made offline…"></textarea>'+
+    '<div class="amf"><button class="btn pr sm" onclick="addNote()">Save note</button></div></div>'+
+    (list.length?list.map(function(n){
+      return '<div class="note-i"><div class="nh">'+n.t+' · you</div><div class="nb">'+esc(n.b)+'</div></div>'}).join('')
+      :'<div class="empty-s">No notes yet. Anything you add here travels with the case and is visible to whoever picks it up next.</div>');
+}
+function nowStamp(){var d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+function addNote(){
+  var box=$('noteBox')||$('caseAsk');
+  var v=(box&&box.value||'').trim();
+  if(!v){toast('Type the note first — it travels with the case.');if(box)box.focus();return}
+  S.notes[S.caseId]=S.notes[S.caseId]||[];
+  S.notes[S.caseId].unshift({t:nowStamp(),b:v});
+  box.value='';S.atab='notes';renderActions();
+  toast('Note saved on '+S.caseId+' — visible to whoever picks this case up next.');
+}
+function caseAskEx(q){$('caseAsk').value=q;caseAskGo()}
+function caseAskGo(){
+  var v=($('caseAsk').value||'').trim();
+  if(!v){toast('Type a question about this case.');return}
+  var a=answerFor(v.toLowerCase());
+  openDrawer('<div class="dr-k">'+S.caseId+' · answer</div><div class="dr-t">'+esc(v)+'</div>'+
+    '<div class="dr-s">'+a.body+'</div>'+
+    a.rows.map(function(r){return '<div class="kv"><span>'+r[0]+'</span><b>'+r[1]+'</b></div>'}).join('')+
+    '<div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">'+
+    '<button class="btn" onclick="closeAll();goFlow(\'trace\')">Trace the decision</button>'+
+    '<button class="btn" onclick="closeAll();S.atab=\'notes\';renderActions()">Add a note</button></div>');
+  $('caseAsk').value='';
+}
+function answerFor(q){
+  if(/nothing|do nothing|monday|wait/.test(q))return{body:'Doing nothing keeps the cover gap open. Dalton and Cartersville break first, around day 12, and the expedite cost runs at roughly $1.8k a day until the window closes.',
+    rows:[['Cost of waiting','~$1.8k/day'],['First break','Dalton · day 12'],['Reversible','yes — the draft stays open']]};
+  if(/why this amount|amount|214/.test(q))return{body:'The $214,000 covers an 18% safety-stock lift on the three SKUs that fall below service target inside the window. It is the full-cover option; a partial option at about $128k is in the packet.',
+    rows:[['Full cover','$214,000'],['Partial option','~$128,000'],['SKUs','3'],['Window','3 months']]};
+  if(/who else|approve|delegate/.test(q))return{body:'Anyone with the planning-lead role can approve above $150,000. The category manager is always notified but cannot approve alone.',
+    rows:[['Can approve','planning lead'],['Notified','category manager'],['Your limit','$150,000']]};
+  if(/breaks if|say no|reject/.test(q))return{body:'Rejecting leaves the three SKUs uncovered — an estimated 4.1% service loss on the affected lines. Iris will not re-raise the same requisition; your reason shapes the next recommendation instead.',
+    rows:[['Service impact','~4.1% loss'],['Re-raised?','no'],['Your reason','feeds the next run']]};
+  if(/vendor|recover|charge/.test(q))return{body:'The vendor scorecard is updated automatically once the claim closes. Recovery against the carrier is a separate claim — Iris opens it when the collection is booked.',
+    rows:[['Scorecard','updated on close'],['Carrier claim','opens with collection']]};
+  if(/claimed before|history|before/.test(q))return{body:'No pattern of false claims on this account. The vendor score was pulled during validation and came back clean, which is part of why the credit auto-issued.',
+    rows:[['Prior claims','none flagged'],['Vendor score','clean'],['Effect','auto-issue allowed']]};
+  return{body:'Routing follows lane ownership and policy: supplier facts to Mercer, coverage and requisitions to Iris, customer promises to Christy. Every stop names the rule that caused it — open any step on the flow to see the evidence behind it.',
+    rows:[['Routing by','lane + policy'],['Every stop','names its rule'],['Evidence','on each step']]};
+}
+function snooze(){toast('Snoozed for 1 hour. It returns to the top of your list at '+
+  String((new Date().getHours()+1)%24).padStart(2,'0')+':'+String(new Date().getMinutes()).padStart(2,'0')+'.')}
+function escalate(){
+  openDrawer('<div class="dr-k">'+S.caseId+' · escalate</div><div class="dr-t">Bring a person in</div>'+
+   '<div class="dr-s">The case keeps running; the person you pick gets the packet and the full history, not a summary.</div>'+
+   '<div class="kv"><span>Planning lead</span><b>Dana R.</b></div>'+
+   '<div class="kv"><span>Category manager</span><b>Marcus O.</b></div>'+
+   '<div class="kv"><span>Service lead</span><b>Priya N.</b></div>'+
+   '<div style="margin-top:16px;display:flex;gap:8px">'+
+   '<button class="btn pr" onclick="toast(\'Escalated to Dana R. — she has the packet and the history.\');closeAll()">Send to Dana R.</button>'+
+   '<button class="btn" onclick="closeAll()">Cancel</button></div>');
+}
+function reassign(){
+  openDrawer('<div class="dr-k">'+S.caseId+' · reassign</div><div class="dr-t">Take this off the agents</div>'+
+   '<div class="dr-s">The agents stop acting on it and hand you everything they have. You can hand it back at any point.</div>'+
+   '<div class="kv"><span>Current owner</span><b>'+(CASES[S.caseId]&&CASES[S.caseId].meta.filter(function(m){return m[0]==='Owner'})[0]||['','—'])[1]+'</b></div>'+
+   '<div class="kv"><span>Work done so far</span><b>stays attached</b></div>'+
+   '<div class="kv"><span>Agents will</span><b>stop acting, keep watching</b></div>'+
+   '<div style="margin-top:16px;display:flex;gap:8px">'+
+   '<button class="btn pr" onclick="toast(\''+S.caseId+' reassigned to you. The agents stopped acting and kept the history attached.\');closeAll()">Reassign to me</button>'+
+   '<button class="btn" onclick="closeAll()">Cancel</button></div>');
+}
+function correctFact(){
+  openDrawer('<div class="dr-k">'+S.caseId+' · correct a fact</div><div class="dr-t">Tell the agent it is wrong</div>'+
+   '<div class="dr-s">If a fact behind the recommendation is wrong, correct it here. The agent re-runs from the corrected fact and says what changed.</div>'+
+   '<div class="kv"><span>Facts used</span><b>see the flow steps</b></div>'+
+   '<textarea class="rzn on" id="factBox" placeholder="e.g. Dalton reopens on the 14th, not the 20th — the coverage gap is shorter than modelled" style="min-height:88px"></textarea>'+
+   '<div style="margin-top:12px;display:flex;gap:8px">'+
+   '<button class="btn pr" onclick="submitFact()">Submit correction</button>'+
+   '<button class="btn" onclick="closeAll()">Cancel</button></div>');
+}
+function submitFact(){
+  var v=($('factBox').value||'').trim();
+  if(!v){toast('Describe what is wrong — the agent re-runs from your correction.');$('factBox').focus();return}
+  S.notes[S.caseId]=S.notes[S.caseId]||[];
+  S.notes[S.caseId].unshift({t:nowStamp(),b:'Correction: '+v});
+  closeAll();S.atab='notes';renderActions();
+  toast('Correction logged. Iris will re-run from it and show what changed.');
+}
+/* ============ ask ============ */
+function askEx(q){$('askInput').value=q;runAsk()}
+function runAsk(){
+  var q=($('askInput').value||'').toLowerCase().trim();
+  if(!q){toast('Type what you want to see, or pick a starting point below.');return}
+  if(/214|held|hold|requisition|why.*stop/.test(q))return goFlow('trace','TR-held');
+  if(/warrant/.test(q))return goFlow('trace','TR-warranty');
+  if(/alone|without asking|mercer/.test(q))return goFlow('trace','TR-alone');
+  if(/customer.*(chose|decide|option)|who decided/.test(q))return goFlow('trace','TR-customer');
+  if(/claim|damage|pallet/.test(q))return goFlow('investigate','EX-4474');
+  if(/limit|what if|change|sandbox|test/.test(q))return goFlow('test');
+  if(/audit|prove|export|evidence|4471/.test(q))return goFlow('audit','EX-4471');
+  if(/4472/.test(q))return goFlow('investigate','EX-4472');
+  goFlow('monitor');
+  toast('Not sure what you meant — here is everything that needs you.');
+}
+
+/* ============ step / drawer detail ============ */
+var STEPS={
+ signal:['Signal · vendor lead time','The supplier feed carried a lead-time change before anyone opened an inbox.',[['Source','EDI 824 · supplier feed'],['Vendor','VN-3391'],['Change','+10 days'],['Caught in','0.8s']]],
+ assess1:['Assess · which orders slip','Every open PO from this vendor was checked against the new date.',[['Checked','47 open POs'],['Slipping','41'],['Absorb without slip','6'],['Read from','Oracle Fusion']]],
+ write1:['Write · lead time updated','Mercer acted alone because all three tests passed, then Fusion confirmed the write.',[['Rule','LT ≤ 15 days'],['This change','10 days'],['Exposure','$38,200 < $50k'],['Verified','by Fusion ✓']]],
+ assess2:['Replan · where cover breaks','Coverage rerun across six DCs against the longer lead time.',[['SKUs at risk','3'],['DCs','6'],['First to break','Dalton · day 12'],['Read from','OMP · Manhattan']]],
+ tradeoff:['Trade-off · both sides costed','Neither number is hidden: the risk of doing nothing and the cost of covering.',[['Unprotected','~4.1% service loss'],['Fully covered','$214k working capital'],['Window','3 months']]],
+ prs:['Three requisitions drafted','Drafted together, then judged separately by the gate.',[['PR 1','$44,100'],['PR 2','$52,300'],['PR 3','$214,000'],['Limit','$150,000']]],
+ 'gate-pass':['Gate · two passed','Inside the planner’s limit, so they executed and verified without interrupting anyone.',[['Amount','$96,400 combined'],['Rule','PR ≤ $150,000'],['Written to','Oracle Fusion ✓']]],
+ 'gate-hold':['Gate · one stopped','The agent drafted it and stopped. It did not argue its confidence up to push it through.',[['Amount','$214,000'],['Limit','$150,000'],['Confidence','0.88 (floor 0.85)'],['Reason','authority — not doubt']]],
+ packet:['Your decision packet','A bounded question with the investigation attached, not re-opened.',[['Recommendation','raise cover on 3 SKUs'],['Alternatives','2 costed'],['Cost of waiting','$1.8k/day'],['Waiting','2h 11m']]],
+ 'future-a':['If you approve','The PR is released and only closes once Fusion confirms the write.',[['Then','executes'],['Closes when','target system confirms']]],
+ 'future-r':['If you reject','Your reason is captured and shapes the next recommendation.',[['Requires','a reason'],['Effect','no silent repeat']]],
+ 'claim-in':['Claim raised','Opened from the POD and photos — the customer was not asked to prove it first.',[['Evidence','POD + photos'],['Damage','2 pallets'],['Caught in','0.4s']]],
+ matched:['Matched to the order','Found on the first lookup, so no search route was needed.',[['Order','SO-48219'],['Confidence','0.97'],['Read from','Oracle Fusion']]],
+ warranty:['Warranty checked first','Checked before treating it as damage — the window had closed.',[['Expired','2025-11'],['Read from','product master'],['Result','damage route']]],
+ photos:['Photos match the POD','Damage pattern consistent with the delivery record.',[['Confidence','0.93'],['Floor','0.85'],['Evidence','POD + 4 photos']]],
+ vendor:['Vendor score pulled','No pattern of false claims on this account.',[['Source','vendor scorecard'],['Result','no flag']]],
+ 'gate-4474':['Gate · inside authority','$8,400 sits under the $10,000 credit limit, so no person was interrupted.',[['Credit','$8,400'],['Limit','$10,000'],['Result','auto-approved']]],
+ 'conf-4474':['Confidence cleared the floor','Both the money test and the confidence test had to pass.',[['Confidence','0.93'],['Floor','0.85']]],
+ credit:['Credit issued','Written to Fusion and confirmed by Fusion — not just sent.',[['Amount','$8,400'],['System','Oracle Fusion'],['Status','verified ✓']]],
+ invoice:['Invoice corrected','The customer sees the corrected balance, not a promise of one.',[['Action','invoice amended'],['Customer','notified']]],
+ 'return':['Return and collection','Handed to Iris, who owns the logistics booking.',[['Owner','Iris'],['Via','HO-8834'],['Waiting on','customer confirmation']]],
+ score:['Vendor scorecard updated','This outcome sharpens the next detection on the lane.',[['Written to','Databricks'],['Effect','detection tuning']]],
+ 'sig-4479':['Three new signals','Picked up from the feed; not yet a case.',[['Feed','VN-2210'],['Signals','3'],['Stage','pre-case']]],
+ 'assess-4479':['Assessing exposure','Checking whether any promise dates actually move.',[['Checked','31 of 47'],['Owner','Mercer']]],
+ 'next-4479':['If dates slip','A case opens and routes to Iris for coverage.',[['Next owner','Iris'],['Trigger','any committed date moves']]],
+ 'quiet-4479':['If nothing slips','It closes quietly and nobody is interrupted.',[['Outcome','logged'],['Interruptions','none']]],
+ 'cl-open':['Claim opened','From records already held — no proof demanded up front.',[['Owner','Christy'],['Age','3h 20m']]],
+ 'cl-wait':['Waiting on photos','A reminder can be sent from the actions panel.',[['Waiting on','customer'],['Action','reminder available']]],
+ 'cl-next':['Then it validates','The same path EX-4474 took: POD, photos, vendor score.',[['Next','validate'],['Rule','credit ≤ $10k auto']]],
+ t1:['The decision','The requisition was held, not executed.',[['Case','EX-4472'],['Amount','$214,000']]],
+ t2:['The rule','Policy v4.2 caps automatic requisitions at $150,000.',[['Limit','$150,000'],['This PR','$214,000']]],
+ t3:['Confidence was never the issue','0.88 sat above the 0.85 floor. Authority stopped it.',[['Confidence','0.88'],['Floor','0.85']]],
+ t4:['The evidence','Cover breaks on three SKUs across six DCs from day 12.',[['SKUs','3'],['DCs','6']]],
+ t5:['Both sides costed','Neither the risk nor the cost was hidden from you.',[['Unprotected','~4.1% service loss'],['Covered','$214k tied up']]],
+ t6:['What happens next','It waits as a bounded packet — you are not asked to re-investigate.',[['Waiting','2h 11m'],['Cost of delay','$1.8k/day']]],
+ w1:['Routed to damage','The warranty branch stayed grey and explains itself.',[['Route','damage'],['Not taken','warranty']]],
+ w2:['The rule','Warranty applies only inside its window.',[['Rule','warranty window']]],
+ w3:['Warranty expired','Read from the product master: November 2025.',[['Expired','2025-11']]],
+ w4:['Photos matched','Consistent with the POD damage pattern.',[['Confidence','0.93']]],
+ w5:['Credit auto-issued','$8,400 was inside the ≤$10k limit.',[['Amount','$8,400'],['Limit','$10,000']]],
+ a1:['Acted alone','No person was asked to approve the lead-time update.',[['Case','EX-4471']]],
+ a2:['Test one','The change was 10 days against a 15-day ceiling.',[['Rule','≤ 15 days'],['Actual','10']]],
+ a3:['Test two','Exposure was $38,200 against a $50,000 ceiling.',[['Rule','< $50,000'],['Actual','$38,200']]],
+ a4:['Test three','Confidence 0.94 against a 0.85 floor.',[['Rule','≥ 0.85'],['Actual','0.94']]],
+ a5:['The proof','Forty-two writes, each confirmed by Fusion itself.',[['Writes','42'],['Verified','all ✓']]],
+ a6:['The counterfactual','One number over any line and it stops, exactly like EX-4472.',[['Behaviour','stop, draft, ask']]],
+ c1:['The customer chose','Christy never made the product decision.',[['Decided by','the customer']]],
+ c2:['Absorbing was allowed','The 4% price gap sat inside the ≤5% rule.',[['Rule','≤ 5%'],['Actual','4%']]],
+ c3:['Substituting was not','Product substitution is on the never-alone list.',[['Rule','never alone']]],
+ c4:['Both options costed','Alternate now, or wait six days — stated plainly.',[['Options','2']]],
+ c5:['The outcome','They waited; the date was re-committed and the pattern logged.',[['Choice','wait'],['Logged','offer pattern']]]
+};
+function openStep(id){
+  var d=STEPS[id];if(!d)return;
+  openDrawer('<div class="dr-k">'+(S.caseId||'')+' · step detail</div><div class="dr-t">'+d[0]+'</div>'+
+    '<div class="dr-s">'+d[1]+'</div>'+
+    d[2].map(function(r){return '<div class="kv"><span>'+r[0]+'</span><b>'+r[1]+'</b></div>'}).join(''));
+}
+
+/* ============ shared drawers ============ */
+function openDrawer(html){$('drbody').innerHTML=html;$('drawer').classList.add('on');$('scrim').classList.add('on')}
+function closeAll(){
+  $('drawer').classList.remove('on');$('scrim').classList.remove('on');
+  $('modal').classList.remove('on');S.rejectMode=false;
+}
+var HOS={
+ 'HO-8831':{t:'HO-8831 · Mercer → Iris',rows:[['Ask','replan cover for the affected window'],['Facts sent','new lead time · 41 affected POs (Fusion 08:14:04)'],['Assumption','window ends 21 Nov — labelled as an assumption'],['Authority passed','coverage + requisitions within limits'],['Authority kept','vendor master stays Mercer’s'],['Due','5 min'],['Status','accepted · 08:14:09']]},
+ 'HO-8832':{t:'HO-8832 · Iris → Christy',rows:[['Ask','protect the install on SO-48219'],['Facts sent','revised date · +6 days vs commitment'],['Authority passed','offer options · absorb ≤5%'],['Authority kept','requisition decisions stay Iris’s'],['Status','accepted · 08:16:41']]},
+ 'HO-8834':{t:'HO-8834 · Christy → Iris',rows:[['Ask','book the return and collection'],['Facts sent','claim approved · credit issued · POD reference'],['Authority passed','logistics booking within limits'],['Authority kept','customer contact stays Christy’s'],['Status','accepted · day 9']]}
+};
+function openHO(id){var h=HOS[id];
+  openDrawer('<div class="dr-k">Handoff · inspectable contract</div><div class="dr-t">'+h.t+'</div>'+
+   '<div class="dr-s">Not “hands to” prose — what moved, what stayed, and the acceptance.</div>'+
+   h.rows.map(function(r){return '<div class="kv"><span>'+r[0]+'</span><b>'+r[1]+'</b></div>'}).join(''));
+}
+var INSTS={
+ 'EX-4479':{t:'EX-4479 · new supplier signals',st:'run',
+  d:'Mercer picked up three lead-time signals on the VN-2210 feed. Not a case yet — it becomes one only if promised dates are actually affected.',
+  facts:[['Stage','Detect'],['Owner','Mercer'],['Source','EDI 824'],['Confidence','0.99'],['Started','09:41:02']],
+  read:['Supplier feed · EDI 824','Oracle Fusion · open POs'],
+  next:'Assess all 47 open orders against the new dates. If any promised date slips, a case opens automatically.',
+  acts:[['Watch this','toast(\'Watching EX-4479 — you will be told the moment it becomes a case.\')']]},
+ 'EX-4479b':{t:'EX-4479 · assessing exposure',st:'run',
+  d:'Comparing the new lead times against the promise date on every open PO from this vendor.',
+  facts:[['Stage','Assess'],['Owner','Mercer'],['Progress','31 of 47 checked'],['Confidence','0.96'],['Elapsed','2.4s']],
+  read:['Oracle Fusion · PO promise dates','OMP · coverage positions'],
+  next:'Anything that slips past its committed date becomes an impact line, and customers get traced from there.'},
+ 'EX-4471w':{t:'EX-4471 · writes verified',st:'done',
+  d:'The vendor lead time and 41 PO promise dates were written to Fusion — and confirmed by Fusion itself, not just sent.',
+  facts:[['Stage','Act'],['Owner','Mercer'],['Writes','42 · all verified'],['Confidence','0.94'],['Runtime','6.1s']],
+  read:['Oracle Fusion · vendor master','Oracle Fusion · PO lines'],
+  next:'Handed to Iris as HO-8831 with the new lead time and the 41 affected orders attached.',
+  acts:[['Open the handoff','openHO(\'HO-8831\')'],['See the full case','goFlow(\'audit\',\'EX-4471\')']]},
+ 'EX-4480':{t:'EX-4480 · coverage check',st:'run',
+  d:'A fresh coverage run across six distribution centres, triggered by the EX-4479 signals.',
+  facts:[['Stage','Assess'],['Owner','Iris'],['Sites','6 DCs'],['Confidence','0.92'],['Elapsed','1.8s']],
+  read:['OMP · coverage by DC','Manhattan · on-hand and in-transit'],
+  next:'Any SKU falling below service target inside the window moves to Impact for costing.'},
+ 'EX-4480b':{t:'EX-4480 · trade-off costed',st:'run',
+  d:'Both sides costed before anything is recommended: what the service loss costs, and what full cover ties up.',
+  facts:[['Stage','Impact'],['Owner','Iris'],['Unprotected','~4.1% service loss'],['Fully covered','$214k working capital'],['Confidence','0.90']],
+  read:['OMP · service targets','Oracle Fusion · carrying cost'],
+  next:'A recommendation is drafted, then checked against your limits before anything executes.'},
+ 'CL-2210':{t:'CL-2210 · damage claim',st:'wait',
+  d:'Two pallets damaged under the wrap. Christy opened the claim from records already held rather than asking the customer to prove it first.',
+  facts:[['Stage','Detect'],['Owner','Christy'],['Waiting on','customer photos'],['Waiting','3h 20m'],['Opened','06:22:10']],
+  read:['Proof of delivery','Oracle Fusion · order record'],
+  next:'Once photos arrive, the damage pattern is matched against the POD and the claim is validated automatically.',
+  acts:[['Send a reminder','toast(\'Reminder sent to the customer — logged on CL-2210.\')'],['Escalate to a person','escalate()']]},
+ 'EX-4474':{t:'EX-4474 · damage validated',st:'done',
+  d:'Photos matched the proof of delivery and the vendor score came back clean — the claim is genuine.',
+  facts:[['Stage','Impact'],['Owner','Christy'],['Evidence','POD + photos'],['Confidence','0.93'],['Exposure','$8,400']],
+  read:['Manhattan · POD','Product master · vendor score'],
+  next:'Credit of $8,400 sits inside the $10,000 limit, so it issues without asking anyone.',
+  acts:[['See the full route','goFlow(\'investigate\',\'EX-4474\')']]},
+ 'EX-4474b':{t:'EX-4474 · credit issued',st:'done',
+  d:'The credit auto-issued once the claim was valid, and Fusion confirmed the write. The customer is confirming receipt.',
+  facts:[['Stage','Act'],['Owner','Christy'],['Credit','$8,400 · verified'],['Limit','≤ $10,000'],['Hold left','17h']],
+  read:['Oracle Fusion · invoice','Manhattan · 48h soft hold'],
+  next:'Handed to Iris as HO-8832 to book the return and collection.',
+  acts:[['Open the handoff','openHO(\'HO-8832\')'],['Nudge the customer','nudge4474()']]}
+};
+function openInst(id){
+  var d=INSTS[id];if(!d)return;
+  var pill={done:'<span class="pill ok">verified</span>',run:'<span class="pill br">running now</span>',
+    wait:'<span class="pill nu">waiting</span>',held:'<span class="pill warn">needs you</span>'}[d.st]||'';
+  var h='<div class="dr-k">Instance</div>'+
+    '<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:4px"><div class="dr-t" style="margin:0">'+d.t+'</div></div>'+
+    '<div style="margin-bottom:10px">'+pill+'</div>'+
+    '<div class="dr-s">'+d.d+'</div>'+
+    d.facts.map(function(r){return '<div class="kv"><span>'+r[0]+'</span><b>'+r[1]+'</b></div>'}).join('');
+  if(d.read&&d.read.length){
+    h+='<div class="rl" style="margin:16px 0 8px">Evidence read</div>'+
+      d.read.map(function(r){return '<div class="note-i" style="margin-bottom:6px"><div class="nb">'+r+'</div></div>'}).join('');
+  }
+  if(d.next){
+    h+='<div class="rl" style="margin:16px 0 8px">What happens next</div>'+
+      '<div class="act-card calm" style="margin-bottom:0"><p style="margin:0">'+d.next+'</p></div>';
+  }
+  h+='<div class="rl" style="margin:16px 0 8px">Do something</div><div class="qa">';
+  (d.acts||[]).forEach(function(a){h+='<button class="btn w" onclick="closeAll();'+a[1]+'">'+a[0]+'</button>'});
+  var cid=id.replace(/[a-z]$/,'');
+  h+='<button class="btn w" onclick="closeAll();goFlow(\'investigate\',\''+(CASES[cid]?cid:'EX-4472')+'\')">Open this case in the Orchestrator</button>';
+  h+='<button class="btn w" onclick="closeAll();toast(\'Watching '+cid+' — you will be notified when it changes.\')">Watch for changes</button>';
+  h+='</div>';
+  openDrawer(h);
+}
+function openLimits(a){
+  var L={mercer:[['Lead-time update','≤ 15 days'],['Exposure alone','< $50,000'],['Confidence floor','0.85'],['Never alone','vendor termination']],
+         iris:[['Auto-raise PR','≤ $150,000'],['Safety stock move','≤ 25%'],['Confidence floor','0.85'],['Never alone','customer credit']],
+         christy:[['Price absorb','≤ 5%'],['Claim credit','≤ $10,000'],['Confidence floor','0.85'],['Never alone','product substitution']]};
+  openDrawer('<div class="dr-k">Decision rights · policy v4.2</div><div class="dr-t">'+AG[a].n+' — limits</div>'+
+   '<div class="dr-s">Set by the planning lead, versioned, effective next run.</div>'+
+   L[a].map(function(r){return '<div class="kv"><span>'+r[0]+'</span><b>'+r[1]+'</b></div>'}).join('')+
+   '<div style="margin-top:16px"><button class="btn" onclick="closeAll();goFlow(\'test\')">Test a limit change →</button></div>');
+}
+function openProposal(){
+  var decided=S.proposal;
+  openDrawer('<div class="dr-k">Learning proposal · from an override</div><div class="dr-t">Read the phase-out flag before cover recommendations</div>'+
+   '<div class="dr-s">Born from Dana R.’s rejection of EX-4468, tested against 90 days of history.</div>'+
+   '<div class="kv"><span>Source</span><b>override · EX-4468 · 14:22</b></div>'+
+   '<div class="kv"><span>Backtest</span><b>3 wrong recommendations suppressed</b></div>'+
+   '<div class="kv"><span>Side effects</span><b>none found in 90-day replay</b></div>'+
+   '<div class="kv"><span>Status</span><b>'+(decided==='approved'?'live from next run · rollback available':decided==='testing'?'sent back for more testing':'awaiting policy owner')+'</b></div>'+
+   (decided?'':'<div style="margin-top:16px;display:flex;gap:8px"><button class="btn pr" onclick="proposalDecide(\'approved\')">Approve change</button>'+
+   '<button class="btn" onclick="proposalDecide(\'testing\')">Request more testing</button></div>'));
+}
+function proposalDecide(kind){
+  S.proposal=kind;
+  var row=$('row-4468-pill');
+  if(row){row.className='pill '+(kind==='approved'?'ok':'nu');
+    row.textContent=kind==='approved'?'change live · rollback available':'more testing requested';}
+  toast(kind==='approved'?'Change approved — live from the next run. Rollback stays available.':'Sent back for more testing. The proposal stays open.');
+  closeAll();
+}
+function openRetry(){
+  openDrawer('<div class="dr-k">System write · recovering</div><div class="dr-t">OMP — safety stock write retrying</div>'+
+   '<div class="dr-s">The write did not land. Nothing is lost: the action stays open until OMP confirms, and it will not double-write.</div>'+
+   '<div class="kv"><span>Case</span><b>EX-4480 · safety stock +12%</b></div>'+
+   '<div class="kv"><span>What happened</span><b>OMP returned 503 at 09:39:12</b></div>'+
+   '<div class="kv"><span>Attempts</span><b>2 of 5 · next try in 38s</b></div>'+
+   '<div class="kv"><span>Duplicate guard</span><b>same request key — OMP skips a repeat</b></div>'+
+   '<div class="kv"><span>If it fails</span><b>stops and comes to you with the attempt history</b></div>'+
+   '<div style="margin-top:16px;display:flex;gap:8px">'+
+   '<button class="btn" onclick="toast(\'Retrying now — re-sent with the same request key.\');closeAll()">Retry now</button>'+
+   '<button class="btn dng" onclick="toast(\'Write cancelled and rolled back. EX-4480 flagged for you.\');closeAll()">Cancel &amp; roll back</button></div>');
+}
+
+/* ============ decision packet ============ */
+function openPacket(){
+  if(!S.held){toast('EX-4472 is already decided.');return}
+  $('modalBody').innerHTML=
+   '<div class="m-t">Decision packet — EX-4472</div>'+
+   '<div class="m-s">One bounded question. The investigation is attached, not re-opened.</div>'+
+   '<div class="opt rec"><h6>Iris recommends <span class="pill br">conf 0.88 · floor 0.85</span></h6>'+
+   '<p>Raise cover on 3 SKUs — the $214,000 requisition. Unprotected, an estimated 4.1% service loss on the affected lines. Two smaller requisitions already executed and verified.</p></div>'+
+   '<div class="opt"><h6>Alternative — partial cover</h6><p>Raise Dalton and Cartersville only (~$128k). Covers the two DCs that break first, leaves the tail exposed.</p></div>'+
+   '<div class="opt"><h6>Alternative — do nothing</h6><p>Accept the service risk. Costs roughly $1.8k/day in expedites if the window holds.</p></div>'+
+   '<div class="kv"><span>Policy check</span><b>$214k &gt; $150k limit — the only reason you are being asked</b></div>'+
+   '<textarea class="rzn" id="rzn" placeholder="Reason (required to reject) — this is what the system learns from"></textarea>'+
+   '<div class="rz-err" id="rzerr">A reason is required — it is what the system learns from.</div>'+
+   '<div class="m-f"><button class="btn dng" onclick="decide(\'reject\')">Reject with reason</button>'+
+   '<button class="btn" onclick="closeAll()">Later</button>'+
+   '<button class="btn pr" onclick="decide(\'approve\')">Approve · $214,000</button></div>';
+  $('modal').classList.add('on');$('scrim').classList.add('on');
+}
+function decide(kind){
+  if(kind==='reject'&&!S.rejectMode){S.rejectMode=true;$('rzn').classList.add('on');$('rzn').focus();return}
+  if(kind==='reject'){
+    var r=$('rzn').value.trim();
+    if(!r){$('rzerr').style.display='block';return}
+    S.held=false;applyDecision(false,r);
+  }else{S.held=false;applyDecision(true,'')}
+  closeAll();
+}
+function applyDecision(ok,reason){
+  var sh=$('ss-held');if(sh)sh.textContent='0';
+  $('p-4472').className='pill '+(ok?'ok':'dng');
+  $('p-4472').textContent=ok?'approved · executing':'rejected · reason captured';
+  $('s-4472').textContent=ok
+    ?'Requisition released. Fusion write in progress — it will show verified once Fusion confirms.'
+    :'Rejected with your reason. Iris will not re-raise it; the reason feeds the next recommendation.';
+  $('a-4472').innerHTML='<button class="btn" onclick="goFlow(\'investigate\',\'EX-4472\')">Open flow</button>';
+  var wf=$('wf-4472');
+  if(wf){wf.className='inst '+(ok?'done':'');
+    wf.innerHTML='<span class="id">EX-4472</span><span class="what">'+(ok?'approved · writing to Fusion':'rejected · reason captured')+'</span>';}
+  AGWORK.iris.m[1][0]=String(Math.max(0,+AGWORK.iris.m[1][0]-1));
+  if(!ok){
+    AGWORK.iris.m[2][0]=String(+AGWORK.iris.m[2][0]+1);
+    var d=document.createElement('div');d.className='ov';
+    d.innerHTML='<b>now · You rejected EX-4472</b> — <span class="why">"'+esc(reason)+'"</span>'+
+      '<div class="fed">↻ captured — it will shape the next recommendation</div>';
+    $('ovfeed').prepend(d);
+  }
+  // flow: replace the decision stage
+  var c=CASES['EX-4472'];
+  c.stages[5]={n:'Your decision',i:'◉',s:ok?'done':'held',t:'answered',items:[
+    ok?{b:'You approved it',s:'$214,000 released to Fusion',k:'ok',d:'packet'}
+      :{b:'You rejected it',s:'reason captured and fed back',k:'warn',d:'packet'}]};
+  c.stages[6]={n:'Act & learn',i:'↻',s:ok?'active':'done',t:ok?'writing':'logged',items:[
+    ok?{b:'Writing to Fusion',s:'closes when the system confirms',k:'',d:'future-a'}
+      :{b:'Learning from your reason',s:'no silent repeat of this recommendation',k:'ok',d:'future-r'}]};
+  c.meta=[['Exposure','$214,000'],['Outcome',ok?'approved':'rejected'],['Owner','Iris'],['Decided','just now']];
+  if(S.filter==='iris'&&$('wf-single').style.display!=='none')renderSingle('iris');
+  if(S.filter==='all')renderVWF();
+  renderAgCards();renderRail();
+  if(S.motive)  {renderPanes();renderFlow()}
+  toast(ok?'Approved. $214k released — the write will verify against Fusion.'
+          :'Rejected with reason — captured and fed back. That is the signal that trains the system.');
+  if(ok)setTimeout(function(){
+    $('p-4472').className='pill ok';$('p-4472').textContent='executed · verified ✓';
+    $('s-4472').textContent='Released and confirmed by Fusion. Safety stock and requisition are live; the outcome is logged against the baseline.';
+    var w=$('wf-4472');if(w){w.className='inst done';
+      w.innerHTML='<span class="id">EX-4472</span><span class="what">$214k · verified ✓</span>';}
+    c.stages[6]={n:'Act & learn',i:'↻',s:'done',t:'verified',items:[
+      {b:'Fusion confirmed the write',s:'requisition live · case closed',k:'ok',d:'future-a'}]};
+    if(S.motive&&S.caseId==='EX-4472')renderFlow();
+  },2600);
+}
+
+/* ============ nudge / propose / audit ============ */
+function nudge4474(){
+  if(S.nudged4474){toast('A reminder already went out — the customer has until the hold expires.');return}
+  S.nudged4474=true;
+  var b=$('nudge-4474');
+  if(b){b.textContent='Reminder sent ✓';b.disabled=true}
+  $('s-4474').textContent='Christy validated the claim from the POD and photos. $8,400 credit issuing · reminder sent just now, logged on the case.';
+  if(S.motive)renderActions();
+  toast('Reminder sent to the customer — logged on EX-4474.');
+}
+function proposeLimit(){
+  if(S.limit===150000){toast('That is the current limit — move it first to propose a change.');return}
+  S.pendingLimit=S.limit;renderActions();
+  toast('Proposed: $'+S.limit.toLocaleString()+' — sent to the policy owner with the replay attached. Nothing changes until it is approved.');
+}
+function withdrawLimit(){S.pendingLimit=null;renderActions();toast('Proposal withdrawn. The limit stays at $150,000.')}
+function copyAudit(){
+  var txt='NAVANTA AUDIT · EX-4471 — vendor lead time +10 days\n'+
+   'Decisions: 6 (1 acted-alone, 1 gate split, 2 handoffs accepted, 1 customer choice)\n'+
+   'Writes: 7, all verified by target systems (Fusion x4, OMP, Manhattan, Databricks)\n'+
+   'Human moments: 1 override by Dana R., reason captured, learning proposed\n'+
+   'Outcome: 6.1s agent time vs 3.5-day manual baseline; customer re-committed';
+  if(navigator.clipboard)navigator.clipboard.writeText(txt).then(
+    function(){toast('Audit summary copied to your clipboard.')},function(){showAuditText(txt)});
+  else showAuditText(txt);
+}
+function showAuditText(txt){
+  openDrawer('<div class="dr-k">Audit summary</div><div class="dr-t">EX-4471 — copy this</div>'+
+    '<div class="dr-s">Your browser blocked clipboard access. Select the text below and copy it.</div>'+
+    '<textarea class="rzn on" style="min-height:190px;font-family:Geist Mono,monospace;font-size:11.5px" readonly>'+esc(txt)+'</textarea>');
+}
+
+/* ============ audit motive uses a closed case ============ */
+CASES['EX-4471']={title:'Vendor lead time +10 days',sub:'closed and provable — every decision, write and human moment',
+ meta:[['Decisions','6'],['Writes','7 verified'],['Human moments','1'],['Agent time','6.1s']],
+ stages:[
+  {n:'Signal',i:'⚑',s:'done',t:'0.8s',own:'mercer',items:[{b:'Lead-time notice',s:'EDI 824 · caught before any inbox',k:'',d:'signal'}]},
+  {n:'Acted alone',i:'▸',s:'done',t:'1.5s',own:'mercer',items:[
+    {b:'Lead time + 41 PO dates',s:'all three tests passed · verified by Fusion ✓',k:'ok',d:'write1'}]},
+  {ho:'HO-8831',hoLabel:'new lead time → Iris'},
+  {n:'Gate split',i:'◇',s:'done',t:'0.2s',own:'iris',items:[
+    {b:'2 executed · 1 held',s:'$96,400 ran · $214,000 asked a person',k:'',d:'gate-pass'}]},
+  {ho:'HO-8832',hoLabel:'date risk → Christy'},
+  {n:'Customer chose',i:'◉',s:'done',t:'day 1',own:'christy',items:[
+    {b:'Waited rather than substitute',s:'install date re-committed in Fusion ✓',k:'ok',d:'c5'}]},
+  {n:'Human moment',i:'✋',s:'done',t:'+2h 11m',items:[
+    {b:'Dana R. rejected the held PR',s:'“SKU 44-2213 phases out in Q4 — don’t build cover we’ll write off.”',k:'warn',d:'t6'}]},
+  {n:'Learned',i:'↻',s:'done',t:'day 9',items:[
+    {b:'Phase-out check proposed',s:'3 repeat recommendations suppressed since',k:'ok',d:'score'}]}
+ ]};
+
+/* ============ keyboard + toast ============ */
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAll()});
+function makeKeyboardReachable(){
+  document.querySelectorAll('.sw,.inst[onclick]').forEach(function(el){
+    if(el.tagName==='BUTTON'||el.tabIndex>=0)return;
+    el.tabIndex=0;el.setAttribute('role','button');
+    el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click()}});
+  });
+}
+var tT=null;
+function toast(m){
+  $('toastEl').textContent=m;$('toastEl').classList.add('on');
+  clearTimeout(tT);tT=setTimeout(function(){$('toastEl').classList.remove('on')},3600);
+}
+
+/* ============ init ============ */
+renderEntry();renderAgCards();renderRail();makeKeyboardReachable();
+</script>
+</body>
+</html>
