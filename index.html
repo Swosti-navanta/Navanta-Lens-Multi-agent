@@ -226,7 +226,7 @@ button{font-family:inherit;cursor:pointer}
 @media(max-width:1180px){.tower-split{grid-template-columns:1fr}.rail{position:static}}
 
 /* ===== tower · SYSTEM VIEW (how the agents worked) ===== */
-.sv-shell{display:grid;grid-template-columns:246px minmax(0,1fr) var(--sv-insp,330px);gap:13px;
+.sv-shell{display:grid;grid-template-columns:210px minmax(0,1fr) var(--sv-insp,320px);gap:13px;
   align-items:stretch;height:calc(100vh - 150px);min-height:580px;transition:grid-template-columns .18s}
 .sv-shell.no-insp{--sv-insp:0px}
 .sv-shell.no-insp>.sv-insp{opacity:0;pointer-events:none;overflow:hidden}
@@ -354,8 +354,12 @@ button{font-family:inherit;cursor:pointer}
 .sv-nar{padding:11px 16px;border-top:1px solid var(--border-light);background:var(--surface-grey);
   font-size:12px;line-height:1.55;color:var(--muted-foreground);min-height:54px}
 .sv-nar b{color:var(--foreground);font-weight:600}
-.sv-insp{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-xl);
+.sv-insp{position:relative;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-xl);
   box-shadow:var(--shadow-card);padding:15px 17px;overflow:auto;min-width:0}
+.sv-x{position:absolute;top:11px;right:11px;width:26px;height:26px;border:1px solid var(--border);
+  background:var(--background);border-radius:7px;color:var(--muted-foreground);font-size:12px;
+  display:flex;align-items:center;justify-content:center;z-index:2}
+.sv-x:hover{background:var(--surface-hover);color:var(--foreground);border-color:var(--border-strong)}
 .sv-ik{font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-neutral);margin-bottom:7px}
 .sv-it{font-size:15px;font-weight:600;letter-spacing:-.01em;line-height:1.25}
 .sv-is{font-size:11.5px;color:var(--muted-foreground);margin:5px 0 12px;line-height:1.5}
@@ -976,7 +980,7 @@ button{font-family:inherit;cursor:pointer}
 
       <!-- ---- SYSTEM VIEW: how the agents worked, replayable ---- -->
       <div id="tv-system" hidden>
-        <div class="sv-shell" id="svShell">
+        <div class="sv-shell no-insp" id="svShell">
           <aside class="sv-phases">
             <div class="sv-ph-h">The phases of this case
               <span>Hover one to isolate it · click to hold</span>
@@ -998,7 +1002,6 @@ button{font-family:inherit;cursor:pointer}
                   <span><i style="background:var(--success)"></i>verified write</span>
                   <span><i style="background:var(--warning)"></i>held / human</span>
                 </span>
-                <button class="icobtn" onclick="svInspToggle()" aria-label="Toggle detail panel" title="Toggle detail panel"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M15 4v16"></path><rect x="15" y="4" width="6" height="16" rx="2" fill="currentColor" stroke="none"></rect></svg></button>
               </div>
             </div>
             <div class="sv-canvas" id="svCanvas">
@@ -1015,7 +1018,10 @@ button{font-family:inherit;cursor:pointer}
             </div>
             <div class="sv-nar" id="svNar" aria-live="polite"></div>
           </section>
-          <aside class="sv-insp" id="svInsp"></aside>
+          <aside class="sv-insp" id="svInsp">
+            <button class="sv-x" onclick="svCloseDrawer()" aria-label="Close detail">✕</button>
+            <div id="svInspBody"></div>
+          </aside>
         </div>
       </div>
 
@@ -1647,7 +1653,8 @@ function nav(p){
   if(p==='govern')renderGov();
   if(p==='audit')renderAudit();
 }
-function towerHome(){S.tower='today';$('t-today').classList.add('on');$('t-agent').classList.remove('on')}
+function towerHome(){S.tower='today';$('t-today').classList.add('on');$('t-agent').classList.remove('on');
+  if(S.towerView==='system'&&SV.built){S.svReturn=false;requestAnimationFrame(function(){svFit()})}}
 function towerTab(t){
   document.querySelectorAll('#t-today .tabsrow button').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});
   ['activity','systems','overrides','value'].forEach(function(k){$('tp-'+k).classList.toggle('on',k===t)});
@@ -1664,60 +1671,60 @@ function towerTab(t){
    4. The loop-back is routed around the canvas edge, never through it.
    5. Only stages up to "now" are drawn live; the rest stay ghosted.
    ============================================================ */
-var SVW=1500, SVH=940;
+var SVW=1420, SVH=940;
 
 var SVN=[
- {id:'signal',k:'signal',ic:'⇩',t:'Signal',r:'The input',x:110,y:26,w:175,
+ {id:'signal',k:'signal',ic:'⇩',t:'Signal',r:'The input',x:40,y:26,w:175,
   d:'Vendor VN-3391 posts +10 days on its lead time, for the next three months.',
   ch:[['EDI 824',''],['08:14:02','']]},
- {id:'case',k:'case',ic:'EX',t:'Case EX-4471',r:'One accountable case',x:320,y:26,w:185,ac:'var(--brand)',
+ {id:'case',k:'case',ic:'EX',t:'Case EX-4471',r:'One accountable case',x:250,y:26,w:185,ac:'var(--brand)',
   d:'Opens the case, routes the work, holds state and the audit.',
   ch:[['$38,200 at risk','b'],['SO-48219','']]},
 
- {id:'mercer',k:'agent',ic:'M',t:'Mercer',r:'Buying agent',x:230,y:200,w:240,ac:'var(--mercer)',
+ {id:'mercer',k:'agent',ic:'M',t:'Mercer',r:'Buying agent',x:160,y:200,w:240,ac:'var(--mercer)',
   d:'Finds 41 of 47 open orders slip. Updates the lead time — inside its limits.',
   ch:[['conf 0.94','b'],['acted alone','g']]},
- {id:'iris',k:'agent',ic:'I',t:'Iris',r:'Planning agent',x:560,y:200,w:240,ac:'var(--iris)',
+ {id:'iris',k:'agent',ic:'I',t:'Iris',r:'Planning agent',x:490,y:200,w:240,ac:'var(--iris)',
   d:'Replans 6 DCs. Raises 2 requisitions, and stops at the third.',
   ch:[['conf 0.88','b'],['1 held · $214k','a']]},
- {id:'christy',k:'agent',ic:'C',t:'Christy',r:'Service agent',x:890,y:200,w:240,ac:'var(--christy)',
+ {id:'christy',k:'agent',ic:'C',t:'Christy',r:'Service agent',x:820,y:200,w:240,ac:'var(--christy)',
   d:'Turns the delay into two honest customer options. The customer picks.',
   ch:[['conf 0.91','b'],['customer chooses','']]},
- {id:'synth',k:'synth',ic:'Σ',t:'Synthesis',r:'Findings converge',x:1190,y:200,w:225,ac:'var(--brand)',
+ {id:'synth',k:'synth',ic:'Σ',t:'Synthesis',r:'Findings converge',x:1120,y:200,w:225,ac:'var(--brand)',
   d:'Facts held apart from assumptions — and one fact is quietly missing.',
   ch:[['facts 9',''],['assumptions 2',''],['1 blind spot','a']]},
 
- {id:'p44',k:'sys',ic:'P44',t:'Project44',r:'Tracking',x:235,y:390,w:140},
- {id:'fusion',k:'sys',ic:'OF',t:'Oracle Fusion',r:'ERP',x:385,y:390,w:160},
- {id:'omp',k:'sys',ic:'OM',t:'OMP',r:'Planning',x:565,y:390,w:130},
- {id:'man',k:'sys',ic:'MH',t:'Manhattan',r:'Warehouse',x:705,y:390,w:150},
- {id:'master',k:'sys',ic:'PM',t:'Product master',r:'Reference data',x:895,y:390,w:165},
+ {id:'p44',k:'sys',ic:'P44',t:'Project44',r:'Tracking',x:165,y:390,w:140},
+ {id:'fusion',k:'sys',ic:'OF',t:'Oracle Fusion',r:'ERP',x:315,y:390,w:160},
+ {id:'omp',k:'sys',ic:'OM',t:'OMP',r:'Planning',x:495,y:390,w:130},
+ {id:'man',k:'sys',ic:'MH',t:'Manhattan',r:'Warehouse',x:635,y:390,w:150},
+ {id:'master',k:'sys',ic:'PM',t:'Product master',r:'Reference data',x:825,y:390,w:165},
 
- {id:'gate',k:'gate',ic:'§',t:'Policy gate',r:'Decide · policy v4.2',x:1190,y:380,w:225,ac:'var(--warning)',
+ {id:'gate',k:'gate',ic:'§',t:'Policy gate',r:'Decide · policy v4.2',x:1120,y:380,w:225,ac:'var(--warning)',
   d:'Checks every proposed action against the limits people set.',
   ch:[['2 pass','g'],['1 stops','a']]},
 
- {id:'writes',k:'writes',ic:'✓',t:'7 writes verified',r:'Fusion · OMP · Manhattan',x:385,y:480,w:470,ac:'var(--success)',
+ {id:'writes',k:'writes',ic:'✓',t:'7 writes verified',r:'Fusion · OMP · Manhattan',x:315,y:480,w:470,ac:'var(--success)',
   d:'Every change confirmed by the target system before the case closes.'},
 
- {id:'planner',k:'human',ic:'DR',t:'Dana R. — planner',r:'Human decision',x:560,y:660,w:230,ac:'var(--warning)',
+ {id:'planner',k:'human',ic:'DR',t:'Dana R. — planner',r:'Human decision',x:490,y:660,w:230,ac:'var(--warning)',
   d:'Gets one bounded question, not the whole case. Rejects — with a reason.',
   ch:[['rejected','a'],['reason captured','']]},
- {id:'respond',k:'outcome',ic:'↩',t:'Write back & respond',r:'The revert',x:890,y:660,w:235,ac:'var(--success)',
+ {id:'respond',k:'outcome',ic:'↩',t:'Write back & respond',r:'The revert',x:820,y:660,w:235,ac:'var(--success)',
   d:'Changes land in the real systems. The customer answers; the date is re-committed.',
   ch:[['date re-committed','g']]},
- {id:'learn',k:'learn',ic:'↻',t:'Learn',r:'Close the loop',x:1200,y:660,w:210,ac:'var(--brand)',
+ {id:'learn',k:'learn',ic:'↻',t:'Learn',r:'Close the loop',x:1130,y:660,w:210,ac:'var(--brand)',
   d:'Outcome and the planner’s reason feed the next case.',
   ch:[['3 repeats suppressed','b']]},
- {id:'dbx',k:'sys',ic:'DB',t:'Databricks',r:'Learning store',x:1200,y:815,w:180}
+ {id:'dbx',k:'sys',ic:'DB',t:'Databricks',r:'Learning store',x:1130,y:815,w:180}
 ];
 
 var SVBANDS=[
- {c:'plain',  x:88,  y:8,   w:440,  h:180, l:'Trigger'},
- {c:'agents', x:212, y:178, w:930,  h:162, l:'Multi-agent work — three specialists, two handoffs'},
- {c:'plain',  x:215, y:368, w:862,  h:90,  l:'Systems of record — each docked under the agent that reads it'},
- {c:'plain',  x:1170,y:360, w:266,  h:148, l:'Governed decision'},
- {c:'plain',  x:540, y:640, w:900,  h:236, l:'Human decision, revert and learning'}
+ {c:'plain',  x:18,  y:8,   w:440,  h:180, l:'Trigger'},
+ {c:'agents', x:142, y:178, w:930,  h:162, l:'Multi-agent work — three specialists, two handoffs'},
+ {c:'plain',  x:145, y:368, w:862,  h:90,  l:'Systems of record — each docked under the agent that reads it'},
+ {c:'plain',  x:1100,y:360, w:266,  h:148, l:'Governed decision'},
+ {c:'plain',  x:470, y:640, w:900,  h:236, l:'Human decision, revert and learning'}
 ];
 
 var SVE=[
@@ -1916,7 +1923,7 @@ function svBuild(){
   });
   nd.innerHTML=h;
   nd.querySelectorAll('[data-sv]').forEach(function(el){
-    el.addEventListener('click',function(){svSelect(el.dataset.sv)});
+    el.addEventListener('click',function(){svNodeClick(el.dataset.sv)});
   });
   svRenderPhases();
   SV.built=true;
@@ -1989,7 +1996,7 @@ function svAnchor(n,side,frac){
 }
 /* the loop rail: down, around the outside, back up the left margin */
 function svRingPath(a,b){
-  var yB=SVH-42, xL=48, r=26;
+  var yB=SVH-42, xL=26, r=26;
   return 'M'+a.x+' '+a.y+
     ' C'+a.x+' '+(a.y+50)+', '+a.x+' '+yB+', '+(a.x-r)+' '+yB+
     ' L'+(xL+r)+' '+yB+
@@ -2042,19 +2049,31 @@ function svDrawWires(){
       el.id='svp-'+e.id;
       el.textContent=e.pill||e.lab;
       el.style.left=pt.x+'px';el.style.top=pt.y+'px';
-      if(e.pill)el.onclick=function(){svSelect(e.ins)};
+      if(e.pill)el.onclick=function(){svSelect(e.ins);svOpenDrawer()};
       $('svStage').appendChild(el);
     }
   });
 }
 
-/* ---- inspector ---- */
+/* ---- node click routing ----
+   agents open the full agent deep-dive page (the same one the dashboard uses),
+   with the page's back button returning here. everything else opens the drawer. */
+function svNodeClick(id){
+  var n=svNode(id);
+  if(n&&n.k==='agent'&&AG[id]){S.svReturn=true;openAgent(id);return}
+  svSelect(id);svOpenDrawer();
+}
+function svOpenDrawer(){var s=$('svShell');if(s&&s.classList.contains('no-insp')){s.classList.remove('no-insp');setTimeout(svFit,190)}}
+function svCloseDrawer(){var s=$('svShell');if(s&&!s.classList.contains('no-insp')){s.classList.add('no-insp');
+  document.querySelectorAll('#svNodes .sv-nd').forEach(function(el){el.classList.remove('sel')});SV.sel=null;setTimeout(svFit,190)}}
+
+/* ---- inspector (drawer body) ---- */
 function svSelect(id,soft){
   var d=SVINS[id];if(!d)return;
   SV.sel=id;
   document.querySelectorAll('#svNodes .sv-nd').forEach(function(el){el.classList.remove('sel')});
   var el=$('svn-'+id);if(el)el.classList.add('sel');
-  $('svInsp').innerHTML='<div class="sv-ik">'+esc(d.k)+'</div><div class="sv-it">'+esc(d.t)+'</div>'+
+  $('svInspBody').innerHTML='<div class="sv-ik">'+esc(d.k)+'</div><div class="sv-it">'+esc(d.t)+'</div>'+
     '<div class="sv-is">'+esc(d.s)+'</div>'+
     d.rows.map(function(r){return '<div class="sv-kv"><span>'+esc(r[0])+'</span><b>'+esc(r[1])+'</b></div>'}).join('')+
     (d.note?'<div class="sv-note">'+d.note+'</div>':'');
@@ -2077,7 +2096,7 @@ function svZoom(dir,cx,cy){
 }
 function svFit(){
   var c=$('svCanvas');if(!c||!c.clientWidth)return;
-  var z=Math.min(1,Math.max(.25,(c.clientWidth-36)/SVW));
+  var z=Math.min(1,Math.max(.5,(c.clientWidth-32)/SVW));
   SV.z=z;SV.x=Math.max(10,(c.clientWidth-SVW*z)/2);SV.y=12;svApply();
 }
 (function(){
