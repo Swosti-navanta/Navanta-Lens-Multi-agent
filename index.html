@@ -278,7 +278,7 @@ button{font-family:inherit;cursor:pointer}
   border-radius:9999px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.07)}
 .sv-band.agents{background:linear-gradient(180deg,#e9e0f8,#e3d8f6);border-radius:22px}
 .sv-band.agents b{color:var(--brand);background:#efe8fb;box-shadow:inset 0 0 0 1px rgba(100,64,182,.25)}
-.sv-band.plain{background:rgba(250,250,251,.6);box-shadow:inset 0 0 0 1px rgba(0,0,0,.045)}
+.sv-band.plain{background:rgba(250,250,251,.55);border:1px dashed #dcdfe4}
 
 /* --- nodes: everything is always visible; focus only dims the rest --- */
 .sv-nd{position:absolute;background:var(--card);border:1px solid var(--border);border-radius:14px;
@@ -1731,11 +1731,11 @@ var SVBANDS=[
 
 var SVE=[
  {id:'sig', f:'signal', t:'case',    fs:'R',ts:'L',ty:'flow'},
- {id:'cm',  f:'case',   t:'mercer',  fs:'B',ts:'T',ty:'flow',ff:.5,tf:.5},
+ {id:'cm',  f:'case',   t:'mercer',  fs:'B',ts:'T',ty:'flow',ff:.5,tf:.3},
  {id:'ho1', f:'mercer', t:'iris',    fs:'R',ts:'L',ty:'hand',pill:'HO-8831',ins:'ho1'},
  {id:'ho2', f:'iris',   t:'christy', fs:'R',ts:'L',ty:'hand',pill:'HO-8832',ins:'ho2'},
  {id:'cs',  f:'christy',t:'synth',   fs:'R',ts:'L',ty:'flow'},
- {id:'r1',  f:'mercer', t:'p44',     fs:'B',ts:'T',ty:'read',ff:.22,tf:.5},
+ {id:'r1',  f:'mercer', t:'p44',     fs:'B',ts:'L',ty:'read',ff:.15,tf:.5},
  {id:'r2',  f:'mercer', t:'fusion',  fs:'B',ts:'T',ty:'read',ff:.72,tf:.5},
  {id:'r3',  f:'iris',   t:'omp',     fs:'B',ts:'T',ty:'read',ff:.22,tf:.5},
  {id:'r4',  f:'iris',   t:'man',     fs:'B',ts:'T',ty:'read',ff:.72,tf:.5},
