@@ -333,6 +333,8 @@ button{font-family:inherit;cursor:pointer}
 .sv-wires g.e-loop path.ln{stroke-dasharray:8 6}
 /* start marker: a solid dot in the edge colour, so the origin is obvious */
 .sv-wires circle.start{stroke:#fff;stroke-width:2}
+/* on a focused phase, the flow's origin dot grows so start & end both read */
+.sv-wires g.sv-live circle.start{r:6.5px;stroke-width:2.5}
 .sv-wires g.e-flow circle.start,.sv-wires g.e-hand circle.start,.sv-wires g.e-loop circle.start{fill:var(--brand)}
 .sv-wires g.e-read circle.start{fill:#0087ce}
 .sv-wires g.e-write circle.start{fill:#16a34a}
@@ -1672,7 +1674,7 @@ function towerTab(t){
    4. The loop-back is routed around the canvas edge, never through it.
    5. Only stages up to "now" are drawn live; the rest stay ghosted.
    ============================================================ */
-var SVW=1420, SVH=1060;
+var SVW=1420, SVH=1100;
 
 var SVN=[
  {id:'signal',k:'signal',ic:'⇩',t:'Signal',r:'The input',x:40,y:26,w:175,
@@ -1682,50 +1684,50 @@ var SVN=[
   d:'Opens the case, routes the work, holds state and the audit.',
   ch:[['$38,200 at risk','b'],['SO-48219','']]},
 
- {id:'mercer',k:'agent',ic:'M',t:'Mercer',r:'Buying agent',x:160,y:230,w:240,ac:'var(--mercer)',
+ {id:'mercer',k:'agent',ic:'M',t:'Mercer',r:'Buying agent',x:160,y:270,w:240,ac:'var(--mercer)',
   d:'Finds 41 of 47 open orders slip. Updates the lead time — inside its limits.',
   ch:[['conf 0.94','b'],['acted alone','g']]},
- {id:'iris',k:'agent',ic:'I',t:'Iris',r:'Planning agent',x:490,y:230,w:240,ac:'var(--iris)',
+ {id:'iris',k:'agent',ic:'I',t:'Iris',r:'Planning agent',x:490,y:270,w:240,ac:'var(--iris)',
   d:'Replans 6 DCs. Raises 2 requisitions, and stops at the third.',
   ch:[['conf 0.88','b'],['1 held · $214k','a']]},
- {id:'christy',k:'agent',ic:'C',t:'Christy',r:'Service agent',x:820,y:230,w:240,ac:'var(--christy)',
+ {id:'christy',k:'agent',ic:'C',t:'Christy',r:'Service agent',x:820,y:270,w:240,ac:'var(--christy)',
   d:'Turns the delay into two honest customer options. The customer picks.',
   ch:[['conf 0.91','b'],['customer chooses','']]},
- {id:'synth',k:'synth',ic:'Σ',t:'Synthesis',r:'Findings converge',x:1120,y:230,w:225,ac:'var(--brand)',
+ {id:'synth',k:'synth',ic:'Σ',t:'Synthesis',r:'Findings converge',x:1120,y:270,w:225,ac:'var(--brand)',
   d:'Facts held apart from assumptions — and one fact is quietly missing.',
   ch:[['facts 9',''],['assumptions 2',''],['1 blind spot','a']]},
 
- {id:'p44',k:'sys',ic:'P44',t:'Project44',r:'Tracking',x:165,y:450,w:140},
- {id:'fusion',k:'sys',ic:'OF',t:'Oracle Fusion',r:'ERP',x:315,y:450,w:160},
- {id:'omp',k:'sys',ic:'OM',t:'OMP',r:'Planning',x:495,y:450,w:130},
- {id:'man',k:'sys',ic:'MH',t:'Manhattan',r:'Warehouse',x:635,y:450,w:150},
- {id:'master',k:'sys',ic:'PM',t:'Product master',r:'Reference data',x:825,y:450,w:165},
+ {id:'p44',k:'sys',ic:'P44',t:'Project44',r:'Tracking',x:165,y:490,w:140},
+ {id:'fusion',k:'sys',ic:'OF',t:'Oracle Fusion',r:'ERP',x:315,y:490,w:160},
+ {id:'omp',k:'sys',ic:'OM',t:'OMP',r:'Planning',x:495,y:490,w:130},
+ {id:'man',k:'sys',ic:'MH',t:'Manhattan',r:'Warehouse',x:635,y:490,w:150},
+ {id:'master',k:'sys',ic:'PM',t:'Product master',r:'Reference data',x:825,y:490,w:165},
 
- {id:'gate',k:'gate',ic:'§',t:'Policy gate',r:'Decide · policy v4.2',x:1120,y:410,w:225,ac:'var(--warning)',
+ {id:'gate',k:'gate',ic:'§',t:'Policy gate',r:'Decide · policy v4.2',x:1120,y:450,w:225,ac:'var(--warning)',
   d:'Checks every proposed action against the limits people set.',
   ch:[['2 pass','g'],['1 stops','a']]},
 
- {id:'writes',k:'writes',ic:'✓',t:'7 writes verified',r:'Fusion · OMP · Manhattan',x:315,y:570,w:470,ac:'var(--success)',
+ {id:'writes',k:'writes',ic:'✓',t:'7 writes verified',r:'Fusion · OMP · Manhattan',x:315,y:610,w:470,ac:'var(--success)',
   d:'Every change confirmed by the target system before the case closes.'},
 
- {id:'planner',k:'human',ic:'DR',t:'Dana R. — planner',r:'Human decision',x:490,y:740,w:230,ac:'var(--warning)',
+ {id:'planner',k:'human',ic:'DR',t:'Dana R. — planner',r:'Human decision',x:490,y:780,w:230,ac:'var(--warning)',
   d:'Gets one bounded question, not the whole case. Rejects — with a reason.',
   ch:[['rejected','a'],['reason captured','']]},
- {id:'respond',k:'outcome',ic:'↩',t:'Write back & respond',r:'The revert',x:820,y:740,w:235,ac:'var(--success)',
+ {id:'respond',k:'outcome',ic:'↩',t:'Write back & respond',r:'The revert',x:820,y:780,w:235,ac:'var(--success)',
   d:'Changes land in the real systems. The customer answers; the date is re-committed.',
   ch:[['date re-committed','g']]},
- {id:'learn',k:'learn',ic:'↻',t:'Learn',r:'Close the loop',x:1130,y:740,w:210,ac:'var(--brand)',
+ {id:'learn',k:'learn',ic:'↻',t:'Learn',r:'Close the loop',x:1130,y:780,w:210,ac:'var(--brand)',
   d:'Outcome and the planner’s reason feed the next case.',
   ch:[['3 repeats suppressed','b']]},
- {id:'dbx',k:'sys',ic:'DB',t:'Databricks',r:'Learning store',x:1130,y:895,w:180}
+ {id:'dbx',k:'sys',ic:'DB',t:'Databricks',r:'Learning store',x:1130,y:935,w:180}
 ];
 
 var SVBANDS=[
  {c:'plain',  x:20,  y:6,   w:435, h:228, l:'Trigger'},
- {c:'agents', x:138, y:210, w:940, h:192, l:'Multi-agent work'},
- {c:'plain',  x:145, y:432, w:865, h:99,  l:'Systems of record'},
- {c:'plain',  x:1100,y:392, w:258, h:162, l:'Governed decision'},
- {c:'plain',  x:468, y:718, w:892, h:250, l:'Human decision & learning'}
+ {c:'agents', x:138, y:250, w:940, h:192, l:'Multi-agent work'},
+ {c:'plain',  x:145, y:472, w:865, h:99,  l:'Systems of record'},
+ {c:'plain',  x:1100,y:432, w:258, h:162, l:'Governed decision'},
+ {c:'plain',  x:468, y:758, w:892, h:250, l:'Human decision & learning'}
 ];
 
 var SVE=[
@@ -1962,9 +1964,19 @@ function svPaint(){
     el.classList.toggle('dim',!!st&&!on.n[n.id]);
     el.classList.toggle('sv-live',!!st&&!!on.n[n.id]);
   });
+  var wr=$('svWires');
   SVE.forEach(function(e){
     var g=$('sve-'+e.id);
-    if(g){g.classList.toggle('dim',!!st&&!on.e[e.id]);g.classList.toggle('sv-live',!!st&&!!on.e[e.id])}
+    if(g){
+      var live=!!st&&!!on.e[e.id];
+      g.classList.toggle('dim',!!st&&!on.e[e.id]);
+      g.classList.toggle('sv-live',live);
+      /* on a focused phase, make the origin dot + landing arrow of its flow prominent,
+         and lift the live edges above the dimmed ones so start/end always read */
+      var ln=g.querySelector('path.ln');
+      if(ln)ln.setAttribute('marker-end','url(#svar-'+e.ty+(live?'-lg':'')+')');
+      if(live&&wr)wr.appendChild(g);
+    }
     var p=$('svp-'+e.id);
     if(p){p.classList.toggle('dim',!!st&&!on.e[e.id]);p.classList.toggle('on',!!st&&!!on.e[e.id]&&!!e.pill)}
   });
@@ -2011,10 +2023,11 @@ function svDrawWires(){
   var wr=$('svWires');if(!wr)return;
   var NS='http://www.w3.org/2000/svg';
   /* arrowheads — one per edge colour, so every line shows where it lands */
+  function mkr(k,id,sz){return '<marker id="'+id+'" viewBox="0 0 10 10" refX="7.5" refY="5" '+
+      'markerWidth="'+sz+'" markerHeight="'+sz+'" orient="auto" markerUnits="userSpaceOnUse">'+
+      '<path d="M0.5,1 L9,5 L0.5,9 z" fill="'+SVCOL[k]+'"/></marker>'}
   var defs='<defs>'+Object.keys(SVCOL).map(function(k){
-    return '<marker id="svar-'+k+'" viewBox="0 0 10 10" refX="7.5" refY="5" '+
-      'markerWidth="8" markerHeight="8" orient="auto" markerUnits="userSpaceOnUse">'+
-      '<path d="M0.5,1 L9,5 L0.5,9 z" fill="'+SVCOL[k]+'"/></marker>'}).join('')+'</defs>';
+    return mkr(k,'svar-'+k,8)+mkr(k,'svar-'+k+'-lg',13)}).join('')+'</defs>';
   wr.innerHTML=defs;
   document.querySelectorAll('#svStage .sv-pill').forEach(function(p){p.remove()});
   SVE.forEach(function(e){
