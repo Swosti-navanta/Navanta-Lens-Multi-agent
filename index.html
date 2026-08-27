@@ -225,35 +225,43 @@ button{font-family:inherit;cursor:pointer}
 .val div span{font-size:11px;color:var(--muted-foreground)}
 @media(max-width:1180px){.tower-split{grid-template-columns:1fr}.rail{position:static}}
 
-/* ===== tower · SYSTEM VIEW (how the agents worked, replayable) ===== */
-.sv-shell{display:grid;grid-template-columns:minmax(0,1fr) var(--sv-insp,340px);gap:14px;align-items:stretch;
-  height:calc(100vh - 150px);min-height:580px;transition:grid-template-columns .18s}
+/* ===== tower · SYSTEM VIEW (how the agents worked) ===== */
+.sv-shell{display:grid;grid-template-columns:246px minmax(0,1fr) var(--sv-insp,330px);gap:13px;
+  align-items:stretch;height:calc(100vh - 150px);min-height:580px;transition:grid-template-columns .18s}
 .sv-shell.no-insp{--sv-insp:0px}
 .sv-shell.no-insp>.sv-insp{opacity:0;pointer-events:none;overflow:hidden}
 .sv-main{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-xl);
   box-shadow:var(--shadow-card);display:flex;flex-direction:column;overflow:hidden;min-width:0}
 
+/* --- left phase panel --- */
+.sv-phases{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-xl);
+  box-shadow:var(--shadow-card);display:flex;flex-direction:column;overflow:auto;min-width:0;padding:12px}
+.sv-ph-h{font-size:11px;font-weight:600;color:var(--foreground);margin-bottom:10px;line-height:1.35}
+.sv-ph-h span{display:block;font-size:10.5px;font-weight:400;color:var(--text-neutral);margin-top:2px}
+.sv-ph{display:flex;gap:9px;width:100%;text-align:left;border:1px solid transparent;background:none;
+  border-radius:9px;padding:7px 8px;margin-bottom:1px;align-items:flex-start;transition:background .15s,border-color .15s}
+.sv-ph em{font-style:normal;font-family:'Geist Mono',monospace;font-size:9.5px;font-weight:600;
+  width:19px;height:19px;border-radius:50%;background:var(--secondary);color:var(--text-neutral);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;margin-top:1px;transition:all .15s}
+.sv-phn{display:block;font-size:12px;font-weight:600;line-height:1.3;letter-spacing:-.005em;color:var(--foreground)}
+.sv-phd{display:block;font-size:10.5px;color:var(--text-neutral);line-height:1.4;margin-top:1px}
+.sv-ph:hover{background:var(--surface-hover)}
+.sv-ph.on{background:var(--surface-accent);border-color:color-mix(in oklab,var(--brand) 30%,#fff)}
+.sv-ph.on em{background:var(--brand);color:#fff}
+.sv-ph.on .sv-phn{color:var(--brand-deep)}
+.sv-ph .bar{width:3px;border-radius:2px;background:var(--ac,var(--brand));opacity:0;flex:0 0 auto;align-self:stretch;transition:opacity .15s}
+.sv-ph.on .bar{opacity:1}
+.sv-clear{margin-top:10px;width:100%;border:1px solid var(--border);background:var(--background);
+  border-radius:8px;padding:7px 10px;font-size:11.5px;font-weight:500;color:var(--muted-foreground)}
+.sv-clear:hover{border-color:var(--border-strong);color:var(--foreground)}
+
 /* --- story header --- */
-.sv-head{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border-light)}
+.sv-head{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--border-light)}
 .sv-step{width:26px;height:26px;border-radius:8px;background:var(--brand);color:#fff;font-family:'Geist Mono',monospace;
   font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
 .sv-hl{font-size:14px;font-weight:600;letter-spacing:-.01em;line-height:1.25}
 .sv-when{font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--text-neutral);margin-top:1px}
-.sv-head .right{margin-left:auto;display:flex;align-items:center;gap:8px}
-
-/* --- stage rail --- */
-.sv-rail{display:flex;gap:5px;align-items:center;padding:9px 16px;border-bottom:1px solid var(--border-light);
-  overflow-x:auto;scrollbar-width:thin}
-.sv-chip{border:1px solid var(--border);background:var(--background);color:var(--text-neutral);font-size:11px;
-  font-weight:500;padding:4px 10px 4px 5px;border-radius:9999px;display:flex;align-items:center;gap:6px;
-  white-space:nowrap;flex:0 0 auto}
-.sv-chip em{font-style:normal;font-family:'Geist Mono',monospace;font-size:9.5px;background:var(--secondary);
-  border-radius:9999px;width:17px;height:17px;display:flex;align-items:center;justify-content:center;color:var(--text-neutral)}
-.sv-chip:hover{border-color:var(--border-strong);color:var(--foreground)}
-.sv-chip.done{color:var(--pill-success-fg)}
-.sv-chip.done em{background:var(--pill-success-bg);color:var(--pill-success-fg)}
-.sv-chip.on{border-color:var(--brand);background:var(--surface-accent);color:var(--foreground);font-weight:600}
-.sv-chip.on em{background:var(--brand);color:#fff}
+.sv-head .right{margin-left:auto;display:flex;align-items:center;gap:10px}
 
 /* --- canvas --- */
 .sv-canvas{position:relative;flex:1;min-height:0;overflow:hidden;cursor:grab;touch-action:none;background:#fbfbfc;
@@ -262,27 +270,26 @@ button{font-family:inherit;cursor:pointer}
 .sv-stage{position:absolute;top:0;left:0;transform-origin:0 0}
 .sv-wires{position:absolute;top:0;left:0;pointer-events:none;overflow:visible}
 
-/* --- lane bands (structure that kills the tangle) --- */
-.sv-band{position:absolute;border-radius:16px;pointer-events:none;z-index:0}
+/* --- lane bands --- */
+.sv-band{position:absolute;border-radius:16px;pointer-events:none;z-index:0;transition:opacity .2s}
 .sv-band b{position:absolute;top:9px;left:14px;font-size:9.5px;font-weight:600;letter-spacing:.1em;
   text-transform:uppercase;color:var(--text-neutral);opacity:.75}
-.sv-band.agents{background:linear-gradient(180deg,color-mix(in oklab,var(--brand) 7%,#fff) 0%,color-mix(in oklab,var(--brand) 3%,#fff) 100%);
-  border:1px solid color-mix(in oklab,var(--brand) 18%,#fff)}
+.sv-band.agents{background:linear-gradient(180deg,color-mix(in oklab,var(--brand) 8%,#fff) 0%,color-mix(in oklab,var(--brand) 3%,#fff) 100%);
+  border:1px solid color-mix(in oklab,var(--brand) 20%,#fff)}
 .sv-band.agents b{color:var(--brand);opacity:1}
 .sv-band.plain{background:var(--surface-grey);border:1px dashed var(--border)}
 
-/* --- nodes --- */
+/* --- nodes: everything is always visible; focus only dims the rest --- */
 .sv-nd{position:absolute;background:var(--card);border:1px solid var(--border);border-radius:12px;
   box-shadow:var(--shadow-card);padding:10px 12px;text-align:left;z-index:3;
-  transition:opacity .3s,box-shadow .25s,border-color .25s,transform .25s}
+  transition:opacity .2s,box-shadow .2s,border-color .2s,transform .2s}
 .sv-nd:hover{border-color:var(--border-strong)}
-.sv-nd .dot{position:absolute;top:9px;right:9px;width:7px;height:7px;border-radius:50%;background:var(--border);transition:all .25s}
-.sv-nd.future{opacity:.32}
-.sv-nd.done .dot{background:var(--success)}
+.sv-nd .dot{position:absolute;top:9px;right:9px;width:7px;height:7px;border-radius:50%;
+  background:var(--ac,var(--text-neutral));opacity:.55}
+.sv-nd.dim{opacity:.2}
 .sv-nd.sv-live{border-color:var(--ac,var(--brand));
   box-shadow:0 0 0 3px color-mix(in oklab,var(--ac,var(--brand)) 16%,transparent),var(--shadow-menu)}
-.sv-nd.sv-live .dot{background:var(--ac,var(--brand));
-  box-shadow:0 0 0 3px color-mix(in oklab,var(--ac,var(--brand)) 22%,transparent)}
+.sv-nd.sv-live .dot{opacity:1;box-shadow:0 0 0 3px color-mix(in oklab,var(--ac,var(--brand)) 22%,transparent)}
 .sv-nd.sel{border-color:var(--ac,var(--brand))}
 .sv-h{display:flex;align-items:center;gap:8px;margin-bottom:5px}
 .sv-ico{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;
@@ -312,69 +319,40 @@ button{font-family:inherit;cursor:pointer}
 .sv-nd.sv-sys .sv-h{margin-bottom:1px}
 .sv-nd.sv-sys .sv-r{font-size:8.5px}
 
-/* --- wires --- */
-.sv-wires path{fill:none;stroke:#c9ced6;stroke-width:1.5;transition:stroke .3s,stroke-width .3s}
-.sv-wires g.future{opacity:.18}
-.sv-wires g.done path.ln,.sv-wires g.sv-live path.ln{stroke-width:2}
-.sv-wires g.e-hand path.ln{stroke-dasharray:none}
-.sv-wires g.done.e-flow path.ln,.sv-wires g.sv-live.e-flow path.ln{stroke:var(--brand)}
-.sv-wires g.done.e-hand path.ln,.sv-wires g.sv-live.e-hand path.ln{stroke:var(--brand);stroke-width:2.6}
-.sv-wires g.done.e-read path.ln,.sv-wires g.sv-live.e-read path.ln{stroke:#0087ce}
-.sv-wires g.done.e-write path.ln,.sv-wires g.sv-live.e-write path.ln{stroke:var(--success)}
-.sv-wires g.done.e-warn path.ln,.sv-wires g.sv-live.e-warn path.ln{stroke:var(--warning)}
-.sv-wires g.e-loop path.ln{stroke-dasharray:6 5}
-.sv-wires g.done.e-loop path.ln,.sv-wires g.sv-live.e-loop path.ln{stroke:var(--brand)}
-.sv-wires path.pk{stroke-width:2.6;stroke-dasharray:3 12;stroke-linecap:round;opacity:0}
-.sv-wires g.sv-live path.pk{opacity:.95;animation:svflow 1.05s linear infinite}
-@keyframes svflow{to{stroke-dashoffset:-15}}
-.sv-wires g.sv-live.e-read path.pk{stroke:#0087ce}
-.sv-wires g.sv-live.e-write path.pk{stroke:var(--success)}
-.sv-wires g.sv-live.e-warn path.pk{stroke:var(--warning)}
-.sv-wires g.sv-live.e-flow path.pk,.sv-wires g.sv-live.e-hand path.pk,.sv-wires g.sv-live.e-loop path.pk{stroke:var(--brand)}
-.sv-wires circle{fill:#c9ced6;transition:fill .3s}
-.sv-wires g.done circle,.sv-wires g.sv-live circle{fill:var(--brand)}
-.sv-wires g.done.e-read circle,.sv-wires g.sv-live.e-read circle{fill:#0087ce}
-.sv-wires g.done.e-write circle,.sv-wires g.sv-live.e-write circle{fill:var(--success)}
-.sv-wires g.done.e-warn circle,.sv-wires g.sv-live.e-warn circle{fill:var(--warning)}
+/* --- wires: always coloured by type, so the flow reads at a glance --- */
+.sv-wires g{transition:opacity .2s}
+.sv-wires g.dim{opacity:.12}
+.sv-wires path.ln{fill:none;stroke-width:1.8;stroke-linecap:round}
+.sv-wires g.sv-live path.ln{stroke-width:2.6}
+.sv-wires g.e-flow path.ln,.sv-wires g.e-hand path.ln,.sv-wires g.e-loop path.ln{stroke:var(--brand)}
+.sv-wires g.e-hand path.ln{stroke-width:2.6}
+.sv-wires g.e-read path.ln{stroke:#0087ce}
+.sv-wires g.e-write path.ln{stroke:#16a34a}
+.sv-wires g.e-warn path.ln{stroke:#f59e0b}
+.sv-wires g.e-loop path.ln{stroke-dasharray:7 5}
+/* start marker: a hollow ring you can see the line leave */
+.sv-wires circle.start{fill:#fff;stroke-width:2.4}
+.sv-wires g.e-flow circle.start,.sv-wires g.e-hand circle.start,.sv-wires g.e-loop circle.start{stroke:var(--brand)}
+.sv-wires g.e-read circle.start{stroke:#0087ce}
+.sv-wires g.e-write circle.start{stroke:#16a34a}
+.sv-wires g.e-warn circle.start{stroke:#f59e0b}
 
 /* --- edge labels & handoff pills --- */
 .sv-pill{position:absolute;transform:translate(-50%,-50%);z-index:6;border:1px solid var(--border);
   background:var(--card);color:var(--muted-foreground);font-family:'Geist Mono',monospace;font-size:9.5px;
   font-weight:500;padding:3px 9px;border-radius:9999px;box-shadow:var(--shadow-card);white-space:nowrap;
-  transition:opacity .3s}
-.sv-pill.future{opacity:.25}
-.sv-pill.ho{border-color:color-mix(in oklab,var(--brand) 35%,#fff);color:var(--brand-deep);font-weight:600}
+  transition:opacity .2s}
+.sv-pill.dim{opacity:.15}
+.sv-pill.ho{border-color:color-mix(in oklab,var(--brand) 40%,#fff);color:var(--brand-deep);font-weight:600}
 .sv-pill.ho:hover{border-color:var(--brand);background:var(--surface-accent)}
 .sv-pill.ho.on{background:var(--brand);border-color:var(--brand);color:#fff}
 .sv-pill.lab{pointer-events:none;background:#fbfbfc;font-size:9px}
 .sv-pill.lab.g{color:var(--pill-success-fg);border-color:color-mix(in oklab,var(--success) 40%,#fff)}
 .sv-pill.lab.a{color:var(--pill-warning-fg);border-color:color-mix(in oklab,var(--warning) 45%,#fff)}
 
-/* --- transport --- */
-.sv-tp{display:flex;align-items:center;gap:10px;padding:9px 14px;border-top:1px solid var(--border);
-  background:var(--card);flex-wrap:wrap}
-.sv-btn{width:30px;height:30px;border:1px solid var(--border);background:var(--background);border-radius:8px;
-  display:flex;align-items:center;justify-content:center;color:var(--muted-foreground);flex:0 0 auto}
-.sv-btn:hover:not(:disabled){background:var(--surface-hover);color:var(--foreground);border-color:var(--border-strong)}
-.sv-btn:disabled{opacity:.35;cursor:default}
-.sv-btn.play{width:34px;height:34px;background:var(--primary);border-color:var(--primary);color:#fff}
-.sv-btn.play:hover:not(:disabled){background:#000;border-color:#000;color:#fff}
-.sv-scrub{flex:1;min-width:150px;position:relative;height:24px;display:flex;align-items:center}
-.sv-track{position:absolute;left:0;right:0;height:4px;border-radius:9999px;background:var(--progress-track);overflow:hidden}
-.sv-fill{position:absolute;left:0;top:0;bottom:0;background:var(--brand);border-radius:9999px;width:0}
-.sv-tick{position:absolute;top:50%;transform:translate(-50%,-50%);width:9px;height:9px;border-radius:50%;
-  background:var(--background);border:1.5px solid var(--border);padding:0}
-.sv-tick.done{background:var(--brand);border-color:var(--brand)}
-.sv-tick.on{background:var(--brand);border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in oklab,var(--brand) 22%,transparent)}
-.sv-cnt{font-family:'Geist Mono',monospace;font-size:11px;color:var(--text-neutral);font-variant-numeric:tabular-nums;flex:0 0 auto}
-.sv-spd{display:flex;background:var(--secondary);border-radius:7px;padding:2px;flex:0 0 auto}
-.sv-spd button{border:0;background:none;font-size:10.5px;font-weight:500;color:var(--muted-foreground);
-  padding:3px 8px;border-radius:5px;font-family:'Geist Mono',monospace}
-.sv-spd button.on{background:var(--background);color:var(--foreground);font-weight:600;box-shadow:var(--shadow-card)}
-
 /* --- narration + inspector --- */
 .sv-nar{padding:11px 16px;border-top:1px solid var(--border-light);background:var(--surface-grey);
-  font-size:12px;line-height:1.55;color:var(--muted-foreground);min-height:58px}
+  font-size:12px;line-height:1.55;color:var(--muted-foreground);min-height:54px}
 .sv-nar b{color:var(--foreground);font-weight:600}
 .sv-insp{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-xl);
   box-shadow:var(--shadow-card);padding:15px 17px;overflow:auto;min-width:0}
@@ -389,11 +367,11 @@ button{font-family:inherit;cursor:pointer}
 .sv-note{font-size:11.5px;line-height:1.55;color:var(--muted-foreground);background:var(--surface-grey);
   border-radius:9px;padding:10px 12px;margin-top:12px}
 .sv-note b{color:var(--foreground);font-weight:600}
-.sv-lg{margin-left:auto;display:flex;gap:11px;flex-wrap:wrap;font-size:10.5px;color:var(--text-neutral);align-items:center}
+.sv-lg{display:flex;gap:11px;flex-wrap:wrap;font-size:10.5px;color:var(--text-neutral);align-items:center}
 .sv-lg span{display:flex;align-items:center;gap:5px}
 .sv-lg i{width:13px;height:2.5px;border-radius:2px}
-@media(max-width:1180px){.sv-shell{grid-template-columns:1fr;height:auto}.sv-main{min-height:520px}}
-@media(prefers-reduced-motion:reduce){.sv-wires path.pk{display:none}.sv-nd,.sv-wires path{transition:none!important}}
+@media(max-width:1240px){.sv-shell{grid-template-columns:1fr;height:auto}.sv-main{min-height:520px}}
+@media(prefers-reduced-motion:reduce){.sv-nd,.sv-wires g{transition:none!important}}
 
 /* ===== tower · agent page (flow on top, data below) ===== */
 .agp-head{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
@@ -999,9 +977,16 @@ button{font-family:inherit;cursor:pointer}
       <!-- ---- SYSTEM VIEW: how the agents worked, replayable ---- -->
       <div id="tv-system" hidden>
         <div class="sv-shell" id="svShell">
+          <aside class="sv-phases">
+            <div class="sv-ph-h">The phases of this case
+              <span>Hover one to isolate it · click to hold</span>
+            </div>
+            <div id="svPhases"></div>
+            <button class="sv-clear" id="svClear" onclick="svPin(null)" hidden>↺ Show the whole flow</button>
+          </aside>
           <section class="sv-main">
             <div class="sv-head">
-              <div class="sv-step" id="svStep">1</div>
+              <div class="sv-step" id="svStep">◆</div>
               <div style="min-width:0">
                 <div class="sv-hl" id="svHl">—</div>
                 <div class="sv-when" id="svWhen">—</div>
@@ -1016,7 +1001,6 @@ button{font-family:inherit;cursor:pointer}
                 <button class="icobtn" onclick="svInspToggle()" aria-label="Toggle detail panel" title="Toggle detail panel"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M15 4v16"></path><rect x="15" y="4" width="6" height="16" rx="2" fill="currentColor" stroke="none"></rect></svg></button>
               </div>
             </div>
-            <div class="sv-rail" id="svRail" role="tablist" aria-label="Stages"></div>
             <div class="sv-canvas" id="svCanvas">
               <div class="sv-stage" id="svStage">
                 <svg class="sv-wires" id="svWires"></svg>
@@ -1030,23 +1014,6 @@ button{font-family:inherit;cursor:pointer}
               </div>
             </div>
             <div class="sv-nar" id="svNar" aria-live="polite"></div>
-            <div class="sv-tp" role="group" aria-label="Playback controls">
-              <button class="sv-btn" id="svFirst" onclick="svGo(0)" aria-label="First stage" title="First (Home)">⏮</button>
-              <button class="sv-btn" id="svPrev" onclick="svPrev()" aria-label="Previous stage" title="Previous (←)">◀</button>
-              <button class="sv-btn play" id="svPlay" onclick="svPlay()" aria-label="Play" title="Play / pause (space)">▶</button>
-              <button class="sv-btn" id="svNext" onclick="svNext()" aria-label="Next stage" title="Next (→)">▶</button>
-              <button class="sv-btn" id="svLast" onclick="svGo(-1)" aria-label="Last stage" title="Last (End)">⏭</button>
-              <div class="sv-scrub" id="svScrub" role="slider" tabindex="0" aria-label="Stage" aria-valuemin="1" aria-valuenow="1">
-                <div class="sv-track"><div class="sv-fill" id="svFill"></div></div>
-              </div>
-              <span class="sv-cnt" id="svCnt">1/9</span>
-              <div class="sv-spd" role="group" aria-label="Speed">
-                <button data-s="0.5" onclick="svSpeed(0.5)">0.5×</button>
-                <button data-s="1" class="on" onclick="svSpeed(1)">1×</button>
-                <button data-s="1.5" onclick="svSpeed(1.5)">1.5×</button>
-                <button data-s="2" onclick="svSpeed(2)">2×</button>
-              </div>
-            </div>
           </section>
           <aside class="sv-insp" id="svInsp"></aside>
         </div>
@@ -1778,31 +1745,40 @@ var SVE=[
 ];
 
 var SVSTAGES=[
- {n:'Signal',time:'08:14:02',hl:'A change in the world, not a ticket',
+ {n:'Catch the change',sub:'The feed moves before anyone asks',time:'08:14:02',
+  hl:'A change in the world, not a ticket',
   txt:'The supplier feed flags it first — vendor VN-3391, lead time up 10 days for three months. Nobody opened an inbox. The agent noticed in 0.8 seconds.',
   nodes:['signal'],edges:[],focus:'signal'},
- {n:'Case',time:'08:14:02',hl:'One accountable case opens',
+ {n:'Open one case',sub:'One number owns the whole thread',time:'08:14:02',
+  hl:'One accountable case opens',
   txt:'Everything that follows hangs off one number — EX-4471 — instead of three tickets in three systems. The case owns state, routing and the audit; the agents only own judgement inside their lane.',
   nodes:['case'],edges:['sig'],focus:'case'},
- {n:'Agents',time:'08:14–08:16',hl:'Three specialists, two inspectable handoffs',
+ {n:'Split across three agents',sub:'Two handoffs you can open',time:'08:14–08:16',
+  hl:'Three specialists, two inspectable handoffs',
   txt:'Mercer works the supplier lane and hands the new lead time to Iris. Iris replans cover, and the revised date wakes Christy. Both handoffs are contracts you can open — click HO-8831 or HO-8832.',
   nodes:['mercer','iris','christy'],edges:['cm','ho1','ho2'],focus:'mercer'},
- {n:'Access',time:'08:14:04',hl:'Each agent reads only its own systems',
-  txt:'Scoped access, drawn honestly: every system sits directly under the agent allowed to touch it. Blue lines are reads. Click any system to see exactly what moved.',
+ {n:'Read only what it may',sub:'Scoped access, drawn honestly',time:'08:14:04',
+  hl:'Each agent reads only its own systems',
+  txt:'Every system sits directly under the agent allowed to touch it. Blue lines are reads. Click any system to see exactly what moved.',
   nodes:['p44','fusion','omp','man','master'],edges:['r1','r2','r3','r4','r5'],focus:'fusion'},
- {n:'Synthesis',time:'08:14:07',hl:'Findings converge — with the seams visible',
-  txt:'41 orders slip, cover breaks on 3 SKUs, 3 install dates are at risk. Facts stay separated from assumptions. One fact is missing from the picture — watch what the planner catches at stage 7.',
+ {n:'Converge the findings',sub:'Facts kept apart from guesses',time:'08:14:07',
+  hl:'Findings converge — with the seams visible',
+  txt:'41 orders slip, cover breaks on 3 SKUs, 3 install dates are at risk. Facts stay separated from assumptions. One fact is missing from the picture — watch what the planner catches two phases on.',
   nodes:['synth'],edges:['cs'],focus:'synth'},
- {n:'Gate',time:'08:14:08',hl:'Same run, same confidence — different authority',
+ {n:'Check against policy',sub:'Two pass, one stops',time:'08:14:08',
+  hl:'Same run, same confidence — different authority',
   txt:'The policy gate splits the plan. Two requisitions sit inside the planner’s limits and execute. The third is $214,000, above the $150k limit. It stops. That stop is the feature.',
   nodes:['gate'],edges:['sg','gr','gp'],focus:'gate'},
- {n:'Human',time:'+2h 11m',hl:'One bounded question reaches a person',
+ {n:'Escalate to a person',sub:'A bounded question, not a case',time:'+2h 11m',
+  hl:'One bounded question reaches a person',
   txt:'Dana R. gets a decision packet — the recommendation, the alternatives costed, the cost of waiting — not a case to re-investigate. She rejects it: the SKU phases out in Q4. The reason is captured.',
   nodes:['planner'],edges:['pr'],focus:'planner'},
- {n:'Respond',time:'by day 2',hl:'The revert — confirmed, not just sent',
+ {n:'Write back & re-commit',sub:'Confirmed by the target system',time:'by day 2',
+  hl:'The revert — confirmed, not just sent',
   txt:'Seven writes land back in Fusion, OMP and Manhattan, each verified by the target system itself. The customer picks “wait” inside the 48-hour window and the install date is re-committed.',
   nodes:['writes','respond'],edges:['wb','w1','w2','w3'],focus:'respond'},
- {n:'Learn',time:'day 9',hl:'The override becomes a permanent check',
+ {n:'Turn it into a rule',sub:'The override becomes a check',time:'day 9',
+  hl:'What this case taught the next one',
   txt:'The outcome and the planner’s reason are logged. A phase-out check now runs before any cover recommendation — three repeat cases suppressed since. Agents never rewrite their own rules silently.',
   nodes:['learn','dbx'],edges:['rl','ld','loop'],focus:'learn'}
 ];
@@ -1894,9 +1870,9 @@ var SVINS={
 };
 
 /* ---- system-view state ---- */
-var SV={stage:0,playing:false,speed:1,sel:null,timer:null,raf:null,t0:0,dur:0,x:0,y:0,z:1,built:false};
+var SV={hover:null,pin:null,sel:null,x:0,y:0,z:1,built:false};
 function svNode(id){for(var i=0;i<SVN.length;i++)if(SVN[i].id===id)return SVN[i];return null}
-function svEdge(id){for(var i=0;i<SVE.length;i++)if(SVE[i].id===id)return SVE[i];return null}
+function svActive(){return SV.hover!==null?SV.hover:SV.pin}
 
 /* ---- toggle between dashboard and system view ---- */
 function towerView(v){
@@ -1906,20 +1882,19 @@ function towerView(v){
   $('tv-system').hidden=(v!=='system');
   if(v==='system'){
     if(!SV.built)svBuild();
-    svApplyStage(SV.stage,true);
+    svPaint();
     requestAnimationFrame(function(){svFit()});
-  }else{svPause()}
+  }
 }
 function svInspToggle(){var s=$('svShell');if(!s)return;s.classList.toggle('no-insp');
   setTimeout(function(){svFit()},200)}
 
-/* ---- build the canvas once ---- */
+/* ---- build once ---- */
 function svBuild(){
   var st=$('svStage'),wr=$('svWires'),nd=$('svNodes');
   st.style.width=SVW+'px';st.style.height=SVH+'px';
   wr.setAttribute('width',SVW);wr.setAttribute('height',SVH);
   wr.style.width=SVW+'px';wr.style.height=SVH+'px';
-
   var h='';
   SVBANDS.forEach(function(b){
     h+='<div class="sv-band '+b.c+'" style="left:'+b.x+'px;top:'+b.y+'px;width:'+b.w+'px;height:'+b.h+'px">'+
@@ -1941,10 +1916,66 @@ function svBuild(){
   });
   nd.innerHTML=h;
   nd.querySelectorAll('[data-sv]').forEach(function(el){
-    el.addEventListener('click',function(){svPause();svSelect(el.dataset.sv)});
+    el.addEventListener('click',function(){svSelect(el.dataset.sv)});
   });
+  svRenderPhases();
   SV.built=true;
   svDrawWires();
+  svSelect('intro',true);
+}
+
+/* ---- left phase panel ---- */
+function svRenderPhases(){
+  var box=$('svPhases');if(!box)return;
+  box.innerHTML=SVSTAGES.map(function(s,i){
+    return '<button class="sv-ph" data-i="'+i+'"><span class="bar"></span><em>'+(i+1)+'</em>'+
+      '<span style="min-width:0"><span class="sv-phn">'+esc(s.n)+'</span>'+
+      '<span class="sv-phd">'+esc(s.sub)+'</span></span></button>';
+  }).join('');
+  box.querySelectorAll('.sv-ph').forEach(function(el){
+    var i=+el.dataset.i;
+    el.addEventListener('mouseenter',function(){SV.hover=i;svPaint()});
+    el.addEventListener('mouseleave',function(){SV.hover=null;svPaint()});
+    el.addEventListener('focus',function(){SV.hover=i;svPaint()});
+    el.addEventListener('blur',function(){SV.hover=null;svPaint()});
+    el.addEventListener('click',function(){svPin(SV.pin===i?null:i)});
+  });
+}
+function svPin(i){SV.pin=i;SV.hover=null;svPaint();
+  if(i!==null&&SVSTAGES[i].focus)svSelect(SVSTAGES[i].focus,true)}
+
+/* ---- paint: default shows everything; a focused phase dims the rest ---- */
+function svPaint(){
+  var i=svActive(), st=(i===null?null:SVSTAGES[i]);
+  var on={n:{},e:{}};
+  if(st){st.nodes.forEach(function(id){on.n[id]=1});st.edges.forEach(function(id){on.e[id]=1})}
+  SVN.forEach(function(n){
+    var el=$('svn-'+n.id);if(!el)return;
+    el.classList.toggle('dim',!!st&&!on.n[n.id]);
+    el.classList.toggle('sv-live',!!st&&!!on.n[n.id]);
+  });
+  SVE.forEach(function(e){
+    var g=$('sve-'+e.id);
+    if(g){g.classList.toggle('dim',!!st&&!on.e[e.id]);g.classList.toggle('sv-live',!!st&&!!on.e[e.id])}
+    var p=$('svp-'+e.id);
+    if(p){p.classList.toggle('dim',!!st&&!on.e[e.id]);p.classList.toggle('on',!!st&&!!on.e[e.id]&&!!e.pill)}
+  });
+  document.querySelectorAll('#svNodes .sv-band').forEach(function(b){b.style.opacity=st?'.35':'1'});
+  document.querySelectorAll('#svPhases .sv-ph').forEach(function(el){
+    el.classList.toggle('on',+el.dataset.i===i)});
+  var c=$('svClear');if(c)c.hidden=(SV.pin===null);
+  if(st){
+    $('svStep').textContent=i+1;
+    $('svHl').textContent=st.hl;
+    $('svWhen').textContent=st.n+' · '+st.time;
+    $('svNar').innerHTML=esc(st.txt);
+  }else{
+    $('svStep').textContent='◆';
+    $('svHl').textContent='One exception, end to end';
+    $('svWhen').textContent='Case EX-4471 · 9 phases · 3 agents · 6 systems';
+    $('svNar').innerHTML='The whole flow at once. Follow the arrows: a hollow ring is where a step '+
+      '<b>starts</b>, the arrowhead is where it <b>lands</b>. Hover a phase on the left to isolate it.';
+  }
 }
 
 /* ---- geometry ---- */
@@ -1956,7 +1987,7 @@ function svAnchor(n,side,frac){
   if(side==='T')return{x:n.x+n.w*frac,y:n.y,nx:0,ny:-1};
   return{x:n.x+n.w*frac,y:n.y+h,nx:0,ny:1};
 }
-/* the loop rail: down, around the outside, back up the left margin — never through the middle */
+/* the loop rail: down, around the outside, back up the left margin */
 function svRingPath(a,b){
   var yB=SVH-42, xL=48, r=26;
   return 'M'+a.x+' '+a.y+
@@ -1967,14 +1998,24 @@ function svRingPath(a,b){
     ' C'+xL+' '+b.y+', '+xL+' '+b.y+', '+(xL+r)+' '+b.y+
     ' L'+b.x+' '+b.y;
 }
+var SVCOL={flow:'#6440b6',hand:'#6440b6',loop:'#6440b6',read:'#0087ce',write:'#16a34a',warn:'#f59e0b'};
 function svDrawWires(){
   var wr=$('svWires');if(!wr)return;
-  wr.innerHTML='';
-  document.querySelectorAll('#svStage .sv-pill').forEach(function(p){p.remove()});
   var NS='http://www.w3.org/2000/svg';
+  /* arrowheads — one per edge colour, so every line shows where it lands */
+  var defs='<defs>'+Object.keys(SVCOL).map(function(k){
+    return '<marker id="svar-'+k+'" viewBox="0 0 10 10" refX="8.5" refY="5" '+
+      'markerWidth="5.5" markerHeight="5.5" orient="auto">'+
+      '<path d="M0,0.6 L9,5 L0,9.4 z" fill="'+SVCOL[k]+'"/></marker>'}).join('')+'</defs>';
+  wr.innerHTML=defs;
+  document.querySelectorAll('#svStage .sv-pill').forEach(function(p){p.remove()});
   SVE.forEach(function(e){
     var fn=svNode(e.f),tn=svNode(e.t);if(!fn||!tn)return;
     var a=svAnchor(fn,e.fs,e.ff),b=svAnchor(tn,e.ts,e.tf),d;
+    /* stand the endpoints off the cards — the cards paint over the SVG, so a marker
+       sitting exactly on the border gets clipped and the direction becomes unreadable */
+    a.x+=a.nx*6;a.y+=a.ny*6;
+    b.x+=b.nx*10;b.y+=b.ny*10;
     if(e.ring){d=svRingPath(a,b)}
     else{
       var dist=Math.hypot(b.x-a.x,b.y-a.y);
@@ -1984,13 +2025,15 @@ function svDrawWires(){
     }
     var g=document.createElementNS(NS,'g');
     g.setAttribute('class','edge e-'+e.ty);g.id='sve-'+e.id;
-    var ln=document.createElementNS(NS,'path');ln.setAttribute('d',d);ln.setAttribute('class','ln');
-    var pk=document.createElementNS(NS,'path');pk.setAttribute('d',d);pk.setAttribute('class','pk');
-    g.appendChild(ln);g.appendChild(pk);
-    [[a.x,a.y],[b.x,b.y]].forEach(function(p){
-      var c=document.createElementNS(NS,'circle');
-      c.setAttribute('cx',p[0]);c.setAttribute('cy',p[1]);c.setAttribute('r',3);g.appendChild(c);
-    });
+    var ln=document.createElementNS(NS,'path');
+    ln.setAttribute('d',d);ln.setAttribute('class','ln');
+    ln.setAttribute('marker-end','url(#svar-'+e.ty+')');
+    g.appendChild(ln);
+    /* a hollow ring marks where the step starts */
+    var c=document.createElementNS(NS,'circle');
+    c.setAttribute('cx',a.x);c.setAttribute('cy',a.y);c.setAttribute('r',3.4);
+    c.setAttribute('class','start');
+    g.appendChild(c);
     wr.appendChild(g);
     if(e.pill||e.lab){
       var pt;try{pt=ln.getPointAtLength(ln.getTotalLength()*(e.lp||0.5))}catch(_){pt={x:(a.x+b.x)/2,y:(a.y+b.y)/2}}
@@ -1999,79 +2042,11 @@ function svDrawWires(){
       el.id='svp-'+e.id;
       el.textContent=e.pill||e.lab;
       el.style.left=pt.x+'px';el.style.top=pt.y+'px';
-      if(e.pill)el.onclick=function(){svPause();svSelect(e.ins)};
+      if(e.pill)el.onclick=function(){svSelect(e.ins)};
       $('svStage').appendChild(el);
     }
   });
 }
-
-/* ---- stage machine ---- */
-function svApplyStage(n,silent){
-  SV.stage=Math.max(0,Math.min(SVSTAGES.length-1,n));
-  var upto={nodes:{},edges:{}},live={nodes:{},edges:{}};
-  for(var i=0;i<=SV.stage;i++){
-    var s=SVSTAGES[i],last=(i===SV.stage);
-    s.nodes.forEach(function(id){upto.nodes[id]=1;if(last)live.nodes[id]=1});
-    s.edges.forEach(function(id){upto.edges[id]=1;if(last)live.edges[id]=1});
-  }
-  SVN.forEach(function(n2){
-    var el=$('svn-'+n2.id);if(!el)return;
-    el.classList.toggle('future',!upto.nodes[n2.id]);
-    el.classList.toggle('done',!!upto.nodes[n2.id]&&!live.nodes[n2.id]);
-    el.classList.toggle('sv-live',!!live.nodes[n2.id]);
-  });
-  SVE.forEach(function(e){
-    var g=$('sve-'+e.id);if(g){
-      g.classList.toggle('future',!upto.edges[e.id]);
-      g.classList.toggle('done',!!upto.edges[e.id]&&!live.edges[e.id]);
-      g.classList.toggle('sv-live',!!live.edges[e.id]);
-    }
-    var p=$('svp-'+e.id);if(p){
-      p.classList.toggle('future',!upto.edges[e.id]);
-      p.classList.toggle('on',!!live.edges[e.id]&&!!e.pill);
-    }
-  });
-  var st=SVSTAGES[SV.stage];
-  $('svStep').textContent=SV.stage+1;
-  $('svHl').textContent=st.hl;
-  $('svWhen').textContent=st.n+' · '+st.time;
-  $('svNar').innerHTML=esc(st.txt);
-  $('svCnt').textContent=(SV.stage+1)+'/'+SVSTAGES.length;
-  $('svScrub').setAttribute('aria-valuenow',SV.stage+1);
-  $('svScrub').setAttribute('aria-valuetext',st.n+' — '+st.hl);
-  svRenderRail();svRenderTicks();
-  $('svPrev').disabled=(SV.stage===0);
-  $('svNext').disabled=(SV.stage===SVSTAGES.length-1);
-  $('svFirst').disabled=(SV.stage===0);
-  $('svLast').disabled=(SV.stage===SVSTAGES.length-1);
-  if(!silent&&st.focus)svSelect(st.focus,true);
-  if(silent&&!SV.sel)svSelect('intro',true);
-}
-function svRenderRail(){
-  var r=$('svRail');if(!r)return;
-  r.innerHTML=SVSTAGES.map(function(s,i){
-    var c=i===SV.stage?'on':(i<SV.stage?'done':'');
-    return '<button class="sv-chip '+c+'" role="tab" aria-selected="'+(i===SV.stage)+'" '+
-      'onclick="svPause();svGo('+i+')"><em>'+(i+1)+'</em>'+esc(s.n)+'</button>'}).join('');
-  var on=r.querySelector('.sv-chip.on');
-  if(on&&on.scrollIntoView)on.scrollIntoView({block:'nearest',inline:'nearest'});
-}
-function svRenderTicks(){
-  var sc=$('svScrub');if(!sc)return;
-  sc.querySelectorAll('.sv-tick').forEach(function(t){t.remove()});
-  var n=SVSTAGES.length;
-  SVSTAGES.forEach(function(s,i){
-    var b=document.createElement('button');
-    b.className='sv-tick '+(i===SV.stage?'on':(i<SV.stage?'done':''));
-    b.style.left=(n===1?0:(i/(n-1))*100)+'%';
-    b.title=(i+1)+'. '+s.n;
-    b.setAttribute('aria-label','Stage '+(i+1)+': '+s.n);
-    b.onclick=function(ev){ev.stopPropagation();svPause();svGo(i)};
-    sc.appendChild(b);
-  });
-  if(!SV.playing)svFill(SVSTAGES.length===1?1:SV.stage/(SVSTAGES.length-1));
-}
-function svFill(f){var el=$('svFill');if(el)el.style.width=Math.max(0,Math.min(1,f))*100+'%'}
 
 /* ---- inspector ---- */
 function svSelect(id,soft){
@@ -2086,50 +2061,7 @@ function svSelect(id,soft){
   if(!soft)$('svInsp').scrollTop=0;
 }
 
-/* ---- playback: pace follows how much there is to read ---- */
-function svDur(i){
-  var s=SVSTAGES[i];if(!s)return 3000;
-  var words=(s.txt||'').trim().split(/\s+/).length;
-  /* on-screen skim ≈ 300 wpm = 200ms a word, + 700ms to take in the canvas change.
-     Long stages get more room; 0.5× gives a careful reader ~2× this. */
-  return Math.min(8500,Math.max(2600,700+words*200))/SV.speed;
-}
-function svTick(){
-  if(!SV.playing)return;
-  var el=Date.now()-SV.t0, f=Math.min(1,el/SV.dur);
-  var base=SV.stage/(SVSTAGES.length-1), span=1/(SVSTAGES.length-1);
-  svFill(base+f*span);
-  if(f>=1){
-    if(SV.stage>=SVSTAGES.length-1){svPause();svFill(1);return}
-    svApplyStage(SV.stage+1);
-    SV.t0=Date.now();SV.dur=svDur(SV.stage);
-  }
-  SV.raf=requestAnimationFrame(svTick);
-}
-function svPlay(){
-  if(SV.playing){svPause();return}
-  if(SV.stage>=SVSTAGES.length-1)svApplyStage(0);
-  SV.playing=true;SV.t0=Date.now();SV.dur=svDur(SV.stage);
-  $('svPlay').innerHTML='❚❚';$('svPlay').setAttribute('aria-label','Pause');
-  SV.raf=requestAnimationFrame(svTick);
-}
-function svPause(){
-  if(!SV.playing)return;
-  SV.playing=false;
-  if(SV.raf)cancelAnimationFrame(SV.raf);SV.raf=null;
-  var b=$('svPlay');if(b){b.innerHTML='▶';b.setAttribute('aria-label','Play')}
-  svFill(SVSTAGES.length===1?1:SV.stage/(SVSTAGES.length-1));
-}
-function svGo(i){if(i<0)i=SVSTAGES.length-1;svApplyStage(i);if(SV.playing){SV.t0=Date.now();SV.dur=svDur(SV.stage)}}
-function svNext(){svPause();if(SV.stage<SVSTAGES.length-1)svApplyStage(SV.stage+1)}
-function svPrev(){svPause();if(SV.stage>0)svApplyStage(SV.stage-1)}
-function svSpeed(s){
-  SV.speed=s;
-  document.querySelectorAll('.sv-spd button').forEach(function(b){b.classList.toggle('on',+b.dataset.s===s)});
-  if(SV.playing){var el=Date.now()-SV.t0;SV.dur=svDur(SV.stage);SV.t0=Date.now()-Math.min(el,SV.dur*0.9)}
-}
-
-/* ---- pan / zoom: two-finger scroll pans, pinch zooms (same as the other boards) ---- */
+/* ---- pan / zoom ---- */
 function svApply(){
   var st=$('svStage');if(!st)return;
   st.style.transform='translate('+SV.x+'px,'+SV.y+'px) scale('+SV.z+')';
@@ -2168,37 +2100,9 @@ function svFit(){
       SV.x=cx-(cx-SV.x)*(nz/old);SV.y=cy-(cy-SV.y)*(nz/old);SV.z=nz;svApply();
     }else{SV.x-=e.deltaX;SV.y-=e.deltaY;svApply()}
   },{passive:false});
-
-  /* scrubber: click or drag anywhere on the track to move through the story */
-  var sc=$('svScrub');
-  if(sc){
-    function seek(clientX){
-      var r=sc.getBoundingClientRect();
-      var f=Math.max(0,Math.min(1,(clientX-r.left)/r.width));
-      svGo(Math.round(f*(SVSTAGES.length-1)));
-    }
-    sc.addEventListener('pointerdown',function(e){
-      if(e.target.classList.contains('sv-tick'))return;
-      svPause();seek(e.clientX);sc.setPointerCapture(e.pointerId);sc._d=true});
-    sc.addEventListener('pointermove',function(e){if(sc._d)seek(e.clientX)});
-    sc.addEventListener('pointerup',function(){sc._d=false});
-    sc.addEventListener('keydown',function(e){
-      if(e.key==='ArrowRight'){e.preventDefault();svNext()}
-      if(e.key==='ArrowLeft'){e.preventDefault();svPrev()}
-    });
-  }
-  /* keyboard, only while the system view is showing */
   document.addEventListener('keydown',function(e){
     if(S.p!=='tower'||S.towerView!=='system')return;
-    var tag=(e.target.tagName||'').toLowerCase();
-    if(tag==='input'||tag==='textarea')return;
-    if(e.key===' '){e.preventDefault();svPlay()}
-    else if(e.key==='ArrowRight'){e.preventDefault();svNext()}
-    else if(e.key==='ArrowLeft'){e.preventDefault();svPrev()}
-    else if(e.key==='Home'){e.preventDefault();svPause();svGo(0)}
-    else if(e.key==='End'){e.preventDefault();svPause();svGo(-1)}
-    else if(e.key==='Escape'){svPause()}
-    else if(/^[1-9]$/.test(e.key)){var i=+e.key-1;if(i<SVSTAGES.length){e.preventDefault();svPause();svGo(i)}}
+    if(e.key==='Escape'&&SV.pin!==null){svPin(null)}
   });
 })();
 window.addEventListener('resize',function(){if(S.towerView==='system')svFit()});
