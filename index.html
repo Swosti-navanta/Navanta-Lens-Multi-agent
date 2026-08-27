@@ -1674,7 +1674,7 @@ function towerTab(t){
    4. The loop-back is routed around the canvas edge, never through it.
    5. Only stages up to "now" are drawn live; the rest stay ghosted.
    ============================================================ */
-var SVW=1420, SVH=1100;
+var SVW=1420, SVH=1140;
 
 var SVN=[
  {id:'signal',k:'signal',ic:'⇩',t:'Signal',r:'The input',x:40,y:26,w:175,
@@ -1719,7 +1719,7 @@ var SVN=[
  {id:'learn',k:'learn',ic:'↻',t:'Learn',r:'Close the loop',x:1130,y:780,w:210,ac:'var(--brand)',
   d:'Outcome and the planner’s reason feed the next case.',
   ch:[['3 repeats suppressed','b']]},
- {id:'dbx',k:'sys',ic:'DB',t:'Databricks',r:'Learning store',x:1130,y:935,w:180}
+ {id:'dbx',k:'sys',ic:'DB',t:'Databricks',r:'Learning store',x:1130,y:980,w:180}
 ];
 
 var SVBANDS=[
@@ -1727,7 +1727,7 @@ var SVBANDS=[
  {c:'agents', x:138, y:250, w:940, h:192, l:'Multi-agent work'},
  {c:'plain',  x:145, y:472, w:865, h:99,  l:'Systems of record'},
  {c:'plain',  x:1100,y:432, w:258, h:162, l:'Governed decision'},
- {c:'plain',  x:468, y:758, w:892, h:250, l:'Human decision & learning'}
+ {c:'plain',  x:468, y:758, w:892, h:295, l:'Human decision & learning'}
 ];
 
 var SVE=[
@@ -2023,11 +2023,12 @@ function svDrawWires(){
   var wr=$('svWires');if(!wr)return;
   var NS='http://www.w3.org/2000/svg';
   /* arrowheads — one per edge colour, so every line shows where it lands */
-  function mkr(k,id,sz){return '<marker id="'+id+'" viewBox="0 0 10 10" refX="7.5" refY="5" '+
+  /* a filled chevron arrowhead — prominent and cleanly proportioned */
+  function mkr(k,id,sz){return '<marker id="'+id+'" viewBox="0 0 12 12" refX="8.6" refY="6" '+
       'markerWidth="'+sz+'" markerHeight="'+sz+'" orient="auto" markerUnits="userSpaceOnUse">'+
-      '<path d="M0.5,1 L9,5 L0.5,9 z" fill="'+SVCOL[k]+'"/></marker>'}
+      '<path d="M1,1.4 L10,6 L1,10.6 L3.2,6 Z" fill="'+SVCOL[k]+'"/></marker>'}
   var defs='<defs>'+Object.keys(SVCOL).map(function(k){
-    return mkr(k,'svar-'+k,8)+mkr(k,'svar-'+k+'-lg',13)}).join('')+'</defs>';
+    return mkr(k,'svar-'+k,12)+mkr(k,'svar-'+k+'-lg',16)}).join('')+'</defs>';
   wr.innerHTML=defs;
   document.querySelectorAll('#svStage .sv-pill').forEach(function(p){p.remove()});
   SVE.forEach(function(e){
@@ -2035,12 +2036,15 @@ function svDrawWires(){
     var a=svAnchor(fn,e.fs,e.ff),b=svAnchor(tn,e.ts,e.tf),d;
     /* stand the endpoints off the cards — the cards paint over the SVG, so a marker
        sitting exactly on the border gets clipped and the direction becomes unreadable */
-    a.x+=a.nx*6;a.y+=a.ny*6;
-    b.x+=b.nx*12;b.y+=b.ny*12;
+    a.x+=a.nx*5;a.y+=a.ny*5;
+    b.x+=b.nx*13;b.y+=b.ny*13;
+    var span=Math.hypot(b.x-a.x,b.y-a.y);
     if(e.ring){d=svRingPath(a,b)}
-    else{
-      var dist=Math.hypot(b.x-a.x,b.y-a.y);
-      var k=Math.min(Math.max(dist*0.3,16),120);
+    else if(span<80){
+      /* short hop: a straight line can't kink — cleaner than a cramped curve */
+      d='M'+a.x+' '+a.y+' L'+b.x+' '+b.y;
+    }else{
+      var k=Math.min(Math.max(span*0.26,22),95);
       d='M'+a.x+' '+a.y+' C'+(a.x+a.nx*k)+' '+(a.y+a.ny*k)+', '+
         (b.x+b.nx*k)+' '+(b.y+b.ny*k)+', '+b.x+' '+b.y;
     }
@@ -2051,10 +2055,13 @@ function svDrawWires(){
     ln.setAttribute('marker-end','url(#svar-'+e.ty+')');
     g.appendChild(ln);
     /* a hollow ring marks where the step starts */
-    var c=document.createElementNS(NS,'circle');
-    c.setAttribute('cx',a.x);c.setAttribute('cy',a.y);c.setAttribute('r',4.5);
-    c.setAttribute('class','start');
-    g.appendChild(c);
+    /* origin dot — skipped on very short hops where a dot + arrow would collide */
+    if(span>=44||e.ring){
+      var c=document.createElementNS(NS,'circle');
+      c.setAttribute('cx',a.x);c.setAttribute('cy',a.y);c.setAttribute('r',4.5);
+      c.setAttribute('class','start');
+      g.appendChild(c);
+    }
     wr.appendChild(g);
     if(e.pill||e.lab){
       var pt;try{pt=ln.getPointAtLength(ln.getTotalLength()*(e.lp||0.5))}catch(_){pt={x:(a.x+b.x)/2,y:(a.y+b.y)/2}}
