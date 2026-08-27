@@ -275,11 +275,11 @@ button{font-family:inherit;cursor:pointer}
 .sv-band b{position:absolute;top:-11px;left:18px;font-size:10px;font-weight:600;letter-spacing:.1em;
   text-transform:uppercase;color:var(--text-neutral);background:#fbfbfc;padding:2px 10px;
   border:1px solid var(--border);border-radius:9999px}
-.sv-band.agents{background:linear-gradient(180deg,color-mix(in oklab,var(--brand) 9%,#fff) 0%,color-mix(in oklab,var(--brand) 4%,#fff) 100%);
-  border:1px solid color-mix(in oklab,var(--brand) 22%,#fff)}
-.sv-band.agents b{color:var(--brand);border-color:color-mix(in oklab,var(--brand) 30%,#fff);
-  background:color-mix(in oklab,var(--brand) 8%,#fff)}
-.sv-band.plain{background:var(--surface-grey);border:1px dashed var(--border)}
+/* smokey / translucent so the connection lines behind stay visible */
+.sv-band.agents{background:rgba(100,64,182,.05);border:1px solid rgba(100,64,182,.2);backdrop-filter:blur(.5px)}
+.sv-band.agents b{color:var(--brand);border-color:rgba(100,64,182,.28);background:rgba(240,236,250,.9)}
+.sv-band.plain{background:rgba(244,244,246,.5);border:1px dashed rgba(180,183,190,.7);backdrop-filter:blur(.5px)}
+.sv-band.plain b{background:rgba(250,250,251,.92)}
 
 /* --- nodes: everything is always visible; focus only dims the rest --- */
 .sv-nd{position:absolute;background:var(--card);border:1px solid var(--border);border-radius:14px;
@@ -1672,7 +1672,7 @@ function towerTab(t){
    4. The loop-back is routed around the canvas edge, never through it.
    5. Only stages up to "now" are drawn live; the rest stay ghosted.
    ============================================================ */
-var SVW=1420, SVH=980;
+var SVW=1420, SVH=1060;
 
 var SVN=[
  {id:'signal',k:'signal',ic:'⇩',t:'Signal',r:'The input',x:40,y:26,w:175,
@@ -1695,37 +1695,37 @@ var SVN=[
   d:'Facts held apart from assumptions — and one fact is quietly missing.',
   ch:[['facts 9',''],['assumptions 2',''],['1 blind spot','a']]},
 
- {id:'p44',k:'sys',ic:'P44',t:'Project44',r:'Tracking',x:165,y:420,w:140},
- {id:'fusion',k:'sys',ic:'OF',t:'Oracle Fusion',r:'ERP',x:315,y:420,w:160},
- {id:'omp',k:'sys',ic:'OM',t:'OMP',r:'Planning',x:495,y:420,w:130},
- {id:'man',k:'sys',ic:'MH',t:'Manhattan',r:'Warehouse',x:635,y:420,w:150},
- {id:'master',k:'sys',ic:'PM',t:'Product master',r:'Reference data',x:825,y:420,w:165},
+ {id:'p44',k:'sys',ic:'P44',t:'Project44',r:'Tracking',x:165,y:450,w:140},
+ {id:'fusion',k:'sys',ic:'OF',t:'Oracle Fusion',r:'ERP',x:315,y:450,w:160},
+ {id:'omp',k:'sys',ic:'OM',t:'OMP',r:'Planning',x:495,y:450,w:130},
+ {id:'man',k:'sys',ic:'MH',t:'Manhattan',r:'Warehouse',x:635,y:450,w:150},
+ {id:'master',k:'sys',ic:'PM',t:'Product master',r:'Reference data',x:825,y:450,w:165},
 
  {id:'gate',k:'gate',ic:'§',t:'Policy gate',r:'Decide · policy v4.2',x:1120,y:410,w:225,ac:'var(--warning)',
   d:'Checks every proposed action against the limits people set.',
   ch:[['2 pass','g'],['1 stops','a']]},
 
- {id:'writes',k:'writes',ic:'✓',t:'7 writes verified',r:'Fusion · OMP · Manhattan',x:315,y:510,w:470,ac:'var(--success)',
+ {id:'writes',k:'writes',ic:'✓',t:'7 writes verified',r:'Fusion · OMP · Manhattan',x:315,y:570,w:470,ac:'var(--success)',
   d:'Every change confirmed by the target system before the case closes.'},
 
- {id:'planner',k:'human',ic:'DR',t:'Dana R. — planner',r:'Human decision',x:490,y:690,w:230,ac:'var(--warning)',
+ {id:'planner',k:'human',ic:'DR',t:'Dana R. — planner',r:'Human decision',x:490,y:740,w:230,ac:'var(--warning)',
   d:'Gets one bounded question, not the whole case. Rejects — with a reason.',
   ch:[['rejected','a'],['reason captured','']]},
- {id:'respond',k:'outcome',ic:'↩',t:'Write back & respond',r:'The revert',x:820,y:690,w:235,ac:'var(--success)',
+ {id:'respond',k:'outcome',ic:'↩',t:'Write back & respond',r:'The revert',x:820,y:740,w:235,ac:'var(--success)',
   d:'Changes land in the real systems. The customer answers; the date is re-committed.',
   ch:[['date re-committed','g']]},
- {id:'learn',k:'learn',ic:'↻',t:'Learn',r:'Close the loop',x:1130,y:690,w:210,ac:'var(--brand)',
+ {id:'learn',k:'learn',ic:'↻',t:'Learn',r:'Close the loop',x:1130,y:740,w:210,ac:'var(--brand)',
   d:'Outcome and the planner’s reason feed the next case.',
   ch:[['3 repeats suppressed','b']]},
- {id:'dbx',k:'sys',ic:'DB',t:'Databricks',r:'Learning store',x:1130,y:845,w:180}
+ {id:'dbx',k:'sys',ic:'DB',t:'Databricks',r:'Learning store',x:1130,y:895,w:180}
 ];
 
 var SVBANDS=[
- {c:'plain',  x:18,  y:8,   w:440,  h:180, l:'Trigger'},
- {c:'agents', x:142, y:208, w:930,  h:185, l:'Multi-agent work — three specialists, two handoffs'},
- {c:'plain',  x:145, y:400, w:862,  h:90,  l:'Systems of record — each docked under the agent that reads it'},
- {c:'plain',  x:1100,y:390, w:266,  h:148, l:'Governed decision'},
- {c:'plain',  x:470, y:670, w:900,  h:236, l:'Human decision, revert and learning'}
+ {c:'plain',  x:20,  y:6,   w:435, h:228, l:'Trigger'},
+ {c:'agents', x:138, y:210, w:940, h:192, l:'Multi-agent work'},
+ {c:'plain',  x:145, y:432, w:865, h:99,  l:'Systems of record'},
+ {c:'plain',  x:1100,y:392, w:258, h:162, l:'Governed decision'},
+ {c:'plain',  x:468, y:718, w:892, h:250, l:'Human decision & learning'}
 ];
 
 var SVE=[
@@ -2022,12 +2022,12 @@ function svDrawWires(){
     var a=svAnchor(fn,e.fs,e.ff),b=svAnchor(tn,e.ts,e.tf),d;
     /* stand the endpoints off the cards — the cards paint over the SVG, so a marker
        sitting exactly on the border gets clipped and the direction becomes unreadable */
-    a.x+=a.nx*7;a.y+=a.ny*7;
-    b.x+=b.nx*13;b.y+=b.ny*13;
+    a.x+=a.nx*6;a.y+=a.ny*6;
+    b.x+=b.nx*12;b.y+=b.ny*12;
     if(e.ring){d=svRingPath(a,b)}
     else{
       var dist=Math.hypot(b.x-a.x,b.y-a.y);
-      var k=Math.min(Math.max(dist*0.42,30),130);
+      var k=Math.min(Math.max(dist*0.3,16),120);
       d='M'+a.x+' '+a.y+' C'+(a.x+a.nx*k)+' '+(a.y+a.ny*k)+', '+
         (b.x+b.nx*k)+' '+(b.y+b.ny*k)+', '+b.x+' '+b.y;
     }
