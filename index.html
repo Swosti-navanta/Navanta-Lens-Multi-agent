@@ -225,6 +225,73 @@ button{font-family:inherit;cursor:pointer}
 .val div span{font-size:11px;color:var(--muted-foreground)}
 @media(max-width:1180px){.tower-split{grid-template-columns:1fr}.rail{position:static}}
 
+/* ===== ASSISTANT slide-over ===== */
+.askbtn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--background);
+  border-radius:9999px;padding:5px 13px 5px 8px;font-size:12.5px;font-weight:600;color:var(--foreground)}
+.askbtn:hover{border-color:var(--brand);color:var(--brand)}
+.askbtn .sp{width:19px;height:19px;border-radius:6px;background:var(--gradient-brand);color:#fff;font-size:10px;
+  display:flex;align-items:center;justify-content:center}
+.ask-scrim{position:fixed;inset:0;background:rgba(9,9,11,.28);z-index:60;animation:askfade .16s}
+@keyframes askfade{from{opacity:0}to{opacity:1}}
+.ask{position:fixed;top:0;right:0;bottom:0;width:min(430px,94vw);z-index:61;background:var(--card);
+  border-left:1px solid var(--border);box-shadow:-14px 0 40px -12px rgb(9 9 11/.22);
+  display:flex;flex-direction:column;animation:askin .22s cubic-bezier(.2,.8,.2,1)}
+@keyframes askin{from{transform:translateX(26px);opacity:.4}to{transform:none;opacity:1}}
+.ask-h{display:flex;align-items:center;gap:10px;padding:13px 15px;border-bottom:1px solid var(--border-light)}
+.ask-h .sp{width:26px;height:26px;border-radius:8px;background:var(--gradient-brand);color:#fff;font-size:12px;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.ask-t{font-size:14.5px;font-weight:600;letter-spacing:-.01em;line-height:1.2}
+.ask-s{font-size:11px;color:var(--text-neutral);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ask-body{flex:1;min-height:0;overflow:auto;padding:15px}
+.ask-sug{display:flex;gap:6px;flex-wrap:wrap;padding:0 15px 10px}
+.ask-sug button{border:1px solid var(--border);background:var(--surface-grey);border-radius:9999px;
+  font-size:11.5px;padding:5px 11px;color:var(--muted-foreground);text-align:left}
+.ask-sug button:hover{border-color:var(--brand);color:var(--brand)}
+.ask-in{display:flex;gap:8px;padding:11px 15px;border-top:1px solid var(--border)}
+.ask-in input{flex:1;min-width:0;border:1px solid var(--input);border-radius:var(--radius-md);font-family:inherit;
+  font-size:12.5px;padding:9px 11px}
+.ask-in input:focus{outline:none;border-color:var(--brand)}
+/* message bubbles */
+.am{margin-bottom:13px;font-size:12.5px;line-height:1.6}
+.am.you{display:flex;justify-content:flex-end}
+.am.you span{background:var(--primary);color:#fff;border-radius:13px 13px 3px 13px;padding:8px 13px;max-width:85%}
+.am.ai .who{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--text-neutral);margin-bottom:5px}
+.am.ai .who i{width:14px;height:14px;border-radius:5px;background:var(--gradient-brand)}
+.am.ai .bub{color:var(--foreground)}
+.am.ai .bub b{font-weight:600}
+.am.ai .bub .mono{font-family:'Geist Mono',monospace;font-size:11.5px}
+/* the recommendation block — the heart of the assistant */
+.arec{border:1px solid color-mix(in oklab,var(--brand) 26%,#fff);background:var(--surface-accent);
+  border-radius:12px;padding:12px 13px;margin-top:10px}
+.arec .rh{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--brand);margin-bottom:7px}
+.arec .rt{font-size:13.5px;font-weight:600;letter-spacing:-.005em;line-height:1.3}
+.arec ul{margin:8px 0 0;padding-left:16px}
+.arec li{font-size:12px;line-height:1.55;color:var(--muted-foreground);margin-bottom:3px}
+.arec .racts{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+.arec .racts .btn{font-size:12px;padding:6px 12px}
+/* evidence / why rows */
+.awhy{border:1px solid var(--border);border-radius:11px;padding:11px 12px;margin-top:10px;background:var(--surface-grey)}
+.awhy .wl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-neutral);margin-bottom:7px}
+.awhy .wr{display:flex;justify-content:space-between;gap:12px;font-size:11.5px;padding:4px 0;line-height:1.45}
+.awhy .wr span{color:var(--text-neutral);flex:0 0 auto}
+.awhy .wr b{font-family:'Geist Mono',monospace;font-weight:500;font-size:11px;text-align:right}
+/* what-if slider (simulate, folded into the assistant) */
+.asim{border:1px solid var(--border);border-radius:11px;padding:12px 13px;margin-top:10px}
+.asim .st{font-size:12.5px;font-weight:600;margin-bottom:9px}
+.asim input[type=range]{width:100%;accent-color:var(--brand);margin:2px 0 6px}
+.asim .sv{font-family:'Geist Mono',monospace;font-size:12px;font-weight:600}
+.asim .sn{font-size:11px;color:var(--text-neutral);line-height:1.45}
+.asim .flip{margin-top:9px;border-radius:9px;padding:9px 11px;font-size:11.5px;line-height:1.5}
+.asim .flip.hold{background:var(--pill-warning-bg);color:var(--pill-warning-fg)}
+.asim .flip.pass{background:var(--pill-success-bg);color:var(--pill-success-fg)}
+.athink{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--text-neutral);margin-bottom:13px}
+.athink i{width:5px;height:5px;border-radius:50%;background:var(--brand);animation:apulse 1.1s infinite}
+.athink i:nth-child(2){animation-delay:.15s}.athink i:nth-child(3){animation-delay:.3s}
+@keyframes apulse{0%,100%{opacity:.25}50%{opacity:1}}
+@media(prefers-reduced-motion:reduce){.ask,.ask-scrim{animation:none}.athink i{animation:none}}
+
 /* ===== tower · SYSTEM VIEW (how the agents worked) ===== */
 .sv-shell{display:grid;grid-template-columns:210px minmax(0,1fr) var(--sv-insp,320px);gap:13px;
   align-items:stretch;height:calc(100vh - 150px);min-height:580px;transition:grid-template-columns .18s}
@@ -953,10 +1020,29 @@ button{font-family:inherit;cursor:pointer}
       <button class="ptab" data-p="audit" onclick="nav('audit')">Case Thread</button>
     </div>
     <div class="top-r">
+      <button class="askbtn" onclick="askOpen()" title="Ask the assistant (⌘K)"><span class="sp">✦</span>Ask</button>
       <button class="pol" id="polBtn" onclick="nav('govern')">policy v4.2</button>
       <div class="live"><span class="dot"></span> live</div>
     </div>
   </div>
+
+  <!-- ================= ASSISTANT (slide-over, summonable anywhere) ================= -->
+  <div class="ask-scrim" id="askScrim" onclick="askClose()" hidden></div>
+  <aside class="ask" id="askEl" role="dialog" aria-modal="true" aria-label="Assistant" hidden>
+    <div class="ask-h">
+      <span class="sp">✦</span>
+      <div style="min-width:0"><div class="ask-t">Assistant</div>
+        <div class="ask-s" id="askCtx">Across all your cases</div></div>
+      <button class="icobtn" style="margin-left:auto" onclick="askClose()" aria-label="Close">✕</button>
+    </div>
+    <div class="ask-body" id="askBody"></div>
+    <div class="ask-sug" id="askSug"></div>
+    <div class="ask-in">
+      <input id="askInput" placeholder="Ask about a case, a limit, or what to do next…"
+        onkeydown="if(event.key==='Enter')askSend()" autocomplete="off">
+      <button class="btn pr" onclick="askSend()">Ask</button>
+    </div>
+  </aside>
 
   <!-- ================= CONTROL TOWER ================= -->
   <div class="view on" id="p-tower">
@@ -1414,8 +1500,6 @@ button{font-family:inherit;cursor:pointer}
             <span class="live"><span class="dot"></span> live</span>
             <div class="seg">
               <button class="on" data-m="route" onclick="ctMode('route')">Live route</button>
-              <button data-m="explain" onclick="ctMode('explain')">Explain</button>
-              <button data-m="simulate" onclick="ctMode('simulate')">Simulate</button>
               <button data-m="ledger" onclick="ctMode('ledger')">Ledger</button>
             </div>
             <button class="icobtn" onclick="ctInsp()" aria-label="Toggle inspector" title="Toggle inspector"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/><rect x="15" y="4" width="6" height="16" rx="2" fill="currentColor" stroke="none"/></svg></button>
@@ -1475,8 +1559,6 @@ button{font-family:inherit;cursor:pointer}
           <span class="live"><span class="dot"></span> live</span>
           <div class="seg">
             <button data-m="route" onclick="ctMode('route')">Live route</button>
-            <button data-m="explain" onclick="ctMode('explain')">Explain</button>
-            <button data-m="simulate" onclick="ctMode('simulate')">Simulate</button>
             <button data-m="ledger" class="on" onclick="ctMode('ledger')">Ledger</button>
           </div>
         </div>
@@ -3229,8 +3311,7 @@ function renderCT(){
     '<span>Exposure <b>'+esc(c.exposure)+'</b></span><span class="sep">·</span>'+
     '<span>Owner <b>'+esc(c.owner)+'</b></span><span class="sep">·</span><span>'+esc(c.sla)+'</span>';
   renderCTRail();renderCTFlow();renderCTDots();
-  if(S.ctMode==='simulate')renderSimPanel();
-  else if(S.ctStep)renderStepInsp(S.ctStep);
+  if(S.ctStep)renderStepInsp(S.ctStep);
   else renderInspEmpty();
 }
 function renderCTRail(){
@@ -3323,7 +3404,7 @@ function renderCTFlow(){
   var html=c.steps.map(function(st,i){
     var ag=st.ag?AG[st.ag]:null;
     var stt=st.st;
-    var dim=(S.ctMode==='explain'&&S.ctStep&&S.ctStep!==st.id)?' dim':'';
+    var dim='';
     var replayHidden=(S.ctReplay!==null&&i>S.ctReplay);
     var cls='snode '+(st.k==='trigger'?'trigger':st.k==='human'?'human':st.k==='agent'?'agent':'')+
       (S.ctStep===st.id?' sel':'')+dim+(replayHidden?' dim':'');
@@ -3426,11 +3507,12 @@ function renderCTDots(){
 /* ---- inspector ---- */
 function selStep(id){
   S.ctStep=id;
-  if(S.ctMode==='simulate'){renderCT();return}
   document.querySelectorAll('.snode').forEach(function(n){n.classList.toggle('sel',n.dataset.s===id)});
-  if(S.ctMode==='explain')renderCTFlow();
   renderStepInsp(id);
   if($('ctInspEl').classList.contains('min'))ctInsp();
+  /* clicking a step now also opens the assistant, explaining it in plain language
+     with its evidence and a what-if — this replaces the old Explain/Simulate modes */
+  askStep(S.caseId,id);
 }
 function renderInspEmpty(){
   $('ctInspLab').textContent='Step inspector';
@@ -3481,6 +3563,191 @@ function renderStepInsp(id){
   }
   $('ctInspBody').innerHTML=h;
 }
+/* ============================================================
+   ASSISTANT — summonable anywhere. Absorbs what used to be the
+   Explain and Simulate modes: click any step on a flow and the
+   assistant explains it, shows the evidence, and offers a what-if.
+   ============================================================ */
+var ASK={open:false,ctx:null,msgs:[]};
+function askOpen(ctx){
+  ASK.open=true;ASK.ctx=ctx||ASK.ctx;
+  $('askScrim').hidden=false;$('askEl').hidden=false;
+  $('askCtx').textContent=ASK.ctx?ASK.ctx.label:'Across all your cases';
+  if(!ASK.msgs.length)askBrief();
+  askPaint();
+  setTimeout(function(){var i=$('askInput');if(i)i.focus()},60);
+}
+function askClose(){ASK.open=false;$('askScrim').hidden=true;$('askEl').hidden=true}
+function askPush(m){ASK.msgs.push(m);askPaint()}
+function askPaint(){
+  var b=$('askBody');if(!b)return;
+  b.innerHTML=ASK.msgs.map(function(m){
+    if(m.you)return '<div class="am you"><span>'+esc(m.you)+'</span></div>';
+    return '<div class="am ai"><div class="who"><i></i>Assistant</div><div class="bub">'+m.ai+'</div></div>';
+  }).join('');
+  b.scrollTop=b.scrollHeight;
+  var sug=$('askSug');
+  if(sug)sug.innerHTML=(ASK.sug||[]).map(function(q){
+    return '<button onclick="askSend('+JSON.stringify(q).replace(/"/g,'&quot;')+')">'+esc(q)+'</button>'}).join('');
+}
+/* the proactive brief — what the user needs, before they ask */
+function askBrief(){
+  if(!S.held){
+    ASK.msgs=[{ai:'Nothing is waiting on you right now. Agents are running and every write so far has verified. '+
+      'Ask me about any case, or a limit you are thinking of changing.'}];
+    ASK.sug=['What did we recover today?','Why was the $214k held?','What never runs without a person?'];
+    return;
+  }
+  ASK.msgs=[{ai:'<b>Three things need you today.</b> The one costing the most is <span class="mono">EX-4472</span> — a '+
+    '<b>$214,000</b> coverage requisition Iris held above your $150k limit. It is bleeding <b>~$1.8k/day</b> '+
+    'and the coverage window closes on day 12.'+
+    '<div class="arec"><div class="rh">✦ My recommendation</div>'+
+    '<div class="rt">Approve it — authority stopped this, not doubt.</div>'+
+    '<ul><li>Two smaller requisitions on the same case already ran and <b>verified</b>.</li>'+
+    '<li>Confidence <b>0.88</b> cleared your <b>0.85</b> floor.</li>'+
+    '<li>Approving raises cover on 3 SKUs before the window closes.</li></ul>'+
+    '<div class="racts"><button class="btn pr" onclick="askDo(\'approve\')">Approve $214k</button>'+
+    '<button class="btn" onclick="askSend(\'what if my limit were higher?\')">What if my limit were higher?</button>'+
+    '<button class="btn" onclick="openPacket()">Open the packet</button></div></div>'}];
+  ASK.sug=['Why was it held?','What happens if I reject?','What else needs me?'];
+}
+/* clicking a step on the flow explains it here — the old Explain mode, but conversational */
+function askStep(caseId,stepId){
+  var c=CASES[caseId];if(!c)return;
+  var st=c.steps.filter(function(x){return x.id===stepId})[0];if(!st)return;
+  var ag=st.ag?AG[st.ag]:null;
+  var who=ag?ag.n+' · '+ag.r.toLowerCase():st.k==='human'?c.owner+' · a person':st.k==='gate'?'Policy gate':'System';
+  ASK.ctx={label:caseId+' · '+st.t};
+  var ev=(st.ev&&st.ev.length)?'<div class="awhy"><div class="wl">Evidence it used</div>'+
+    st.ev.map(function(e){return '<div class="wr"><span>·</span><b>'+esc(e)+'</b></div>'}).join('')+'</div>':'';
+  var meta='<div class="awhy"><div class="wl">At a glance</div>'+
+    '<div class="wr"><span>Owner</span><b>'+esc(who)+'</b></div>'+
+    (st.conf&&st.conf!=='—'?'<div class="wr"><span>Confidence</span><b>'+esc(st.conf)+'</b></div>':'')+
+    (st.dur?'<div class="wr"><span>Took</span><b>'+esc(st.dur)+'</b></div>':'')+
+    (st.act?'<div class="wr"><span>Wrote to</span><b>'+esc(st.act.sys)+' · '+(st.act.ok?'confirmed':'pending')+'</b></div>':'')+
+    '</div>';
+  var msg='<b>'+esc(st.t)+'</b> — here is what happened and why.'+
+    '<div style="margin-top:8px"><b>What it was trying to do.</b> '+esc(st.obj||'—')+'</div>'+
+    '<div style="margin-top:6px"><b>What it concluded.</b> '+esc(st.res||st.d)+'</div>'+meta+ev;
+  var isHold=(st.k==='human'&&caseId==='EX-4472'&&S.held);
+  if(isHold){
+    msg+='<div class="arec"><div class="rh">✦ My recommendation</div>'+
+      '<div class="rt">This is the decision that is costing you $1.8k a day.</div>'+
+      '<div class="racts"><button class="btn pr" onclick="askDo(\'approve\')">Approve $214k</button>'+
+      '<button class="btn" onclick="askSend(\'what if my limit were higher?\')">Try a different limit</button></div></div>';
+  }
+  ASK.msgs=[{ai:msg}];
+  ASK.sug=isHold?['What if my limit were higher?','What happens if I reject?']
+    :['Why did this step run at all?','What would have stopped it?','What ran next?'];
+  askOpen(ASK.ctx);
+}
+/* the old Simulate mode, folded in as a what-if the assistant offers */
+function askSim(){
+  var lim=S.simLimit||250000;
+  ASK.msgs.push({ai:'Here is the same case under a different purchase-requisition limit. '+
+    'Nothing below touches production — it is a model of what <i>would</i> have happened.'+askSimHtml(lim)});
+  ASK.sug=['Propose this change in Governance','What is the risk of raising it?'];
+  askPaint();
+}
+function askSimHtml(lim){
+  var flips=214000,pass=lim>=flips;
+  return '<div class="asim" id="askSimBox"><div class="st">What if Iris could approve more?</div>'+
+    '<div class="sv">Simulated limit: $'+lim.toLocaleString()+'</div>'+
+    '<input type="range" min="100000" max="400000" step="10000" value="'+lim+'" '+
+    'oninput="S.simLimit=+this.value;askSimUpd()">'+
+    '<div class="sn">Today it is <b>$150,000</b>. This requisition is <b>$214,000</b> — the branch flips at $214,000.</div>'+
+    '<div class="flip '+(pass?'pass':'hold')+'" id="askFlip">'+askFlipTxt(lim)+'</div>'+
+    '<div class="racts" style="display:flex;gap:7px;margin-top:10px">'+
+    '<button class="btn pr" onclick="nav(\'govern\');gvTab(\'auth\');askClose()">Propose in Governance</button></div></div>';
+}
+function askFlipTxt(lim){
+  return lim>=214000
+    ? '<b>Within authority.</b> Iris releases it herself in ~12 seconds. No waiting cost — but $214k of spend now executes without a person seeing it.'
+    : '<b>Above authority.</b> It still stops for you. 2h 11m of waiting so far, at $1.8k/day.';
+}
+function askSimUpd(){
+  var lim=S.simLimit||250000;
+  var b=$('askSimBox');if(!b)return;
+  b.querySelector('.sv').textContent='Simulated limit: $'+lim.toLocaleString();
+  var f=$('askFlip');f.innerHTML=askFlipTxt(lim);f.className='flip '+(lim>=214000?'pass':'hold');
+}
+function askDo(kind){
+  if(kind==='approve'){
+    askPush({you:'Approve it.'});
+    decide('approve');
+    setTimeout(function(){
+      askPush({ai:'✦ <b>Done — $214k PR released.</b> The case closes once Fusion confirms the write. '+
+        '<div class="arec"><div class="rh">Next up</div><div class="rt">EX-4474 is waiting on the customer.</div>'+
+        '<ul><li>17h of stock-hold left before the alternate is released.</li></ul>'+
+        '<div class="racts"><button class="btn" onclick="askSend(\'nudge the customer on EX-4474\')">Nudge the customer</button>'+
+        '<button class="btn" onclick="openCase(\'EX-4474\')">Open the case</button></div></div>'});
+      ASK.sug=['What did we recover today?','Show me the ledger entry'];askPaint();
+    },260);
+  }
+}
+/* free-text — routes to the same grounded answers */
+function askSend(q){
+  q=(typeof q==='string'&&q)||$('askInput').value.trim();
+  if(!q)return;
+  $('askInput').value='';
+  askPush({you:q});
+  var l=q.toLowerCase();
+  setTimeout(function(){
+    if(/limit.*high|higher|what if|simulat|different limit/.test(l)){askSim();return}
+    if(/why.*held|why.*hold|held/.test(l)){
+      askPush({ai:'Because of <b>authority, not doubt</b>.'+
+        '<div class="awhy"><div class="wl">The check that stopped it</div>'+
+        '<div class="wr"><span>PR value</span><b>$214,000</b></div>'+
+        '<div class="wr"><span>Iris’s limit</span><b>$150,000</b></div>'+
+        '<div class="wr"><span>Confidence</span><b>0.88 · floor 0.85 ✓</b></div>'+
+        '<div class="wr"><span>Policy</span><b>'+esc(GOV.ver.split(' ')[0])+' · PR_AUTO_LIMIT</b></div></div>'+
+        'Two other requisitions on the same case were inside the limit and executed. Same run, same confidence — different authority.'});
+      ASK.sug=['What if my limit were higher?','Approve it'];askPaint();return;
+    }
+    if(/reject|what happens if i reject/.test(l)){
+      askPush({ai:'You would be asked for a <b>reason</b> — and that reason is the point. '+
+        'It is captured on the case, Iris will not re-raise the same requisition, and the reason feeds the next recommendation. '+
+        'That is exactly how EX-4468 became a permanent phase-out check.'});
+      ASK.sug=['Show me EX-4468','Approve it instead'];askPaint();return;
+    }
+    if(/recover|value|saved|today/.test(l)){
+      askPush({ai:'<b>$129k protected today</b> against a $210k addressable exposure — 61%.'+
+        '<div class="awhy"><div class="wl">Where it came from</div>'+
+        '<div class="wr"><span>Mercer · service</span><b>$41k</b></div>'+
+        '<div class="wr"><span>Iris · stock-outs</span><b>$52k</b></div>'+
+        '<div class="wr"><span>Christy · promises</span><b>$36k</b></div>'+
+        '<div class="wr"><span>Planner time saved</span><b>38h</b></div></div>'+
+        'Median resolution 74m against a 38h manual baseline — measured, not claimed.'});
+      ASK.sug=['What remains at risk?'];askPaint();return;
+    }
+    if(/never.*person|unattended|alone/.test(l)){
+      askPush({ai:'Three things never run unattended, whatever the confidence: <b>customer credit</b>, '+
+        '<b>vendor termination</b>, and any requisition above the planner limit. They are set in Governance, not in code.'});
+      ASK.sug=['Open Governance'];askPaint();return;
+    }
+    if(/nudge/.test(l)){
+      if(typeof nudge4474==='function')nudge4474();
+      askPush({ai:'✦ Nudged. Christy sent the customer a reminder with both options and the 17h hold deadline attached.'});
+      askPaint();return;
+    }
+    if(/4468|phase/.test(l)){
+      askPush({ai:'<b>EX-4468</b> — Dana R. rejected a cover recommendation because SKU 44-2213 phases out in Q4. '+
+        'That reason became a tested phase-out check that now runs before any cover recommendation. '+
+        '<b>3 repeat recommendations suppressed</b> since. It is awaiting your approval in Governance.'});
+      ASK.sug=['Open Governance'];askPaint();return;
+    }
+    if(/governance|open gov/.test(l)){nav('govern');askClose();return}
+    if(/ledger|audit|record/.test(l)){nav('audit');ctMode('ledger');askClose();return}
+    askPush({ai:'I can answer from the case records. Try asking why the $214k was held, what a different limit would do, '+
+      'what we recovered today, or what never runs without a person.'});
+    ASK.sug=['Why was the $214k held?','What if my limit were higher?','What did we recover today?'];askPaint();
+  },220);
+}
+document.addEventListener('keydown',function(e){
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();ASK.open?askClose():askOpen()}
+  if(e.key==='Escape'&&ASK.open)askClose();
+});
+
 /* ---- modes ---- */
 function ctMode(m){
   document.querySelectorAll('#a-board .seg button,#a-list .seg button').forEach(function(b){b.classList.toggle('on',b.dataset.m===m)});
@@ -3488,10 +3755,9 @@ function ctMode(m){
     S.audit='list';['board','list','trail'].forEach(function(k){$('a-'+k).classList.toggle('on',k==='list')});
     drawLedger();return;
   }
-  S.audit='board';S.ctMode=m;
+  S.audit='board';S.ctMode='route';
   ['board','list','trail'].forEach(function(k){$('a-'+k).classList.toggle('on',k==='board')});
-  $('ctCanvas').classList.toggle('sim',m==='simulate');
-  if(m==='simulate'&&$('ctInspEl').classList.contains('min'))ctInsp();
+  $('ctCanvas').classList.remove('sim');
   renderCT();
   requestAnimationFrame(function(){ctFit()});
 }
