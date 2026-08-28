@@ -957,25 +957,29 @@ button{font-family:inherit;cursor:pointer}
 .raillab:first-child{margin-top:0}
 .raillab i{width:6px;height:6px;border-radius:50%;flex:0 0 auto}
 .raillab .n{margin-left:auto;font-family:'Geist Mono',monospace;font-variant-numeric:tabular-nums;opacity:.8}
-/* case rows — title + exposure, consequence + age. Two aligned columns, no
-   repetition of the group state, and colour carried by the dot alone. */
-.ccard{display:flex;gap:10px;width:100%;text-align:left;align-items:flex-start;background:none;
-  border:0;border-radius:9px;padding:11px 10px;transition:background .12s}
-.ccard+.ccard{border-top:1px solid var(--border-light);border-radius:0}
-.ccard:hover{background:var(--surface-grey)}
-.ccard.on{background:var(--surface-accent);border-radius:9px}
-.ccard.on+.ccard{border-top-color:transparent}
-.cc-dot{width:7px;height:7px;border-radius:50%;background:var(--cc);flex:0 0 auto;margin-top:6px}
-.ccard.on .cc-dot{box-shadow:0 0 0 3px color-mix(in oklab,var(--cc) 20%,transparent)}
-.cc-col{min-width:0;flex:1}
-.cc-r1,.cc-r2{display:flex;align-items:baseline;gap:10px}
-.cc-r2{margin-top:3px}
-.ccard .cnm{flex:1;min-width:0;font-size:13px;font-weight:600;letter-spacing:-.005em;line-height:1.35}
-.cc-val{flex:0 0 auto;font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;
+/* case cards — id + exposure, the title, then state and age */
+.ccard{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:12px 13px;margin-bottom:8px;transition:border-color .12s,box-shadow .12s,background .12s}
+.ccard:hover{border-color:var(--border-strong);box-shadow:var(--shadow-card)}
+.ccard.on{border-color:var(--brand);background:var(--surface-accent);
+  box-shadow:0 0 0 3px color-mix(in oklab,var(--brand) 12%,transparent)}
+.cc-r1{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+.cc-id{flex:1;min-width:0;font-family:'Geist Mono',monospace;font-size:11px;color:var(--text-neutral)}
+.cc-val{flex:0 0 auto;font-family:'Geist Mono',monospace;font-size:12.5px;font-weight:600;
   font-variant-numeric:tabular-nums;color:var(--foreground)}
-.cc-line{flex:1;min-width:0;font-size:11.5px;color:var(--muted-foreground);line-height:1.4}
-.cc-age{flex:0 0 auto;font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--text-neutral);
-  font-variant-numeric:tabular-nums}
+.ccard .cnm{display:block;font-size:13.5px;font-weight:600;letter-spacing:-.01em;line-height:1.3;margin-bottom:9px}
+.cc-r3{display:flex;align-items:center;gap:10px}
+.cst{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;border-radius:8px;
+  padding:4px 9px;background:var(--secondary);color:var(--muted-foreground)}
+.cst svg{width:13px;height:13px;flex:0 0 auto}
+.cst.hu{background:var(--pill-warning-bg);color:var(--pill-warning-fg)}
+.cst.wt{background:var(--secondary);color:var(--muted-foreground)}
+.cst.br{background:var(--pill-info-bg);color:var(--pill-info-fg)}
+.cst.dg{background:var(--pill-warning-bg);color:var(--pill-warning-fg)}
+.cst.ok{background:var(--pill-success-bg);color:var(--pill-success-fg)}
+.cc-age{margin-left:auto;display:inline-flex;align-items:center;gap:5px;font-family:'Geist Mono',monospace;
+  font-size:11px;color:var(--text-neutral);font-variant-numeric:tabular-nums}
+.cc-age svg{width:13px;height:13px;flex:0 0 auto}
 .railempty{font-size:12px;color:var(--text-neutral);text-align:center;padding:22px 10px;line-height:1.5}
 .ccard .cwait b{font-weight:600;color:var(--foreground)}
 /* canvas */
@@ -3042,6 +3046,11 @@ var ICO={
  person:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>',
  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>',
  spark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"/></svg>',
+ clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 1.8"/></svg>',
+ hourglass:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10"/><path d="M7 21h10"/><path d="M8 3v3.5L12 11l4-4.5V3"/><path d="M8 21v-3.5L12 13l4 4.5V21"/></svg>',
+ spin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="8" stroke-dasharray="34 18"/></svg>',
+ undo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h11a5 5 0 0 1 0 10h-5"/><path d="M8 4L4 8l4 4"/></svg>',
+ tick:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M8.6 12.2l2.3 2.3 4.5-4.6"/></svg>',
  bolt:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>',
  shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.4-3 8.2-7 9.4C8 20.2 5 16.4 5 12V6l7-3z"/></svg>'
 };
@@ -3781,22 +3790,19 @@ function caseCard(k,cur){
   var c=CASES[k];
   var decided=(k==='EX-4472'&&!S.held);
   var st=decided?'done':c.status;
-  var col={held:'var(--warning)',waiting:'var(--read)',active:'var(--brand)',
-           overridden:'var(--destructive)',done:'var(--success)'}[st]||'var(--border-strong)';
-  /* the group header already says the state — only add a line when it says something new */
-  var line=st==='waiting'?'Waiting on '+(c.waiting||'someone else')
-    :st==='active'?'Agents working now'
-    :st==='overridden'?'You overrode it'
-    :(c.atRisk||'');
-  return '<button class="ccard'+(cur?' on':'')+'" style="--cc:'+col+'" onclick="pickCase(\''+k+'\')">'+
-    '<span class="cc-dot"></span>'+
-    '<span class="cc-col">'+
-      '<span class="cc-r1"><span class="cnm">'+esc(c.title)+'</span>'+
-        '<span class="cc-val">'+esc(c.val)+'</span></span>'+
-      '<span class="cc-r2"><span class="cc-line">'+esc(line)+'</span>'+
-        '<span class="cc-age">'+esc(c.elapsed)+'</span></span>'+
-    '</span></button>';
+  var S2={held:['hu',ICO.person,'Needs you'],
+          waiting:['wt',ICO.hourglass,'Waiting external'],
+          active:['br',ICO.spin,'Active'],
+          overridden:['dg',ICO.undo,'Overridden'],
+          done:['ok',ICO.tick,'Resolved']}[st]||['nu',ICO.spin,'Open'];
+  return '<button class="ccard'+(cur?' on':'')+'" onclick="pickCase(\''+k+'\')">'+
+    '<span class="cc-r1"><span class="cc-id">'+k+'</span><span class="cc-val">'+esc(c.val)+'</span></span>'+
+    '<span class="cnm">'+esc(c.title)+'</span>'+
+    '<span class="cc-r3"><span class="cst '+S2[0]+'">'+S2[1]+esc(S2[2])+'</span>'+
+      '<span class="cc-age">'+ICO.clock+esc(c.elapsed)+'</span></span>'+
+    '</button>';
 }
+function pickCase(k){S.caseId=k;S.ctStep=null;S.ctReplay=null;ASK.into='rail';renderCT();ctFit()}
 function ctRailTab(t){
   S.ctRailTab=t;
   document.querySelectorAll('.railtabs button').forEach(function(b){b.classList.toggle('on',b.dataset.rt===t)});
