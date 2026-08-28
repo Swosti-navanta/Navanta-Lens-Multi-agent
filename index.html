@@ -750,7 +750,7 @@ button{font-family:inherit;cursor:pointer}
 .ct-facts b{font-weight:600;color:var(--foreground)}
 .ct-facts .sep{color:var(--input)}
 .ct-head .right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.ct-body{display:grid;grid-template-columns:auto minmax(0,1fr) auto;min-height:0}
+.ct-body{display:grid;grid-template-columns:auto minmax(0,1fr);min-height:0}
 /* rail */
 .ct-rail{width:380px;border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:0;background:var(--background);transition:width .18s}
 /* rail header — assistant identity + toggle across to active cases */
@@ -1526,7 +1526,6 @@ button{font-family:inherit;cursor:pointer}
               <button class="on" data-m="route" onclick="ctMode('route')">Live route</button>
               <button data-m="ledger" onclick="ctMode('ledger')">Ledger</button>
             </div>
-            <button class="icobtn" onclick="ctInsp()" aria-label="Toggle inspector" title="Toggle inspector"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/><rect x="15" y="4" width="6" height="16" rx="2" fill="currentColor" stroke="none"/></svg></button>
           </div>
         </div>
         <div class="ct-body">
@@ -1583,11 +1582,6 @@ button{font-family:inherit;cursor:pointer}
               <span class="rb-sum" id="ctSum"></span>
             </div>
           </div>
-          <aside class="ct-insp" id="ctInspEl">
-            <div class="insp-h"><span class="il" id="ctInspLab">Step inspector</span>
-              <button class="icobtn" style="margin-left:auto;width:24px;height:24px" onclick="ctInsp()" aria-label="Close">✕</button></div>
-            <div class="insp-b" id="ctInspBody"></div>
-          </aside>
         </div>
       </div>
     </div>
@@ -3554,12 +3548,12 @@ function selStep(id){
   S.ctStep=id;
   document.querySelectorAll('.snode').forEach(function(n){n.classList.toggle('sel',n.dataset.s===id)});
   renderStepInsp(id);
-  if($('ctInspEl').classList.contains('min'))ctInsp();
   /* clicking a step now also opens the assistant, explaining it in plain language
      with its evidence and a what-if — this replaces the old Explain/Simulate modes */
   askStep(S.caseId,id);
 }
 function renderInspEmpty(){
+  if(!$('ctInspBody'))return;
   $('ctInspLab').textContent='Step inspector';
   $('ctInspBody').innerHTML='<div class="insp-p" style="color:var(--muted-foreground)">'+
     'Select any step on the board to see what it was trying to do, what it concluded, the evidence it used, and the exact system action it took.</div>'+
@@ -3567,6 +3561,7 @@ function renderInspEmpty(){
     '<div class="insp-ul"><li>'+summarize(CASES[S.caseId]).split(' · ').join('</li><li>')+'</li></div>';
 }
 function renderStepInsp(id){
+  if(!$('ctInspBody'))return;
   var c=CASES[S.caseId];
   var st=c.steps.filter(function(x){return x.id===id})[0];if(!st)return;
   var ag=st.ag?AG[st.ag]:null;
@@ -3876,6 +3871,7 @@ function ctMode(m){
   requestAnimationFrame(function(){ctFit()});
 }
 function renderSimPanel(){
+  if(!$('ctInspBody'))return;
   $('ctInspLab').textContent='⚗ Simulation';
   var lim=S.simLimit||250000;
   var flips=214000;
@@ -3930,7 +3926,7 @@ function ctPlay(){
 function ctStopPlay(){if(ctTimer){clearInterval(ctTimer);ctTimer=null}$('ctPlayBtn').textContent='▶'}
 /* ---- panels + pan/zoom ---- */
 function ctRail(){$('ctRailEl').classList.toggle('min')}
-function ctInsp(){$('ctInspEl').classList.toggle('min')}
+function ctInsp(){var e=$('ctInspEl');if(e)e.classList.toggle('min')}
 function ctApply(){
   var st=$('ctStage');if(!st)return;
   st.style.transform='translate('+S.ctx+'px,'+S.cty+'px) scale('+S.ctz+')';
