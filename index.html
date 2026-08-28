@@ -764,17 +764,24 @@ button{font-family:inherit;cursor:pointer}
 .ct-body{display:grid;grid-template-columns:auto minmax(0,1fr);min-height:0}
 /* rail */
 .ct-rail{width:380px;border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:0;background:var(--background);transition:width .18s}
-/* rail header — assistant identity + toggle across to active cases */
-.rail-hd{display:flex;align-items:center;gap:10px;padding:12px 12px;border-bottom:1px solid var(--border);background:var(--background)}
-.rail-hd .sp{width:26px;height:26px;border-radius:8px;background:var(--gradient-brand);color:#fff;font-size:12px;
-  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
-.rail-hd .sp.cases{background:var(--secondary);color:var(--muted-foreground)}
-.rh-t{font-size:14px;font-weight:600;letter-spacing:-.01em;line-height:1.2}
-.rh-s{font-size:11px;color:var(--text-neutral);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.railtog{margin-left:auto;position:relative;display:flex;align-items:center;gap:6px;border:1px solid var(--border);
-  background:var(--background);border-radius:8px;padding:5px 9px;color:var(--muted-foreground);flex:0 0 auto}
-.railtog:hover{border-color:var(--brand);color:var(--brand)}
-.railtog .tn{font-family:'Geist Mono',monospace;font-size:10.5px;font-weight:600}
+/* rail header — segmented control between assistant and the case list */
+.rail-hd{padding:12px 12px 10px;border-bottom:0;background:var(--background)}
+.railseg{width:100%;background:var(--secondary);border-radius:9999px;padding:3px;gap:2px}
+.railseg button{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  font-size:12.5px;font-weight:500;color:var(--muted-foreground);padding:7px 12px;border-radius:9999px;
+  border:0;background:none;white-space:nowrap;transition:background .12s ease,color .12s ease,box-shadow .12s ease}
+.railseg button:hover{color:var(--foreground)}
+.railseg button.on{background:var(--background);color:var(--foreground);font-weight:600;
+  box-shadow:0 1px 2px rgb(9 9 11/.08),0 0 0 1px rgb(9 9 11/.04)}
+.railseg button:focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 30%,transparent)}
+.railseg .sp2{width:15px;height:15px;border-radius:5px;background:var(--gradient-brand);color:#fff;
+  font-size:8.5px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+.railseg button:not(.on) .sp2{filter:grayscale(1);opacity:.45}
+.railseg .n{font-family:'Geist Mono',monospace;font-size:10.5px;font-weight:600;
+  background:var(--border);color:var(--muted-foreground);border-radius:9999px;padding:1px 6px}
+.railseg button.on .n{background:var(--secondary);color:var(--foreground)}
+.rail-sub2{font-size:11px;color:var(--text-neutral);padding:0 14px 10px;background:var(--background);
+  border-bottom:1px solid var(--border);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* assistant pane inside the rail */
 .rail-ai{flex:1;display:flex;flex-direction:column;min-height:0;background:var(--surface-grey)}
 .rai-body{flex:1;min-height:0;overflow-y:auto;padding:14px}
@@ -1543,20 +1550,14 @@ button{font-family:inherit;cursor:pointer}
         <div class="ct-body">
           <aside class="ct-rail" id="ctRailEl">
             <div class="rail-hd">
-              <span class="sp" id="railIco">✦</span>
-              <div style="min-width:0">
-                <div class="rh-t" id="railTitle">Assistant</div>
-                <div class="rh-s" id="railSub">Working on EX-4472</div>
+              <div class="seg railseg" role="tablist" aria-label="Assistant or active cases">
+                <button id="railSegAI" class="on" role="tab" aria-selected="true" onclick="ctRailMode('ai')">
+                  <span class="sp2">✦</span>Assistant</button>
+                <button id="railSegCases" role="tab" aria-selected="false" onclick="ctRailMode('cases')">
+                  Cases <span class="n" id="railTogN">4</span></button>
               </div>
-              <button class="railtog" id="railTog" onclick="ctRailMode()" title="Show active cases"
-                aria-label="Switch between assistant and active cases">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <rect x="3" y="4" width="18" height="6" rx="1.5"></rect>
-                  <rect x="3" y="14" width="18" height="6" rx="1.5"></rect></svg>
-                <span id="railTogN" class="tn">4</span>
-              </button>
             </div>
+            <div class="rail-sub2" id="railSub">Working on EX-4472</div>
             <!-- assistant pane (default) -->
             <div class="rail-ai" id="ctRailAI">
               <div class="rai-body" id="ctAiBody"></div>
@@ -3614,14 +3615,14 @@ function ctRailMode(m){
   S.ctRail=m||(S.ctRail==='cases'?'ai':'cases');
   var ai=S.ctRail!=='cases';
   $('ctRailAI').hidden=!ai;$('ctRailBody').hidden=ai;
-  $('railIco').textContent=ai?'✦':'☰';
-  $('railIco').className='sp'+(ai?'':' cases');
-  $('railTitle').textContent=ai?'Assistant':'Active cases';
+  var a=$('railSegAI'),b=$('railSegCases');
+  if(a){a.classList.toggle('on',ai);a.setAttribute('aria-selected',String(ai))}
+  if(b){b.classList.toggle('on',!ai);b.setAttribute('aria-selected',String(!ai))}
+  var n=$('railTogN');if(n)n.textContent=String(CTORDER.length);
   var c=CASES[S.caseId];
-  $('railSub').textContent=ai?('Working on '+S.caseId):(CTORDER.length+' cases · '+(c?c.title:''));
-  var tg=$('railTog');
-  if(tg){tg.title=ai?'Show active cases':'Back to the assistant';
-    $('railTogN').textContent=ai?String(CTORDER.length-1):'✦';}
+  var sub=$('railSub');
+  if(sub)sub.textContent=ai?('Working on '+S.caseId+(c?' · '+c.title:''))
+    :(CTORDER.length+' open cases');
   if(ai)ctAiBrief();else renderCTRail();
 }
 /* the assistant, rendered into the rail and scoped to the open case */
