@@ -887,6 +887,7 @@ button{font-family:inherit;cursor:pointer}
 .li-tile{width:38px;height:38px;border-radius:11px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
   font-size:15px;font-weight:600;background:var(--secondary);color:var(--tc,var(--text-neutral));
   transition:background .12s,box-shadow .12s}
+.li-tile svg{width:19px;height:19px}
 .lib-item.on .li-tile{background:var(--card);box-shadow:0 1px 3px rgb(9 9 11/.1)}
 .li-col{min-width:0;flex:1}
 .lib-item .lib-name{display:block;font-size:13.5px;font-weight:600;line-height:1.3;letter-spacing:-.01em}
@@ -919,24 +920,26 @@ button{font-family:inherit;cursor:pointer}
 .raillab:first-child{margin-top:0}
 .raillab i{width:6px;height:6px;border-radius:50%;flex:0 0 auto}
 .raillab .n{margin-left:auto;font-family:'Geist Mono',monospace;font-variant-numeric:tabular-nums;opacity:.8}
-/* case card — an accent rail carries the state, the title leads */
-.ccard{position:relative;display:block;width:100%;text-align:left;border:1px solid var(--border);
-  background:var(--background);border-radius:10px;padding:11px 12px 11px 15px;margin-bottom:7px;overflow:hidden;
-  transition:border-color .12s,background .12s,box-shadow .12s}
-.ccard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cc,var(--border-strong))}
-.ccard:hover{border-color:var(--border-strong);background:var(--surface-grey)}
-.ccard.on{border-color:color-mix(in oklab,var(--cc) 45%,#fff);background:color-mix(in oklab,var(--cc) 6%,#fff);
-  box-shadow:0 1px 2px rgb(9 9 11/.06)}
-.ccard .cnm{display:block;font-size:13px;font-weight:600;line-height:1.35;letter-spacing:-.005em;margin-bottom:5px}
-.ccard .cmeta{display:flex;align-items:center;gap:7px;font-family:'Geist Mono',monospace;font-size:10.5px;
-  color:var(--text-neutral);font-variant-numeric:tabular-nums}
-.ccard .cmeta .cval{font-weight:600;color:var(--muted-foreground)}
-.ccard .cmeta .sep{opacity:.4}
-.ccard .cwait{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted-foreground);
-  margin-top:8px;padding-top:8px;border-top:1px solid var(--border-light)}
-.ccard .cwait b{color:var(--foreground);font-weight:600}
-.ccard .cwait.you{color:var(--pill-warning-fg)}
-.ccard .cwait.you b{color:var(--pill-warning-fg)}
+/* case rows — dense and scannable: state dot, inline status, age on the right */
+.ccard{display:flex;gap:10px;width:100%;text-align:left;align-items:flex-start;background:none;
+  border:0;border-radius:9px;padding:10px 10px;transition:background .12s}
+.ccard+.ccard{border-top:1px solid var(--border-light);border-radius:0}
+.ccard:hover{background:var(--surface-grey)}
+.ccard.on{background:var(--surface-accent);border-radius:9px}
+.ccard.on+.ccard{border-top-color:transparent}
+.cc-dot{width:8px;height:8px;border-radius:50%;background:var(--cc);flex:0 0 auto;margin-top:5px;
+  box-shadow:0 0 0 3px color-mix(in oklab,var(--cc) 16%,transparent)}
+.cc-col{min-width:0;flex:1}
+.cc-top{display:flex;align-items:baseline;gap:8px;min-width:0}
+.ccard .cnm{font-size:13px;font-weight:600;letter-spacing:-.005em;line-height:1.35;min-width:0}
+.cc-sep{color:var(--input);flex:0 0 auto}
+.cc-st{font-size:11.5px;font-weight:600;color:var(--cc)}
+.cc-age{margin-left:auto;padding-left:8px;font-family:'Geist Mono',monospace;font-size:10.5px;
+  color:var(--text-neutral);font-variant-numeric:tabular-nums;flex:0 0 auto}
+.cc-sub{display:block;font-size:11.5px;line-height:1.45;margin-top:3px;color:var(--muted-foreground)}
+.cc-risk{display:block;font-size:11px;color:var(--text-neutral);line-height:1.45;margin-top:2px}
+.cc-sub b{font-family:'Geist Mono',monospace;font-weight:600;color:var(--muted-foreground)}
+.cc-dotsep{margin:0 5px;opacity:.45}
 .railempty{font-size:12px;color:var(--text-neutral);text-align:center;padding:22px 10px;line-height:1.5}
 .ccard .cwait b{font-weight:600;color:var(--foreground)}
 /* canvas */
@@ -2753,7 +2756,7 @@ function openRetry(){
 /* node kinds: gate · ai · human · step · term · start
    coords are in a 1020×900 stage; edges carry a labelled kind */
 var WFS={
- 'exception-triage':{name:'Exception triage',group:'Planning',owner:'Iris · planner',
+ 'exception-triage':{name:'Exception triage',group:'Planning',owner:'Iris · planner',short:'What clears itself, and what reaches a planner',
   sub:'What the nightly run resolves on its own, and what reaches a planner with the evidence attached',
   nodes:[
    {id:'g1',x:376,y:16,k:'gate',t:'Safe to resolve alone?',d:'Routine movement inside policy with no escalating signal resolves without a person.',
@@ -2788,7 +2791,7 @@ var WFS={
    {f:'h1',t:'t3',l:'hold',k:'person'},
    {f:'t3',t:'h1',l:'condition cleared',k:'loop'}]},
 
- 'po-approval':{name:'PO auto-approval',group:'Buying',owner:'Mercer · buyer',
+ 'po-approval':{name:'PO auto-approval',group:'Buying',owner:'Mercer · buyer',short:'When a purchase order clears on its own',
   sub:'How a purchase order clears without a person, and the door that never opens on its own',
   nodes:[
    {id:'s0',x:376,y:16,k:'start',t:'Requisition arrives',d:'Raised by Iris, or by a person.'},
@@ -2822,7 +2825,7 @@ var WFS={
    {f:'a2',t:'g3',k:'llm'},
    {f:'g3',t:'h1',l:'passes',k:'expr'}]},
 
- 'claims':{name:'Damaged delivery claim',group:'Service',owner:'Christy · service',
+ 'claims':{name:'Damaged delivery claim',group:'Service',owner:'Christy · service',short:'Evidence to credit, without asking the customer',
   sub:'From evidence to credit without asking the customer to prove what we already hold',
   nodes:[
    {id:'s0',x:376,y:16,k:'start',t:'Claim raised',d:'POD and customer photos arrive together.'},
@@ -2857,7 +2860,7 @@ var WFS={
    {f:'g3',t:'t1',l:'above limit',k:'expr'},
    {f:'g3',t:'t2',l:'inside limit',k:'expr'}]},
 
- 'coverage':{name:'Coverage replan',group:'Planning',owner:'Mercer → Iris',
+ 'coverage':{name:'Coverage replan',group:'Planning',owner:'Mercer → Iris',short:'One supplier signal, two agents, one case',
   sub:'The EX-4471 path: one supplier signal, two agents, one accountable case',
   nodes:[
    {id:'s0',x:376,y:16,k:'start',t:'Supplier signal',d:'EDI 824 · lead time +10 days for three months.'},
@@ -2885,7 +2888,7 @@ var WFS={
    {f:'a2',t:'a3',l:'HO-8831 accepted',k:'expr'},
    {f:'a3',t:'g2',k:'llm'}]},
 
- 'threshold':{name:'Threshold change',group:'Policy',owner:'Policy owner',
+ 'threshold':{name:'Threshold change',group:'Policy',owner:'Policy owner',short:'How a governing number is allowed to move',
   sub:'How a number that judges every future case is allowed to move',
   nodes:[
    {id:'s0',x:376,y:16,k:'start',t:'Someone proposes a number'},
@@ -2986,6 +2989,14 @@ function wfAskGo(){
 
 /* ---- library ---- */
 /* small inline marks — legible at 11px, no cryptic glyphs */
+/* one mark per flow subject, so the tile says what it is about */
+var FLOWICO={
+ 'exception-triage':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+ 'coverage':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.7l9 4.6-9 4.6-9-4.6 9-4.6z"/><path d="M3 12.2l9 4.6 9-4.6"/><path d="M3 16.9l9 4.6 9-4.6"/></svg>',
+ 'po-approval':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2.8H7a2 2 0 0 0-2 2v14.4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7.8l-5-5z"/><path d="M14 2.8v5h5"/><path d="M9.2 14.6l1.9 1.9 3.7-3.7"/></svg>',
+ 'claims':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 7.8L12 3 3.5 7.8v8.4L12 21l8.5-4.8V7.8z"/><path d="M3.5 7.8L12 12.6l8.5-4.8"/><path d="M12 21v-8.4"/></svg>',
+ 'threshold':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><circle cx="9" cy="6" r="2.2"/><path d="M4 12h16"/><circle cx="15" cy="12" r="2.2"/><path d="M4 18h16"/><circle cx="11" cy="18" r="2.2"/></svg>'
+};
 var ICO={
  person:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>',
  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>',
@@ -3005,15 +3016,15 @@ function renderWFLib(){
       var hu=w.nodes.filter(function(n){return n.k==='human'}).length;
       var own=(w.owner||'').toLowerCase();
       var akey=own.indexOf('iris')>-1?'iris':own.indexOf('mercer')>-1?'mercer':own.indexOf('christy')>-1?'christy':null;
-      var mark=akey?AG[akey].av:'§', col=akey?AG[akey].c:'var(--text-neutral)';
+      var col=akey?AG[akey].c:'var(--text-neutral)';
+      var mark=FLOWICO[k]||ICO.bolt;
       /* one honest line about what it does, then one about whether it needs you */
-      var desc=(w.sub||'').replace(/\s*$/,'');
-      if(desc.length>96)desc=desc.slice(0,93).replace(/[\s,]+\S*$/,'')+'…';
+      var desc=w.short||(w.sub||'').split(',')[0];
       return '<button class="lib-item'+(S.wf===k?' on':'')+'" onclick="pickWF(\''+k+'\')">'+
-        '<span class="li-tile" style="--tc:'+col+'">'+esc(mark)+'</span>'+
+        '<span class="li-tile" style="--tc:'+col+'">'+mark+'</span>'+
         '<span class="li-col">'+
           '<span class="lib-name">'+esc(w.name)+(w.generated?'<em class="li-gen">assembled</em>':'')+'</span>'+
-          '<span class="li-desc">'+esc(desc)+'.</span>'+
+          '<span class="li-desc">'+esc(desc)+'</span>'+
           '<span class="li-foot'+(hu?' hu':'')+'">'+(hu?ICO.person+'Needs a person':ICO.check+'Runs on its own')+'</span>'+
         '</span></button>';
     }).join('');
@@ -3690,16 +3701,21 @@ function caseCard(k,cur){
   var st=decided?'done':c.status;
   var col={held:'var(--warning)',waiting:'#0087ce',active:'var(--brand)',
            overridden:'var(--destructive)',done:'var(--success)'}[st]||'var(--border-strong)';
-  var waitTxt=decided?'':(st==='held'?'Waiting on <b>your decision</b>'
-    :(c.waiting?'Waiting on <b>'+esc(c.waiting)+'</b>':''));
+  var word=decided?'Decided'
+    :st==='held'?'Waiting on you'
+    :st==='waiting'?'Waiting on '+(c.waiting||'someone else')
+    :st==='overridden'?'You overrode it'
+    :st==='done'?'Closed':'Agents working';
   return '<button class="ccard'+(cur?' on':'')+'" style="--cc:'+col+'" onclick="pickCase(\''+k+'\')">'+
-    '<span class="cnm">'+esc(c.title)+'</span>'+
-    '<span class="cmeta"><span>'+k+'</span><span class="sep">·</span>'+
-      '<span class="cval">'+esc(c.val)+'</span><span class="sep">·</span><span>'+esc(c.elapsed)+'</span></span>'+
-    (waitTxt?'<div class="cwait'+(st==='held'?' you':'')+'">'+waitTxt+'</div>':'')+
-    '</button>';
+    '<span class="cc-dot"></span>'+
+    '<span class="cc-col">'+
+      '<span class="cc-top"><span class="cnm">'+esc(c.title)+'</span>'+
+        '<span class="cc-age">'+esc(c.elapsed)+'</span></span>'+
+      '<span class="cc-sub"><span class="cc-st">'+esc(word)+'</span>'+
+        '<span class="cc-dotsep">·</span><b>'+esc(c.val)+'</b></span>'+
+      '<span class="cc-risk">'+esc(c.atRisk||'')+'</span>'+
+    '</span></button>';
 }
-function pickCase(k){S.caseId=k;S.ctStep=null;S.ctReplay=null;ASK.into='rail';renderCT();ctFit()}
 function ctRailTab(t){
   S.ctRailTab=t;
   document.querySelectorAll('.railtabs button').forEach(function(b){b.classList.toggle('on',b.dataset.rt===t)});
