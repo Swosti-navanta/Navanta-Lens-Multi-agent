@@ -878,27 +878,25 @@ button{font-family:inherit;cursor:pointer}
 .cvs.gt{background:var(--pill-info-bg);border-color:#cfe2fb;color:var(--pill-info-fg)}
 .cvs.gt b{color:var(--pill-info-fg)}
 
-/* --- flow list rows: agent mark + readable signals --- */
-.lib-item{display:flex;gap:10px;width:100%;text-align:left;align-items:flex-start;
-  border:1px solid transparent;background:none;border-radius:10px;padding:9px 10px;margin-bottom:3px;
-  transition:background .12s,border-color .12s}
-.lib-item:hover{background:var(--surface-grey);border-color:var(--border)}
-.lib-item.on{background:var(--surface-accent);border-color:color-mix(in oklab,var(--brand) 28%,#fff)}
-.li-av{width:28px;height:28px;border-radius:8px;color:#fff;font-size:12px;font-weight:600;flex:0 0 auto;
-  display:flex;align-items:center;justify-content:center;margin-top:1px}
+/* --- flow cards: icon tile, title, what it does, one status line --- */
+.lib-item{display:flex;gap:12px;width:100%;text-align:left;align-items:flex-start;
+  border:1px solid var(--border);background:var(--card);border-radius:12px;padding:13px;margin-bottom:8px;
+  transition:background .12s,border-color .12s,box-shadow .12s}
+.lib-item:hover{border-color:var(--border-strong);box-shadow:var(--shadow-card)}
+.lib-item.on{background:var(--surface-grey);border-color:var(--border-strong)}
+.li-tile{width:38px;height:38px;border-radius:11px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:600;background:var(--secondary);color:var(--tc,var(--text-neutral));
+  transition:background .12s,box-shadow .12s}
+.lib-item.on .li-tile{background:var(--card);box-shadow:0 1px 3px rgb(9 9 11/.1)}
 .li-col{min-width:0;flex:1}
-.lib-item .lib-name{display:block;font-size:13px;font-weight:600;line-height:1.3;letter-spacing:-.005em}
-.li-gen{font-style:normal;font-size:9.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
-  background:var(--surface-accent);color:var(--brand);border-radius:9999px;padding:1px 7px;margin-left:6px}
-.lib-item .lib-meta{display:block;font-size:11px;color:var(--text-neutral);margin-top:1px;text-transform:capitalize}
-.li-sig{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
-.li-sig .sg{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;border-radius:9999px;
-  padding:3px 9px;background:var(--secondary);color:var(--muted-foreground);white-space:nowrap}
-.li-sig .sg svg{width:11px;height:11px;flex:0 0 auto}
-.li-sig .sg.st{background:var(--surface-accent);color:var(--brand-deep)}
-.li-sig .sg.hu{background:var(--pill-warning-bg);color:var(--pill-warning-fg)}
-.li-sig .sg.no{background:var(--pill-success-bg);color:var(--pill-success-fg)}
-.li-sig .sg.gt{background:var(--secondary);color:var(--muted-foreground);font-weight:500}
+.lib-item .lib-name{display:block;font-size:13.5px;font-weight:600;line-height:1.3;letter-spacing:-.01em}
+.li-gen{font-style:normal;font-size:9px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  background:var(--surface-accent);color:var(--brand);border-radius:9999px;padding:1px 7px;margin-left:6px;vertical-align:1px}
+.li-desc{display:block;font-size:11.5px;color:var(--muted-foreground);line-height:1.5;margin-top:3px}
+.li-foot{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;margin-top:8px;
+  color:var(--pill-success-fg)}
+.li-foot.hu{color:var(--pill-warning-fg)}
+.li-foot svg{width:12px;height:12px;flex:0 0 auto}
 
 /* --- case panel: grouped by who the case is blocked on --- */
 .railsearch{width:100%;font-family:inherit;font-size:12.5px;padding:8px 12px 8px 32px;border:1px solid var(--border);
@@ -3004,27 +3002,19 @@ function renderWFLib(){
   $('wfLib').innerHTML=Object.keys(groups).map(function(g){
     return '<div class="lib-group">'+g+'</div>'+groups[g].map(function(k){
       var w=WFS[k];
-      var ai=w.nodes.filter(function(n){return n.k==='ai'}).length;
       var hu=w.nodes.filter(function(n){return n.k==='human'}).length;
-      var gt=w.nodes.filter(function(n){return n.k==='gate'}).length;
-      /* who runs it — use the real agent mark where we know them */
       var own=(w.owner||'').toLowerCase();
       var akey=own.indexOf('iris')>-1?'iris':own.indexOf('mercer')>-1?'mercer':own.indexOf('christy')>-1?'christy':null;
-      var av=akey?{av:AG[akey].av,bg:AG[akey].bg}:{av:'§',bg:'var(--text-neutral)'};
-      /* role = the bit after the dot; otherwise fall back to who runs it */
-      var parts=(w.owner||'').split('·');
-      var role=parts.length>1?parts[1].trim():(parts[0]||'').trim();
-      return '<button class="lib-item'+(S.wf===k?' on':'')+(w.generated?' gen':'')+'" onclick="pickWF(\''+k+'\')">'+
-        '<span class="li-av" style="background:'+av.bg+'">'+esc(av.av)+'</span>'+
+      var mark=akey?AG[akey].av:'§', col=akey?AG[akey].c:'var(--text-neutral)';
+      /* one honest line about what it does, then one about whether it needs you */
+      var desc=(w.sub||'').replace(/\s*$/,'');
+      if(desc.length>96)desc=desc.slice(0,93).replace(/[\s,]+\S*$/,'')+'…';
+      return '<button class="lib-item'+(S.wf===k?' on':'')+'" onclick="pickWF(\''+k+'\')">'+
+        '<span class="li-tile" style="--tc:'+col+'">'+esc(mark)+'</span>'+
         '<span class="li-col">'+
           '<span class="lib-name">'+esc(w.name)+(w.generated?'<em class="li-gen">assembled</em>':'')+'</span>'+
-          '<span class="lib-meta">'+esc(role)+'</span>'+
-          '<span class="li-sig">'+
-            (hu?'<span class="sg hu">'+ICO.person+'Needs you '+(hu>1?hu+'\u00d7':'')+'</span>'
-               :'<span class="sg no">'+ICO.check+'Runs on its own</span>')+
-            '<span class="sg st">'+ICO.bolt+ai+' agent step'+(ai===1?'':'s')+'</span>'+
-            (gt?'<span class="sg gt">'+ICO.shield+gt+' policy check'+(gt===1?'':'s')+'</span>':'')+
-          '</span>'+
+          '<span class="li-desc">'+esc(desc)+'.</span>'+
+          '<span class="li-foot'+(hu?' hu':'')+'">'+(hu?ICO.person+'Needs a person':ICO.check+'Runs on its own')+'</span>'+
         '</span></button>';
     }).join('');
   }).join('')||'<div class="lib-group">Nothing matched</div>';
