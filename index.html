@@ -37,6 +37,7 @@
   --mercer:#6440b6; --iris:#00648f; --christy:#3d348b;
 }
 *{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
 html,body{background:#f4f4f5}
 body{font-family:'Geist',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--foreground);
   font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
@@ -751,7 +752,30 @@ button{font-family:inherit;cursor:pointer}
 .ct-head .right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .ct-body{display:grid;grid-template-columns:auto minmax(0,1fr) auto;min-height:0}
 /* rail */
-.ct-rail{width:272px;border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:0;background:var(--surface-grey);transition:width .18s}
+.ct-rail{width:380px;border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:0;background:var(--background);transition:width .18s}
+/* rail header — assistant identity + toggle across to active cases */
+.rail-hd{display:flex;align-items:center;gap:10px;padding:12px 12px;border-bottom:1px solid var(--border);background:var(--background)}
+.rail-hd .sp{width:26px;height:26px;border-radius:8px;background:var(--gradient-brand);color:#fff;font-size:12px;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.rail-hd .sp.cases{background:var(--secondary);color:var(--muted-foreground)}
+.rh-t{font-size:14px;font-weight:600;letter-spacing:-.01em;line-height:1.2}
+.rh-s{font-size:11px;color:var(--text-neutral);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.railtog{margin-left:auto;position:relative;display:flex;align-items:center;gap:6px;border:1px solid var(--border);
+  background:var(--background);border-radius:8px;padding:5px 9px;color:var(--muted-foreground);flex:0 0 auto}
+.railtog:hover{border-color:var(--brand);color:var(--brand)}
+.railtog .tn{font-family:'Geist Mono',monospace;font-size:10.5px;font-weight:600}
+/* assistant pane inside the rail */
+.rail-ai{flex:1;display:flex;flex-direction:column;min-height:0;background:var(--surface-grey)}
+.rai-body{flex:1;min-height:0;overflow-y:auto;padding:14px}
+.rai-sug{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 9px}
+.rai-sug button{border:1px solid var(--border);background:var(--background);border-radius:9999px;
+  font-size:11px;padding:5px 10px;color:var(--muted-foreground);text-align:left}
+.rai-sug button:hover{border-color:var(--brand);color:var(--brand)}
+.rai-in{display:flex;gap:7px;padding:10px 12px;border-top:1px solid var(--border);background:var(--background)}
+.rai-in input{flex:1;min-width:0;border:1px solid var(--input);border-radius:9999px;font-family:inherit;
+  font-size:12.5px;padding:9px 13px}
+.rai-in input:focus{outline:none;border-color:var(--brand)}
+.rai-in .btn{border-radius:9999px}
 .ct-rail.min{width:0;border-right:0;overflow:hidden}
 .railtabs{display:flex;gap:2px;padding:9px 10px 0;border-bottom:1px solid var(--border);background:var(--background)}
 .railtabs button{flex:1;font-size:12.5px;font-weight:500;color:var(--muted-foreground);background:none;border:0;
@@ -1507,12 +1531,33 @@ button{font-family:inherit;cursor:pointer}
         </div>
         <div class="ct-body">
           <aside class="ct-rail" id="ctRailEl">
-            <div class="railtabs">
-              <button class="on" data-rt="cases" onclick="ctRailTab('cases')">Cases</button>
-              <button data-rt="ask" onclick="ctRailTab('ask')">Ask</button>
-              <button data-rt="activity" onclick="ctRailTab('activity')">Activity</button>
+            <div class="rail-hd">
+              <span class="sp" id="railIco">✦</span>
+              <div style="min-width:0">
+                <div class="rh-t" id="railTitle">Assistant</div>
+                <div class="rh-s" id="railSub">Working on EX-4472</div>
+              </div>
+              <button class="railtog" id="railTog" onclick="ctRailMode()" title="Show active cases"
+                aria-label="Switch between assistant and active cases">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="6" rx="1.5"></rect>
+                  <rect x="3" y="14" width="18" height="6" rx="1.5"></rect></svg>
+                <span id="railTogN" class="tn">4</span>
+              </button>
             </div>
-            <div class="rail-b" id="ctRailBody"></div>
+            <!-- assistant pane (default) -->
+            <div class="rail-ai" id="ctRailAI">
+              <div class="rai-body" id="ctAiBody"></div>
+              <div class="rai-sug" id="ctAiSug"></div>
+              <div class="rai-in">
+                <input id="ctAiInput" placeholder="Ask about this case…" autocomplete="off"
+                  onkeydown="if(event.key==='Enter')ctAiSend()">
+                <button class="btn pr" onclick="ctAiSend()">Ask</button>
+              </div>
+            </div>
+            <!-- cases pane -->
+            <div class="rail-b" id="ctRailBody" hidden></div>
           </aside>
           <div class="ct-canvas" id="ctCanvas">
             <div class="ct-stage" id="ctStage">
@@ -1639,7 +1684,7 @@ var $=function(id){return document.getElementById(id)};
 function esc(s){return String(s).replace(/[&<>"]/g,function(m){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]})}
 var S={p:'tower',tower:'today',towerView:'dash',agent:null,gv:'auth',held:true,paused:{},nudged4474:false,
        wf:'exception-triage',wfSel:null,wfx:0,wfy:14,wfz:1,audit:'board',aFilter:'all',aQ:'',aRef:null,caseId:'EX-4472',
-       ctMode:'route',ctStep:null,ctRailTab:'cases',ctFilter:'all',ctQ:'',ctReplay:null,
+       ctMode:'route',ctStep:null,ctRail:'ai',ctRailTab:'cases',ctFilter:'all',ctQ:'',ctReplay:null,
        ctx:0,cty:8,ctz:1,simLimit:250000,simPreset:null,pendingProps:[]};
 
 var AG={
@@ -3310,7 +3355,7 @@ function renderCT(){
   $('ct-facts').innerHTML='<span>At risk: <b>'+esc(c.atRisk)+'</b></span><span class="sep">·</span>'+
     '<span>Exposure <b>'+esc(c.exposure)+'</b></span><span class="sep">·</span>'+
     '<span>Owner <b>'+esc(c.owner)+'</b></span><span class="sep">·</span><span>'+esc(c.sla)+'</span>';
-  renderCTRail();renderCTFlow();renderCTDots();
+  ctRailMode(S.ctRail||'ai');renderCTFlow();renderCTDots();
   if(S.ctStep)renderStepInsp(S.ctStep);
   else renderInspEmpty();
 }
@@ -3379,7 +3424,7 @@ function caseCard(k,cur){
     (cur&&c.waiting&&!held?'<div class="cwait">⧖ Waiting on <b>'+esc(c.waiting)+'</b></div>':'')+
     '</button>';
 }
-function pickCase(k){S.caseId=k;S.ctStep=null;S.ctReplay=null;renderCT();ctFit()}
+function pickCase(k){S.caseId=k;S.ctStep=null;S.ctReplay=null;ASK.into='rail';renderCT();ctFit()}
 function ctRailTab(t){
   S.ctRailTab=t;
   document.querySelectorAll('.railtabs button').forEach(function(b){b.classList.toggle('on',b.dataset.rt===t)});
@@ -3564,13 +3609,75 @@ function renderStepInsp(id){
   $('ctInspBody').innerHTML=h;
 }
 /* ============================================================
+   CASE THREAD RAIL — the assistant IS the left pane; an icon
+   toggles across to the active-case list.
+   ============================================================ */
+function ctRailMode(m){
+  S.ctRail=m||(S.ctRail==='cases'?'ai':'cases');
+  var ai=S.ctRail!=='cases';
+  $('ctRailAI').hidden=!ai;$('ctRailBody').hidden=ai;
+  $('railIco').textContent=ai?'✦':'☰';
+  $('railIco').className='sp'+(ai?'':' cases');
+  $('railTitle').textContent=ai?'Assistant':'Active cases';
+  var c=CASES[S.caseId];
+  $('railSub').textContent=ai?('Working on '+S.caseId):(CTORDER.length+' cases · '+(c?c.title:''));
+  var tg=$('railTog');
+  if(tg){tg.title=ai?'Show active cases':'Back to the assistant';
+    $('railTogN').textContent=ai?String(CTORDER.length-1):'✦';}
+  if(ai)ctAiBrief();else renderCTRail();
+}
+/* the assistant, rendered into the rail and scoped to the open case */
+function ctAiPaint(){
+  var b=$('ctAiBody');if(!b)return;
+  b.innerHTML=(ASK.msgs||[]).map(function(m){
+    if(m.you)return '<div class="am you"><span>'+esc(m.you)+'</span></div>';
+    return '<div class="am ai"><div class="who"><i></i>Assistant</div><div class="bub">'+m.ai+'</div></div>';
+  }).join('');
+  b.scrollTop=b.scrollHeight;
+  var s=$('ctAiSug');
+  if(s)s.innerHTML=(ASK.sug||[]).map(function(q){
+    return '<button onclick="ctAiSend('+JSON.stringify(q).replace(/"/g,'&quot;')+')">'+esc(q)+'</button>'}).join('');
+}
+function ctAiSend(q){
+  q=(typeof q==='string'&&q)||$('ctAiInput').value.trim();
+  if(!q)return;
+  $('ctAiInput').value='';
+  ASK.into='rail';askSend(q);
+}
+/* case-scoped opening brief */
+function ctAiBrief(){
+  var c=CASES[S.caseId];if(!c)return;
+  var held=(S.caseId==='EX-4472'&&S.held);
+  if(held){
+    ASK.msgs=[{ai:'<b>'+esc(c.title)+'</b> — '+esc(c.exposure)+' of exposure, waiting on you for '+
+      esc(c.elapsed)+'.'+
+      '<div class="arec"><div class="rh">✦ My recommendation</div>'+
+      '<div class="rt">Approve it — authority stopped this, not doubt.</div>'+
+      '<ul><li>Two smaller requisitions on this case already ran and <b>verified</b>.</li>'+
+      '<li>Confidence <b>0.88</b> cleared your <b>0.85</b> floor.</li>'+
+      '<li>Delay is costing <b>$1.8k/day</b>.</li></ul>'+
+      '<div class="racts"><button class="btn pr" onclick="askDo(\'approve\')">Approve $214k</button>'+
+      '<button class="btn" onclick="ctAiSend(\'what if my limit were higher?\')">Try a different limit</button>'+
+      '</div></div>'+
+      '<div style="margin-top:9px;font-size:12px;color:var(--muted-foreground)">Click any step on the flow and I will explain what it was doing and the evidence it used.</div>'}];
+    ASK.sug=['Why was it held?','What happens if I reject?','What ran without me?'];
+  }else{
+    ASK.msgs=[{ai:'<b>'+esc(c.title)+'</b> — '+esc(c.exposure)+', owned by <b>'+esc(c.owner)+'</b>. '+
+      esc(c.waiting?('Waiting on '+c.waiting+'.'):'')+
+      '<div style="margin-top:9px;font-size:12px;color:var(--muted-foreground)">Click any step on the flow and I will explain what it was doing, what it concluded and the evidence it used.</div>'}];
+    ASK.sug=['Walk me through this case','What did the agents decide alone?','What needed a person?'];
+  }
+  ctAiPaint();
+}
+
+/* ============================================================
    ASSISTANT — summonable anywhere. Absorbs what used to be the
    Explain and Simulate modes: click any step on a flow and the
    assistant explains it, shows the evidence, and offers a what-if.
    ============================================================ */
 var ASK={open:false,ctx:null,msgs:[]};
 function askOpen(ctx){
-  ASK.open=true;ASK.ctx=ctx||ASK.ctx;
+  ASK.into=null;ASK.open=true;ASK.ctx=ctx||ASK.ctx;
   $('askScrim').hidden=false;$('askEl').hidden=false;
   $('askCtx').textContent=ASK.ctx?ASK.ctx.label:'Across all your cases';
   if(!ASK.msgs.length)askBrief();
@@ -3580,6 +3687,8 @@ function askOpen(ctx){
 function askClose(){ASK.open=false;$('askScrim').hidden=true;$('askEl').hidden=true}
 function askPush(m){ASK.msgs.push(m);askPaint()}
 function askPaint(){
+  /* when the assistant is the Case Thread left pane, paint there instead */
+  if(ASK.into==='rail'||(S.p==='audit'&&S.audit==='board'&&S.ctRail!=='cases')){ctAiPaint();return}
   var b=$('askBody');if(!b)return;
   b.innerHTML=ASK.msgs.map(function(m){
     if(m.you)return '<div class="am you"><span>'+esc(m.you)+'</span></div>';
@@ -3639,7 +3748,12 @@ function askStep(caseId,stepId){
   ASK.msgs=[{ai:msg}];
   ASK.sug=isHold?['What if my limit were higher?','What happens if I reject?']
     :['Why did this step run at all?','What would have stopped it?','What ran next?'];
-  askOpen(ASK.ctx);
+  if(S.p==='audit'&&S.audit==='board'){
+    ASK.into='rail';
+    if(S.ctRail==='cases')ctRailMode('ai');
+    var rs=$('railSub');if(rs)rs.textContent=S.caseId+' · '+st.t;
+    ctAiPaint();
+  }else{ASK.into=null;askOpen(ASK.ctx)}
 }
 /* the old Simulate mode, folded in as a what-if the assistant offers */
 function askSim(){
