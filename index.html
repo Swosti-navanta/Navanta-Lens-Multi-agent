@@ -300,6 +300,26 @@ button{font-family:inherit;cursor:pointer}
 .arec li::before{content:'';position:absolute;left:2px;top:8px;width:4px;height:4px;border-radius:50%;background:var(--brand);opacity:.55}
 .arec .racts{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
 .arec .racts .btn{font-size:12px;height:34px;padding:0 14px}
+/* --- assistant: visible processing, condition checklist, actions --- */
+.think{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--text-neutral);
+  background:var(--secondary);border:0;border-radius:9999px;padding:4px 11px;margin-bottom:10px;
+  transition:background .12s,color .12s}
+.think:hover{background:var(--surface-hover);color:var(--foreground)}
+.think svg{width:12px;height:12px}
+.think .cv{font-size:10px;opacity:.7;transition:transform .15s}
+.think.open .cv{transform:rotate(180deg)}
+.thinkb{margin:-4px 0 11px;padding:9px 11px;background:var(--surface-grey);border-radius:9px}
+.thinkb .tk{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted-foreground);padding:2px 0}
+.thinkb .tk svg{width:12px;height:12px;color:var(--success);flex:0 0 auto}
+.condlist{margin-bottom:11px}
+.cond{display:flex;align-items:flex-start;gap:7px;padding:6px 0;border-bottom:1px solid var(--border-light)}
+.cond:last-child{border-bottom:0}
+.cond svg{width:12px;height:12px;color:var(--success);flex:0 0 auto;margin-top:2px}
+.cond code{font-family:'Geist Mono',monospace;font-size:10.5px;line-height:1.45;color:var(--muted-foreground);
+  word-break:break-word}
+.acts{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+.acts .btn{font-size:12px;height:32px;padding:0 13px}
+
 /* --- step card: scannable in 5-8s --- */
 .scard{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:10px;background:var(--background)}
 .sc-top{display:flex;align-items:center;gap:9px;padding:11px 13px;border-bottom:1px solid var(--border-light);
@@ -3017,6 +3037,7 @@ var FLOWICO={
 var ICO={
  person:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>',
  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>',
+ spark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"/></svg>',
  bolt:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>',
  shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.4-3 8.2-7 9.4C8 20.2 5 16.4 5 12V6l7-3z"/></svg>'
 };
@@ -3176,39 +3197,79 @@ function wfAiBrief(){
   wfAiPaint();
 }
 /* clicking a node explains it here — replaces the old right-hand Details pane */
+/* how often each gate actually stopped something, last 90 days */
+var GATEHOLD={'Safe to resolve alone?':[23,412],'Value inside the cap?':[19,412],'Confidence floor':[11,412],
+ 'Vendor cleared?':[4,214],'Credit inside limit?':[7,168],'Inside the update window?':[6,240],
+ 'PR gate splits the plan':[19,412],'Existing order?':[12,168],'Warranty or damage?':[9,168],
+ 'Inside every limit?':[14,412],'Did anything slip through?':[3,412]};
+
 function wfAiNode(id){
   var w=WFS[S.wf];
   var n=w.nodes.filter(function(x){return x.id===id})[0];if(!n)return;
   var kind={gate:'A rule people set',ai:'The agent judges',human:'A person decides',
     term:'Where it ends up',start:'Where it starts',step:'It just runs'}[n.k]||'Step';
-  var m='<b>'+esc(n.t)+'</b><div style="margin-top:7px">'+esc(n.d||'')+'</div>'+
+  var tone=n.k==='human'||n.k==='gate'?'var(--warning)':n.k==='ai'?'var(--brand)':'var(--text-neutral)';
+  var mark=n.k==='human'?'☺':n.k==='gate'?'§':n.k==='ai'?'✦':'•';
+  var outs=w.edges.filter(function(e){return e.f===id});
+
+  /* the conditions, as a checklist rather than a code block */
+  var conds=[];
+  if(n.expr)conds=n.expr.split(/\s*AND\s*/i).map(function(c){return c.replace(/\s+/g,' ').trim()}).filter(Boolean);
+
+  /* what the assistant actually did to answer — visible processing */
+  var steps=['Read this step from the flow'];
+  if(conds.length)steps.push('Checked '+conds.length+' condition'+(conds.length===1?'':'s'));
+  if(n.badge)steps.push('Looked up '+n.badge+' in policy '+GOV.ver.split(' ')[0]);
+  if(outs.length)steps.push('Traced '+outs.length+' way'+(outs.length===1?'':'s')+' out');
+  var tid='th'+Math.abs(id.split('').reduce(function(a,c){return a*31+c.charCodeAt(0)|0},7));
+  var m='<button class="think" onclick="var b=this.nextElementSibling;b.hidden=!b.hidden;this.classList.toggle(\'open\')">'+
+      ICO.spark+'Worked through '+steps.length+' steps<span class="cv">⌄</span></button>'+
+      '<div class="thinkb" hidden>'+steps.map(function(t){
+        return '<div class="tk">'+ICO.check+esc(t)+'</div>'}).join('')+'</div>';
+
+  m+='<b>'+esc(n.t)+'</b><div style="margin-top:7px">'+esc(n.d||'')+'</div>'+
     '<div class="scard"><div class="sc-top">'+
-      '<div class="sc-av" style="background:'+(n.k==='human'||n.k==='gate'?'var(--warning)':n.k==='ai'?'var(--brand)':'var(--text-neutral)')+'">'+
-      (n.k==='human'?'☺':n.k==='gate'?'§':n.k==='ai'?'✦':'•')+'</div>'+
+      '<div class="sc-av" style="background:'+tone+'">'+mark+'</div>'+
       '<div class="sc-who">'+esc(kind)+'<span>'+esc(n.badge||'this step')+'</span></div></div><div class="sc-b">';
-  if(n.expr)m+='<div class="sc-evl">What it checks</div><div class="sc-ev" style="margin-bottom:10px"><span>'+esc(n.expr)+'</span></div>';
+
+  /* how often it bites — the number people actually want */
+  var hd=GATEHOLD[n.t];
+  if(hd&&n.k==='gate'){
+    var pct=Math.round(hd[0]/hd[1]*100);
+    m+='<div class="sc-conf"><div class="sc-cl">Stopped something <b>'+hd[0]+'×</b>'+
+      '<span class="verdict '+(pct>=8?'fail':'pass')+'">'+pct+'% of runs</span></div>'+
+      '<div class="sc-track"><div class="sc-fill'+(pct>=8?' low':'')+'" style="width:'+Math.max(pct,2)+'%"></div></div>'+
+      '<div class="sc-floorl">'+hd[1]+' runs in the last 90 days</div></div>';
+  }
+  if(conds.length){
+    m+='<div class="sc-evl">All of these must hold</div><div class="condlist">'+
+      conds.map(function(c){return '<div class="cond">'+ICO.check+'<code>'+esc(c)+'</code></div>'}).join('')+'</div>';
+  }
   if(n.auth)m+='<div class="sc-evl">Who allows it</div>'+
     '<div style="font-size:11.5px;color:var(--muted-foreground);line-height:1.5;margin-bottom:10px">'+esc(n.auth)+'</div>';
-  var outs=w.edges.filter(function(e){return e.f===id});
   if(outs.length){
     m+='<div class="sc-evl">Where it can go</div>';
     outs.forEach(function(e){
       var to=w.nodes.filter(function(x){return x.id===e.t})[0];
       var kn=e.k==='person'?'a person decides':e.k==='llm'?'the agent judges':e.k==='loop'?'loops back':'automatic';
-      m+='<div class="sc-sys" style="margin-bottom:6px"><span class="dot" style="background:'+
-        (e.k==='person'?'var(--read)':e.k==='llm'?'var(--warning)':'var(--text-neutral)')+'"></span>'+
+      var kc=e.k==='person'?'var(--read)':e.k==='llm'?'var(--warning)':'var(--text-neutral)';
+      m+='<div class="sc-sys" style="margin-bottom:6px"><span class="dot" style="background:'+kc+'"></span>'+
         '<span><b>'+esc(e.l||'continues')+'</b> → '+esc(to?to.t:e.t)+'</span>'+
         '<span class="vf" style="color:var(--text-neutral);font-weight:500">'+kn+'</span></div>';
     });
   }
   m+='</div></div>';
-  if(n.badge&&n.expr){
-    m+='<div class="arec"><div class="rh">✦ This number is governed</div>'+
-      '<div class="rt">'+esc(n.badge)+' is read live from policy '+GOV.ver.split(' ')[0]+'.</div>'+
-      '<div class="racts"><button class="btn pr" onclick="nav(\'govern\');gvTab(\'auth\')">Change it in Governance</button></div></div>';
-  }
+
+  /* actions — something to do, not just something to read */
+  var acts='<div class="acts">';
+  if(n.badge&&n.expr)acts+='<button class="btn pr" onclick="nav(\'govern\');gvTab(\'auth\')">Change this in Governance</button>';
+  acts+='<button class="btn" onclick="wfAiSend(\'show me a case that hit it\')">See a case it stopped</button>';
+  if(n.k==='human')acts+='<button class="btn" onclick="nav(\'audit\');openCase(\'EX-4472\')">Open the waiting case</button>';
+  acts+='</div>';
+  m+=acts;
+
   WFASK.msgs=[{ai:m}];
-  WFASK.sug=['What would have stopped this?','Who can change this gate?','Show me a case that hit it'];
+  WFASK.sug=['What would have stopped this?','Who can change this gate?','How often does it hold?'];
   if(S.wfRail==='list')wfRailMode('ai');
   var sub=$('wfRailSub');if(sub)sub.textContent=WFS[S.wf].name+' · '+n.t;
   wfAiPaint();
