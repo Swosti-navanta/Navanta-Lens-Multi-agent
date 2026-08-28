@@ -1309,7 +1309,6 @@ button{font-family:inherit;cursor:pointer}
       </div>
 
       <div id="tv-dash">
-      <div class="tower-split">
         <div>
           <div class="askpanel">
             <div class="ah"><span class="sp">✦</span><h3>Work with your agents</h3></div>
@@ -1419,8 +1418,6 @@ button{font-family:inherit;cursor:pointer}
           </div>
         </div>
 
-        <aside class="rail" id="towerRail"></aside>
-      </div>
       </div><!-- /tv-dash -->
     </div>
 
@@ -2472,7 +2469,7 @@ function renderAgCards(){
   }).join('');
 }
 function renderRail(){
-  var el=$('towerRail');if(!el)return;
+  var el=$('towerRail');if(!el){askBrief();if(ASK.open)askPaint();return}
   var d=new Date();
   var stamp=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]+' '+d.getDate()+' '+
     ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
@@ -4119,22 +4116,36 @@ function askPaint(){
 /* the proactive brief — what the user needs, before they ask */
 function askBrief(){
   if(!S.held){
-    ASK.msgs=[{ai:'Nothing is waiting on you right now. Agents are running and every write so far has verified. '+
-      'Ask me about any case, or a limit you are thinking of changing.'}];
-    ASK.sug=['What did we recover today?','Why was the $214k held?','What never runs without a person?'];
+    ASK.msgs=[{ai:'<b>Nothing is waiting on you.</b> Every case is inside its limits or waiting on '+
+      'someone outside.'+
+      '<div class="awhy"><div class="wl">Where things stand</div>'+
+      '<div class="wr"><span>EX-4472</span><b>answered · in the ledger</b></div>'+
+      '<div class="wr"><span>EX-4474</span><b>credit verified · customer confirming</b></div>'+
+      '<div class="wr"><span>OMP write</span><b>retrying with a duplicate guard</b></div></div>'+
+      '<div class="arec"><div class="rh">✦ Worth a look</div>'+
+      '<div class="rt">A phase-out check is waiting for your approval.</div>'+
+      '<ul><li>Came from Dana R.\u2019s override · 3 repeats suppressed in backtest.</li>'+
+      '<li>5 requisitions were above the $150,000 line this month — the limit may be worth revisiting.</li></ul>'+
+      '<div class="racts"><button class="btn pr" onclick="nav(\'govern\');gvTab(\'learn\')">Review in Governance</button></div></div>'}];
+    ASK.sug=['What did we recover today?','What remains at risk?','What never runs without a person?'];
     return;
   }
-  ASK.msgs=[{ai:'<b>Three things need you today.</b> The one costing the most is <span class="mono">EX-4472</span> — a '+
-    '<b>$214,000</b> coverage requisition Iris held above your $150k limit. It is bleeding <b>~$1.8k/day</b> '+
-    'and the coverage window closes on day 12.'+
+  ASK.msgs=[{ai:'<b>One decision is waiting on you.</b> <span class="mono">EX-4472</span> — '+
+    'Coverage gap across 6 DCs, run by Iris. It has been waiting <b>2h 11m</b> and is costing <b>$1.8k a day</b>.'+
+    '<div class="awhy"><div class="wl">What it found</div>'+
+    '<div class="wr"><span>Cover breaks</span><b>3 SKUs · 6 DCs · from day 12</b></div>'+
+    '<div class="wr"><span>The requisition</span><b>$214,000 vs your $150,000 limit</b></div>'+
+    '<div class="wr"><span>Already ran</span><b>2 smaller PRs · verified</b></div>'+
+    '<div class="wr"><span>Confidence</span><b>0.88 · floor 0.85 ✓</b></div></div>'+
     '<div class="arec"><div class="rh">✦ My recommendation</div>'+
     '<div class="rt">Approve it — authority stopped this, not doubt.</div>'+
-    '<ul><li>Two smaller requisitions on the same case already ran and <b>verified</b>.</li>'+
-    '<li>Confidence <b>0.88</b> cleared your <b>0.85</b> floor.</li>'+
-    '<li>Approving raises cover on 3 SKUs before the window closes.</li></ul>'+
+    '<ul><li><b>Now:</b> approve the $214,000 requisition — raises cover on 3 SKUs before the window closes.</li>'+
+    '<li><b>Immediately after:</b> Iris writes to Fusion and OMP; the case closes only once both confirm.</li>'+
+    '<li><b>Ongoing:</b> the outcome is logged against the baseline and feeds the next recommendation.</li></ul>'+
     '<div class="racts"><button class="btn pr" onclick="askDo(\'approve\')">Approve $214k</button>'+
-    '<button class="btn" onclick="askSend(\'what if my limit were higher?\')">What if my limit were higher?</button>'+
-    '<button class="btn" onclick="openPacket()">Open the packet</button></div></div>'}];
+    '<button class="btn" onclick="openPacket()">Open the decision packet</button>'+
+    '<button class="btn" onclick="askSend(\'what if my limit were higher?\')">Try a different limit</button>'+
+    '</div></div>'}];
   ASK.sug=['Why was it held?','What happens if I reject?','What else needs me?'];
 }
 /* clicking a step on the flow explains it here — the old Explain mode, but conversational */
