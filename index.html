@@ -957,26 +957,25 @@ button{font-family:inherit;cursor:pointer}
 .raillab:first-child{margin-top:0}
 .raillab i{width:6px;height:6px;border-radius:50%;flex:0 0 auto}
 .raillab .n{margin-left:auto;font-family:'Geist Mono',monospace;font-variant-numeric:tabular-nums;opacity:.8}
-/* case rows — dense and scannable: state dot, inline status, age on the right */
+/* case rows — title + exposure, consequence + age. Two aligned columns, no
+   repetition of the group state, and colour carried by the dot alone. */
 .ccard{display:flex;gap:10px;width:100%;text-align:left;align-items:flex-start;background:none;
-  border:0;border-radius:9px;padding:10px 10px;transition:background .12s}
+  border:0;border-radius:9px;padding:11px 10px;transition:background .12s}
 .ccard+.ccard{border-top:1px solid var(--border-light);border-radius:0}
 .ccard:hover{background:var(--surface-grey)}
 .ccard.on{background:var(--surface-accent);border-radius:9px}
 .ccard.on+.ccard{border-top-color:transparent}
-.cc-dot{width:8px;height:8px;border-radius:50%;background:var(--cc);flex:0 0 auto;margin-top:5px;
-  box-shadow:0 0 0 3px color-mix(in oklab,var(--cc) 16%,transparent)}
+.cc-dot{width:7px;height:7px;border-radius:50%;background:var(--cc);flex:0 0 auto;margin-top:6px}
+.ccard.on .cc-dot{box-shadow:0 0 0 3px color-mix(in oklab,var(--cc) 20%,transparent)}
 .cc-col{min-width:0;flex:1}
-.cc-top{display:flex;align-items:baseline;gap:8px;min-width:0}
-.ccard .cnm{font-size:13px;font-weight:600;letter-spacing:-.005em;line-height:1.35;min-width:0}
-.cc-sep{color:var(--input);flex:0 0 auto}
-.cc-st{font-size:11.5px;font-weight:600;color:var(--cc)}
-.cc-age{margin-left:auto;padding-left:8px;font-family:'Geist Mono',monospace;font-size:10.5px;
-  color:var(--text-neutral);font-variant-numeric:tabular-nums;flex:0 0 auto}
-.cc-sub{display:block;font-size:11.5px;line-height:1.45;margin-top:3px;color:var(--muted-foreground)}
-.cc-risk{display:block;font-size:11px;color:var(--text-neutral);line-height:1.45;margin-top:2px}
-.cc-sub b{font-family:'Geist Mono',monospace;font-weight:600;color:var(--muted-foreground)}
-.cc-dotsep{margin:0 5px;opacity:.45}
+.cc-r1,.cc-r2{display:flex;align-items:baseline;gap:10px}
+.cc-r2{margin-top:3px}
+.ccard .cnm{flex:1;min-width:0;font-size:13px;font-weight:600;letter-spacing:-.005em;line-height:1.35}
+.cc-val{flex:0 0 auto;font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;
+  font-variant-numeric:tabular-nums;color:var(--foreground)}
+.cc-line{flex:1;min-width:0;font-size:11.5px;color:var(--muted-foreground);line-height:1.4}
+.cc-age{flex:0 0 auto;font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--text-neutral);
+  font-variant-numeric:tabular-nums}
 .railempty{font-size:12px;color:var(--text-neutral);text-align:center;padding:22px 10px;line-height:1.5}
 .ccard .cwait b{font-weight:600;color:var(--foreground)}
 /* canvas */
@@ -1038,12 +1037,17 @@ button{font-family:inherit;cursor:pointer}
 .zstack button:hover{background:var(--surface-hover);color:var(--foreground)}
 .zstack .zv{font-size:10px;font-weight:600;color:var(--text-neutral);text-align:center;padding:4px 0 5px;
   border-top:1px solid var(--border-light);font-variant-numeric:tabular-nums;background:var(--surface-grey)}
-.minimap{position:absolute;right:14px;bottom:52px;width:104px;height:82px;z-index:6;border:1px solid var(--border);
-  border-radius:8px;background:rgba(255,255,255,.9);overflow:hidden;box-shadow:var(--shadow-card)}
+.minimap{position:absolute;right:14px;bottom:14px;width:104px;height:82px;z-index:6;border:1px solid var(--border);
+  border-radius:8px;background:rgba(255,255,255,.92);overflow:hidden;box-shadow:var(--shadow-card);
+  cursor:grab;touch-action:none;transition:box-shadow .12s,border-color .12s}
+.minimap:hover{border-color:var(--border-strong);box-shadow:var(--shadow-menu)}
+.minimap.drag{cursor:grabbing}
 .minimap i{position:absolute;border-radius:2px;background:var(--wire);display:block}
 .minimap i.ag{background:color-mix(in oklab,var(--chart-2) 45%,#fff)}
 .minimap i.hu{background:color-mix(in oklab,var(--warning) 55%,#fff)}
-.minimap .vp{position:absolute;border:1.5px solid var(--brand);border-radius:3px;background:rgba(100,64,182,.07)}
+.minimap .vp{position:absolute;border:1.5px solid var(--brand);border-radius:3px;
+  background:color-mix(in oklab,var(--brand) 9%,transparent);pointer-events:none;transition:top .05s linear}
+.minimap.drag .vp{transition:none}
 .replaybar{position:absolute;left:0;right:0;bottom:0;z-index:6;display:flex;align-items:center;gap:12px;
   padding:8px 14px;background:var(--background);border-top:1px solid var(--border);flex-wrap:wrap}
 .rb-ctrls{display:flex;gap:2px}
@@ -3779,19 +3783,18 @@ function caseCard(k,cur){
   var st=decided?'done':c.status;
   var col={held:'var(--warning)',waiting:'var(--read)',active:'var(--brand)',
            overridden:'var(--destructive)',done:'var(--success)'}[st]||'var(--border-strong)';
-  var word=decided?'Decided'
-    :st==='held'?'Waiting on you'
-    :st==='waiting'?'Waiting on '+(c.waiting||'someone else')
+  /* the group header already says the state — only add a line when it says something new */
+  var line=st==='waiting'?'Waiting on '+(c.waiting||'someone else')
+    :st==='active'?'Agents working now'
     :st==='overridden'?'You overrode it'
-    :st==='done'?'Closed':'Agents working';
+    :(c.atRisk||'');
   return '<button class="ccard'+(cur?' on':'')+'" style="--cc:'+col+'" onclick="pickCase(\''+k+'\')">'+
     '<span class="cc-dot"></span>'+
     '<span class="cc-col">'+
-      '<span class="cc-top"><span class="cnm">'+esc(c.title)+'</span>'+
+      '<span class="cc-r1"><span class="cnm">'+esc(c.title)+'</span>'+
+        '<span class="cc-val">'+esc(c.val)+'</span></span>'+
+      '<span class="cc-r2"><span class="cc-line">'+esc(line)+'</span>'+
         '<span class="cc-age">'+esc(c.elapsed)+'</span></span>'+
-      '<span class="cc-sub"><span class="cc-st">'+esc(word)+'</span>'+
-        '<span class="cc-dotsep">·</span><b>'+esc(c.val)+'</b></span>'+
-      '<span class="cc-risk">'+esc(c.atRisk||'')+'</span>'+
     '</span></button>';
 }
 function ctRailTab(t){
@@ -3906,7 +3909,33 @@ function drawMap(){
   var vh=Math.min(82,(cv.clientHeight/S.ctz)*sy),vy=Math.max(0,(-S.cty/S.ctz)*sy);
   h+='<div class="vp" style="left:2px;top:'+Math.min(82-vh,vy)+'px;width:100px;height:'+vh+'px"></div>';
   m.innerHTML=h;
+  MAP={sy:sy,vh:vh,H:H};
 }
+/* --- minimap as a navigator: click to jump, drag to scrub the board --- */
+var MAP={sy:1,vh:82,H:1};
+function mapTo(clientY){
+  var m=$('ctMap'),cv=$('ctCanvas');if(!m||!cv)return;
+  var r=m.getBoundingClientRect();
+  var y=clientY-r.top-MAP.vh/2;                 /* centre the viewport on the pointer */
+  y=Math.max(0,Math.min(82-MAP.vh,y));
+  S.cty=-(y/MAP.sy)*S.ctz;                       /* invert the draw transform */
+  var minY=Math.min(8,cv.clientHeight-($('ctStage').offsetHeight*S.ctz));
+  S.cty=Math.max(minY,Math.min(8,S.cty));
+  ctApply();
+}
+(function(){
+  var m=$('ctMap');if(!m)return;
+  var dragging=false;
+  m.addEventListener('pointerdown',function(e){
+    e.preventDefault();e.stopPropagation();
+    dragging=true;m.classList.add('drag');
+    try{m.setPointerCapture(e.pointerId)}catch(_){}
+    mapTo(e.clientY);
+  });
+  m.addEventListener('pointermove',function(e){if(dragging){e.preventDefault();mapTo(e.clientY)}});
+  function end(){dragging=false;m.classList.remove('drag')}
+  m.addEventListener('pointerup',end);m.addEventListener('pointercancel',end);
+})();
 function renderCTDots(){
   if(!$('ctDots'))return;
   var c=CASES[S.caseId];
