@@ -801,9 +801,16 @@ button{font-family:inherit;cursor:pointer}
 .ct-head{display:flex;align-items:center;gap:11px;padding:9px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap;background:var(--background)}
 .ct-head .cid{font-family:'Geist Mono',monospace;font-size:12px;color:var(--muted-foreground)}
 .ct-head h2{font-size:14px;font-weight:600;letter-spacing:-.005em}
-.ct-facts{display:flex;align-items:center;gap:10px;font-size:11.5px;color:var(--muted-foreground);flex-wrap:wrap;min-width:0}
+.ct-facts{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted-foreground);flex-wrap:wrap;min-width:0}
 .ct-facts b{font-weight:600;color:var(--foreground)}
-.ct-facts .sep{color:var(--input)}
+.fct{display:inline-flex;align-items:center;gap:5px;background:var(--surface-grey);border:1px solid var(--border-light);
+  border-radius:9999px;padding:4px 11px;white-space:nowrap}
+.fct.tsla{gap:7px}
+.fct.tsla i{display:block;width:46px;height:5px;border-radius:9999px;background:var(--progress-track);overflow:hidden}
+.fct.tsla i em{display:block;height:100%;border-radius:9999px;background:var(--success)}
+.fct.tsla.late i em{background:var(--warning)}
+.fct.tsla.late{background:var(--pill-warning-bg);border-color:#f0dcae;color:var(--pill-warning-fg)}
+.fct.tsla.late b{color:var(--pill-warning-fg)}
 .ct-head .right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .ct-body{display:grid;grid-template-columns:auto minmax(0,1fr);min-height:0;transition:grid-template-columns .18s}
 .ct-body.railmin{grid-template-columns:0 minmax(0,1fr)}
@@ -3144,9 +3151,9 @@ function wfInspToggle(){var s=$('wfShell');if(!s)return;s.classList.toggle('no-i
 
 /* ============ case thread · data ============ */
 var CASES={
- 'EX-4472':{title:'Coverage gap across 6 DCs',status:'held',pill:['warn','held for decision'],
-  atRisk:'Three customer installation commitments',exposure:'$214,000',owner:'Iris',ownerKey:'iris',
-  sla:'waiting 2h 11m / SLA 8h 0m',val:'$214k',elapsed:'2h 11m',waiting:'Planner approval',
+ 'EX-4472':{title:'Coverage gap across 6 DCs',status:'held',pill:['warn','Waiting on you'],
+  atRisk:'3 customer installations could slip',exposure:'$214,000',owner:'Iris',ownerKey:'iris',
+  sla:'waiting 2h 11m / SLA 8h 0m',spent:'2h 11m',limit:'8h',pctSla:27,val:'$214k',elapsed:'2h 11m',waiting:'Planner approval',
   steps:[
    {id:'s1',k:'trigger',t:'Supplier delay reported',
     d:'Meridian Components filed EDI 824: lead time +10 days for approximately three months across 12 SKUs.',
@@ -3229,9 +3236,9 @@ var CASES={
     res:'Not yet — waiting on the decision above.',
     ev:['Databricks · outcome vs baseline','Learning governance · reason capture']}]},
 
- 'EX-4480':{title:'Install date at risk',status:'waiting',pill:['info','waiting external'],
-  atRisk:'One customer install crew, booked',exposure:'$91,400',owner:'Christy',ownerKey:'christy',
-  sla:'waiting 1d 7h / SLA 2d 0m',val:'$91.4k',elapsed:'1d 7h',waiting:'Customer choice',
+ 'EX-4480':{title:'Install date at risk',status:'waiting',pill:['info','Waiting on the customer'],
+  atRisk:'A booked install crew is idle',exposure:'$91,400',owner:'Christy',ownerKey:'christy',
+  sla:'waiting 1d 7h / SLA 2d 0m',spent:'1d 7h',limit:'2d',pctSla:65,val:'$91.4k',elapsed:'1d 7h',waiting:'Customer choice',
   steps:[
    {id:'s1',k:'trigger',t:'Revised date breaks a commitment',
     d:'The revised delivery date lands 6 days past the committed install on SO-48219.',st:'complete',chips:['$91.4k order'],
@@ -3267,9 +3274,9 @@ var CASES={
     obj:'Make the new promise real in the system of record.',res:'Not yet — waiting on the customer.',
     ev:['Fusion · install date','Crew scheduling']}]},
 
- 'EX-4474':{title:'Damaged delivery claim',status:'active',pill:['info','active'],
-  atRisk:'Customer goodwill on SO-48219',exposure:'$8,400',owner:'Christy',ownerKey:'christy',
-  sla:'running 47m / SLA 4h 0m',val:'$8.4k',elapsed:'47m',waiting:'',
+ 'EX-4474':{title:'Damaged delivery claim',status:'active',pill:['info','Agents working'],
+  atRisk:'A customer is owed an answer',exposure:'$8,400',owner:'Christy',ownerKey:'christy',
+  sla:'running 47m / SLA 4h 0m',spent:'47m',limit:'4h',pctSla:20,val:'$8.4k',elapsed:'47m',waiting:'',
   steps:[
    {id:'s1',k:'trigger',t:'Claim raised with evidence',d:'Two pallets damaged under the wrap. POD and customer photos arrived together.',
     st:'complete',chips:['$8.4k claim'],
@@ -3299,9 +3306,9 @@ var CASES={
     obj:'Recover the goods and let the outcome reach the vendor record.',res:'Queued behind the customer confirming receipt.',
     ev:['HO-8834 · return + collection','Vendor scorecard']}]},
 
- 'EX-4468':{title:'Phase-out inventory cover',status:'overridden',pill:['dng','overridden'],
-  atRisk:'Obsolescence write-off risk',exposure:'$47,600',owner:'Iris',ownerKey:'iris',
-  sla:'closed after 58m','val':'$47.6k',elapsed:'58m',waiting:'',
+ 'EX-4468':{title:'Phase-out inventory cover',status:'overridden',pill:['dng','You overrode it'],
+  atRisk:'Stock you would write off',exposure:'$47,600',owner:'Iris',ownerKey:'iris',
+  sla:'closed after 58m',spent:'58m',limit:'',pctSla:0,'val':'$47.6k',elapsed:'58m',waiting:'',
   steps:[
    {id:'s1',k:'trigger',t:'Cover recommendation raised',d:'Iris recommended raising cover 18% on SKU 44-2213 after the lead-time change.',
     st:'complete',chips:['$47.6k'],obj:'Protect service on a SKU that fell below target.',
@@ -3322,9 +3329,9 @@ var CASES={
     ev:['Backtest · 90 days','Proposal v4.3 · awaiting approval'],
     side:[{sys:'Governance',verb:'proposal',ok:true,d:'v4.3 · awaiting policy owner'}]}]},
 
- 'EX-4471':{title:'Vendor lead-time update',status:'done',pill:['ok','resolved'],
-  atRisk:'Nothing — closed and verified',exposure:'$38,200',owner:'Mercer',ownerKey:'mercer',
-  sla:'closed in 6.1s of agent time',val:'$38.2k',elapsed:'6.1s',waiting:'',
+ 'EX-4471':{title:'Vendor lead-time update',status:'done',pill:['ok','Done'],
+  atRisk:'Nothing — it is closed',exposure:'$38,200',owner:'Mercer',ownerKey:'mercer',
+  sla:'closed in 6.1s of agent time',spent:'6.1s',limit:'',pctSla:0,val:'$38.2k',elapsed:'6.1s',waiting:'',
   steps:[
    {id:'s1',k:'trigger',t:'Lead-time notice detected',d:'EDI 824 from VN-3391: +10 days for three months. Caught in 0.8s, before any inbox.',
     st:'complete',chips:['$38.2k exposure'],obj:'Catch the change at machine speed.',
@@ -3419,9 +3426,16 @@ function renderCT(){
   $('ct-title').textContent=c.title;
   $('ct-pill').className='pill '+(held?'ok':c.pill[0]);
   $('ct-pill').textContent=held?'decided':c.pill[1];
-  $('ct-facts').innerHTML='<span>At risk: <b>'+esc(c.atRisk)+'</b></span><span class="sep">·</span>'+
-    '<span>Exposure <b>'+esc(c.exposure)+'</b></span><span class="sep">·</span>'+
-    '<span>Owner <b>'+esc(c.owner)+'</b></span><span class="sep">·</span><span>'+esc(c.sla)+'</span>';
+  var late=(c.pctSla||0)>=70;
+  var closedCase=(c.status==='done'||c.status==='overridden'||(S.caseId==='EX-4472'&&!S.held));
+  $('ct-facts').innerHTML=
+    '<span class="fct"><b>'+esc(c.exposure)+'</b> '+(closedCase?'protected':'at stake')+'</span>'+
+    '<span class="fct">'+esc(c.atRisk)+'</span>'+
+    '<span class="fct">Run by <b>'+esc(c.owner)+'</b></span>'+
+    (c.limit
+      ? '<span class="fct tsla'+(late?' late':'')+'"><b>'+esc(c.spent)+'</b> of '+esc(c.limit)+
+        '<i><em style="width:'+(c.pctSla||0)+'%"></em></i></span>'
+      : '<span class="fct">Closed in <b>'+esc(c.spent||'')+'</b></span>');
   ctRailMode(S.ctRail||'ai');renderCTFlow();renderCTDots();
   if(S.ctStep)renderStepInsp(S.ctStep);
   else renderInspEmpty();
