@@ -892,11 +892,13 @@ button{font-family:inherit;cursor:pointer}
   background:var(--surface-accent);color:var(--brand);border-radius:9999px;padding:1px 7px;margin-left:6px}
 .lib-item .lib-meta{display:block;font-size:11px;color:var(--text-neutral);margin-top:1px;text-transform:capitalize}
 .li-sig{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
-.li-sig .sg{font-size:10px;font-weight:600;border-radius:6px;padding:2px 7px;background:var(--secondary);color:var(--muted-foreground)}
-.li-sig .sg.ai{background:var(--surface-accent);color:var(--brand-deep)}
+.li-sig .sg{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;border-radius:9999px;
+  padding:3px 9px;background:var(--secondary);color:var(--muted-foreground);white-space:nowrap}
+.li-sig .sg svg{width:11px;height:11px;flex:0 0 auto}
+.li-sig .sg.st{background:var(--surface-accent);color:var(--brand-deep)}
 .li-sig .sg.hu{background:var(--pill-warning-bg);color:var(--pill-warning-fg)}
 .li-sig .sg.no{background:var(--pill-success-bg);color:var(--pill-success-fg)}
-.li-sig .sg.gt{background:var(--pill-info-bg);color:var(--pill-info-fg)}
+.li-sig .sg.gt{background:var(--secondary);color:var(--muted-foreground);font-weight:500}
 
 /* --- case panel: grouped by who the case is blocked on --- */
 .railsearch{width:100%;font-family:inherit;font-size:12.5px;padding:8px 12px 8px 32px;border:1px solid var(--border);
@@ -2985,6 +2987,13 @@ function wfAskGo(){
 }
 
 /* ---- library ---- */
+/* small inline marks — legible at 11px, no cryptic glyphs */
+var ICO={
+ person:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>',
+ check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>',
+ bolt:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>',
+ shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.4-3 8.2-7 9.4C8 20.2 5 16.4 5 12V6l7-3z"/></svg>'
+};
 function renderWFLib(){
   var q=($('wfq').value||'').toLowerCase().trim();
   var keys=Object.keys(WFS).filter(function(k){
@@ -3011,10 +3020,10 @@ function renderWFLib(){
           '<span class="lib-name">'+esc(w.name)+(w.generated?'<em class="li-gen">assembled</em>':'')+'</span>'+
           '<span class="lib-meta">'+esc(role)+'</span>'+
           '<span class="li-sig">'+
-            '<span class="sg ai" title="'+ai+' agent step'+(ai===1?'':'s')+'">✦ '+ai+'</span>'+
-            (hu?'<span class="sg hu" title="'+hu+' point'+(hu===1?'':'s')+' a person decides">☺ '+hu+'</span>'
-               :'<span class="sg no" title="Runs without a person">no human</span>')+
-            (gt?'<span class="sg gt" title="'+gt+' gate'+(gt===1?'':'s')+' that can stop it">§ '+gt+'</span>':'')+
+            (hu?'<span class="sg hu">'+ICO.person+'Needs you '+(hu>1?hu+'\u00d7':'')+'</span>'
+               :'<span class="sg no">'+ICO.check+'Runs on its own</span>')+
+            '<span class="sg st">'+ICO.bolt+ai+' agent step'+(ai===1?'':'s')+'</span>'+
+            (gt?'<span class="sg gt">'+ICO.shield+gt+' policy check'+(gt===1?'':'s')+'</span>':'')+
           '</span>'+
         '</span></button>';
     }).join('');
@@ -3038,7 +3047,7 @@ function renderWF(){
     '<span class="cvs ai"><b>'+ai+'</b> '+(ai===1?'agent step':'agent steps')+'</span>'+
     (hu?'<span class="cvs hu"><b>'+hu+'</b> '+(hu===1?'point a person decides':'points a person decides')+'</span>'
        :'<span class="cvs ok">Runs without a person</span>')+
-    (gt?'<span class="cvs gt"><b>'+gt+'</b> '+(gt===1?'gate can stop it':'gates can stop it')+'</span>':'')+
+    (gt?'<span class="cvs gt"><b>'+gt+'</b> policy '+(gt===1?'check':'checks')+' can stop it</span>':'')+
     '<span class="cvs nu"><b>'+au+'</b> governed '+(au===1?'number':'numbers')+'</span>';
   $('wfNodes').innerHTML=w.nodes.map(function(n){
     var cls='wnode '+(n.k==='human'?'human':n.k==='ai'?'ai':n.k==='term'?'term':n.k==='start'?'term':'')+(S.wfSel===n.id?' sel':'');
