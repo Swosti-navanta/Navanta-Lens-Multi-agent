@@ -796,7 +796,7 @@ button{font-family:inherit;cursor:pointer}
 .i-empty{font-size:12.5px;line-height:1.55;color:var(--muted-foreground)}
 @media(max-width:1200px){.wf-shell{grid-template-columns:1fr;height:auto}.wf-pane{min-height:320px}}
 /* ===== case thread ===== */
-.ct-shell{display:grid;grid-template-rows:auto minmax(0,1fr);gap:12px;height:calc(100vh - 132px);min-height:560px;
+.ct-shell{display:grid;grid-template-rows:auto minmax(0,1fr);gap:12px;height:calc(100vh - 104px);min-height:560px;
   background:transparent}
 .ct-head{display:flex;align-items:center;gap:11px;padding:0 4px 2px;flex-wrap:wrap;background:transparent}
 .ct-head .cid{font-family:'Geist Mono',monospace;font-size:12px;color:var(--muted-foreground)}
@@ -3649,6 +3649,15 @@ function renderCTDots(){
 
 
 /* ---- inspector ---- */
+function ctDeselect(){
+  S.ctStep=null;
+  document.querySelectorAll('.snode').forEach(function(n){n.classList.remove('sel')});
+  if(S.p==='audit'&&S.audit==='board'&&S.ctRail!=='cases'){
+    ASK.into='rail';
+    var rs=$('railSub');if(rs)rs.textContent='Working on '+S.caseId+(CASES[S.caseId]?' · '+CASES[S.caseId].title:'');
+    ctAiBrief();
+  }
+}
 function selStep(id){
   S.ctStep=id;
   document.querySelectorAll('.snode').forEach(function(n){n.classList.toggle('sel',n.dataset.s===id)});
@@ -4100,12 +4109,17 @@ function ctFit(){
   var drag=null;
   c.addEventListener('pointerdown',function(e){
     if(e.target.closest('.snode,.sidenode,.zstack,.replaybar,.fitbtn,.minimap'))return;
-    drag={x:e.clientX,y:e.clientY,bx:S.ctx,by:S.cty};
+    drag={x:e.clientX,y:e.clientY,bx:S.ctx,by:S.cty,moved:false};
     c.classList.add('grabbing');try{c.setPointerCapture(e.pointerId)}catch(_){}
   });
   c.addEventListener('pointermove',function(e){if(!drag)return;
-    S.ctx=drag.bx+(e.clientX-drag.x);S.cty=drag.by+(e.clientY-drag.y);ctApply()});
-  function end(){drag=null;c.classList.remove('grabbing')}
+    var dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+    if(Math.abs(dx)>3||Math.abs(dy)>3)drag.moved=true;
+    S.ctx=drag.bx+dx;S.cty=drag.by+dy;ctApply()});
+  function end(){
+    /* a click on empty canvas (not a pan) clears the selected step */
+    if(drag&&!drag.moved&&S.ctStep)ctDeselect();
+    drag=null;c.classList.remove('grabbing')}
   c.addEventListener('pointerup',end);c.addEventListener('pointercancel',end);
   c.addEventListener('wheel',function(e){e.preventDefault();
     var r=c.getBoundingClientRect();
