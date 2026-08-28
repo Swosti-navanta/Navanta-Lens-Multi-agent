@@ -686,13 +686,10 @@ button{font-family:inherit;cursor:pointer}
 .gcard .gf{margin-top:10px;padding-top:9px;border-top:1px solid var(--border-light);display:flex;gap:6px;flex-wrap:wrap}
 .entryfoot{display:flex;justify-content:center;margin-top:22px}
 /* board shell */
-.wf-shell{display:grid;grid-template-columns:var(--wf-lib,262px) minmax(0,1fr) var(--wf-insp,344px);gap:14px;
-  align-items:stretch;height:calc(100vh - 118px);min-height:560px;transition:grid-template-columns .18s}
-.wf-shell.no-lib{--wf-lib:0px;gap:0 14px}
+.wf-shell{display:grid;grid-template-columns:var(--wf-lib,380px) minmax(0,1fr);gap:14px;
+  align-items:stretch;height:calc(100vh - 104px);min-height:560px;transition:grid-template-columns .18s}
+.wf-shell.no-lib{--wf-lib:0px;gap:0}
 .wf-shell.no-lib>aside.wf-pane:first-of-type{opacity:0;pointer-events:none;overflow:hidden}
-.wf-shell.no-insp{--wf-insp:0px;gap:0 14px}
-.wf-shell.no-insp>aside.wf-pane:last-of-type{opacity:0;pointer-events:none;overflow:hidden}
-.wf-shell.no-lib.no-insp{gap:0}
 .wf-pane{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-xl);
   box-shadow:var(--shadow-card);display:flex;flex-direction:column;overflow:hidden;min-height:0}
 .lib-search{padding:12px;border-bottom:1px solid var(--border-light)}
@@ -867,6 +864,40 @@ button{font-family:inherit;cursor:pointer}
   border-bottom:2px solid transparent;padding:6px 4px 9px}
 .railtabs button.on{color:var(--foreground);font-weight:600;border-bottom-color:var(--brand)}
 .rail-b{flex:1;overflow-y:auto;padding:11px}
+#wfListPane .lib-list{margin-top:2px}
+/* --- workflow header: plain-language stat chips --- */
+.cv-stats{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-left:auto}
+.cvs{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;border-radius:9999px;padding:4px 11px;
+  white-space:nowrap;background:var(--surface-grey);border:1px solid var(--border-light);color:var(--muted-foreground)}
+.cvs b{font-family:'Geist Mono',monospace;font-weight:600;color:var(--foreground)}
+.cvs.ai{background:var(--surface-accent);border-color:color-mix(in oklab,var(--brand) 20%,#fff);color:var(--brand-deep)}
+.cvs.ai b{color:var(--brand-deep)}
+.cvs.hu{background:var(--pill-warning-bg);border-color:#f0dcae;color:var(--pill-warning-fg)}
+.cvs.hu b{color:var(--pill-warning-fg)}
+.cvs.ok{background:var(--pill-success-bg);border-color:#bbe7c9;color:var(--pill-success-fg);font-weight:600}
+.cvs.gt{background:var(--pill-info-bg);border-color:#cfe2fb;color:var(--pill-info-fg)}
+.cvs.gt b{color:var(--pill-info-fg)}
+
+/* --- flow list rows: agent mark + readable signals --- */
+.lib-item{display:flex;gap:10px;width:100%;text-align:left;align-items:flex-start;
+  border:1px solid transparent;background:none;border-radius:10px;padding:9px 10px;margin-bottom:3px;
+  transition:background .12s,border-color .12s}
+.lib-item:hover{background:var(--surface-grey);border-color:var(--border)}
+.lib-item.on{background:var(--surface-accent);border-color:color-mix(in oklab,var(--brand) 28%,#fff)}
+.li-av{width:28px;height:28px;border-radius:8px;color:#fff;font-size:12px;font-weight:600;flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;margin-top:1px}
+.li-col{min-width:0;flex:1}
+.lib-item .lib-name{display:block;font-size:13px;font-weight:600;line-height:1.3;letter-spacing:-.005em}
+.li-gen{font-style:normal;font-size:9.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  background:var(--surface-accent);color:var(--brand);border-radius:9999px;padding:1px 7px;margin-left:6px}
+.lib-item .lib-meta{display:block;font-size:11px;color:var(--text-neutral);margin-top:1px;text-transform:capitalize}
+.li-sig{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.li-sig .sg{font-size:10px;font-weight:600;border-radius:6px;padding:2px 7px;background:var(--secondary);color:var(--muted-foreground)}
+.li-sig .sg.ai{background:var(--surface-accent);color:var(--brand-deep)}
+.li-sig .sg.hu{background:var(--pill-warning-bg);color:var(--pill-warning-fg)}
+.li-sig .sg.no{background:var(--pill-success-bg);color:var(--pill-success-fg)}
+.li-sig .sg.gt{background:var(--pill-info-bg);color:var(--pill-info-fg)}
+
 /* --- case panel: grouped by who the case is blocked on --- */
 .railsearch{width:100%;font-family:inherit;font-size:12.5px;padding:8px 12px 8px 32px;border:1px solid var(--border);
   border-radius:9999px;background:var(--surface-grey) no-repeat 11px center;
@@ -1543,29 +1574,46 @@ button{font-family:inherit;cursor:pointer}
     <!-- board -->
     <div class="view" id="w-board">
       <div class="wf-shell" id="wfShell">
-        <aside class="wf-pane">
-          <div class="lib-search">
-            <input class="lib-input" id="wfq" placeholder="Search or ask…" autocomplete="off">
-            <div class="libchips">
-              <button onclick="wfAskEx('why does a requisition get held?')">why held?</button>
-              <button onclick="wfAskEx('how does a damage claim clear?')">claims</button>
-              <button onclick="wfAskEx('what never runs without a person?')">never alone</button>
-              <button onclick="wfAskEx('build me a returns flow')">returns</button>
+        <aside class="wf-pane" id="wfRail">
+          <div class="rail-hd">
+            <div class="seg railseg" role="tablist" aria-label="Assistant or flows">
+              <button id="wfSegAI" class="on" role="tab" aria-selected="true" onclick="wfRailMode('ai')">
+                <span class="sp2">✦</span>Assistant</button>
+              <button id="wfSegList" role="tab" aria-selected="false" onclick="wfRailMode('list')">
+                Flows <span class="n" id="wfListN">5</span></button>
             </div>
+            <button class="railcol" onclick="wfLibToggle()" aria-label="Collapse the panel" title="Collapse the panel">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M9.5 4v16"/>
+                <path d="M15.5 9.5L13 12l2.5 2.5"/></svg>
+            </button>
+          </div>
+          <div class="rail-sub2" id="wfRailSub">Exception triage</div>
+          <div class="rail-ai" id="wfRailAI">
+            <div class="rai-body" id="wfAiBody"></div>
+            <div class="rai-sug" id="wfAiSug"></div>
+            <div class="rai-in">
+              <input id="wfAiInput" placeholder="Ask about this flow…" autocomplete="off"
+                onkeydown="if(event.key==='Enter')wfAiSend()">
+              <button class="btn pr" onclick="wfAiSend()">Ask</button>
+            </div>
+          </div>
+          <div class="rail-b" id="wfListPane" hidden>
+            <input class="railsearch" id="wfq" placeholder="Search flows…" autocomplete="off">
+            <div class="lib-list" id="wfLib"></div>
             <div class="reveal-note" id="wfNote" hidden></div>
           </div>
-          <div class="lib-list" id="wfLib"></div>
         </aside>
         <section class="wf-pane">
           <header class="cv-head">
-            <button class="icobtn" onclick="wfLibToggle()" aria-label="Toggle flow library" title="Toggle flow library"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M9 4v16"></path><rect x="3" y="4" width="6" height="16" rx="2" fill="currentColor" stroke="none"></rect></svg></button>
+            <button class="railexp" id="wfRailExpand" onclick="wfLibToggle()" aria-label="Show the assistant panel" title="Show the assistant panel" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M9.5 4v16"/><path d="M13.5 9.5l2.5 2.5-2.5 2.5"/></svg></button>
             <button class="cv-back" onclick="wfHome()" aria-label="Back to start">←</button>
             <div style="min-width:0">
               <div class="cv-title" id="cvTitle"></div>
               <div class="cv-sub" id="cvSub"></div>
             </div>
             <div class="cv-stats" id="cvStats"></div>
-            <button class="icobtn" onclick="wfInspToggle()" aria-label="Toggle details panel" title="Toggle details panel"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M15 4v16"></path><rect x="15" y="4" width="6" height="16" rx="2" fill="currentColor" stroke="none"></rect></svg></button>
           </header>
           <div class="cv-key">
             <span class="lg-row"><span class="lg-line" style="border-color:#a1a1aa"></span>expression</span>
@@ -1586,14 +1634,6 @@ button{font-family:inherit;cursor:pointer}
             </div>
           </div>
         </section>
-        <aside class="wf-pane">
-          <div class="rp-tabs">
-            <button class="rp-tab on" data-r="det" onclick="rpTab('det')">Details</button>
-            <button class="rp-tab" data-r="ask" onclick="rpTab('ask')">Ask</button>
-          </div>
-          <div class="rp-panel on" id="rp-det"></div>
-          <div class="rp-panel" id="rp-ask"></div>
-        </aside>
       </div>
     </div>
    </div>
@@ -1759,7 +1799,7 @@ button{font-family:inherit;cursor:pointer}
 var $=function(id){return document.getElementById(id)};
 function esc(s){return String(s).replace(/[&<>"]/g,function(m){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]})}
 var S={p:'tower',tower:'today',towerView:'dash',agent:null,gv:'auth',held:true,paused:{},nudged4474:false,
-       wf:'exception-triage',wfSel:null,wfx:0,wfy:14,wfz:1,audit:'board',aFilter:'all',aQ:'',aRef:null,caseId:'EX-4472',
+       wf:'exception-triage',wfRail:'ai',wfSel:null,wfx:0,wfy:14,wfz:1,audit:'board',aFilter:'all',aQ:'',aRef:null,caseId:'EX-4472',
        ctMode:'route',ctStep:null,ctRail:'ai',ctRailTab:'cases',ctFilter:'all',ctQ:'',ctReplay:null,
        ctx:0,cty:8,ctz:1,simLimit:250000,simPreset:null,pendingProps:[]};
 
@@ -2957,9 +2997,26 @@ function renderWFLib(){
       var w=WFS[k];
       var ai=w.nodes.filter(function(n){return n.k==='ai'}).length;
       var hu=w.nodes.filter(function(n){return n.k==='human'}).length;
+      var gt=w.nodes.filter(function(n){return n.k==='gate'}).length;
+      /* who runs it — use the real agent mark where we know them */
+      var own=(w.owner||'').toLowerCase();
+      var akey=own.indexOf('iris')>-1?'iris':own.indexOf('mercer')>-1?'mercer':own.indexOf('christy')>-1?'christy':null;
+      var av=akey?{av:AG[akey].av,bg:AG[akey].bg}:{av:'§',bg:'var(--text-neutral)'};
+      /* role = the bit after the dot; otherwise fall back to who runs it */
+      var parts=(w.owner||'').split('·');
+      var role=parts.length>1?parts[1].trim():(parts[0]||'').trim();
       return '<button class="lib-item'+(S.wf===k?' on':'')+(w.generated?' gen':'')+'" onclick="pickWF(\''+k+'\')">'+
-        '<span class="lib-name">'+esc(w.name)+'</span>'+
-        '<span class="lib-meta">'+esc(w.owner)+' · '+ai+' AI · '+hu+' human</span></button>';
+        '<span class="li-av" style="background:'+av.bg+'">'+esc(av.av)+'</span>'+
+        '<span class="li-col">'+
+          '<span class="lib-name">'+esc(w.name)+(w.generated?'<em class="li-gen">assembled</em>':'')+'</span>'+
+          '<span class="lib-meta">'+esc(role)+'</span>'+
+          '<span class="li-sig">'+
+            '<span class="sg ai" title="'+ai+' agent step'+(ai===1?'':'s')+'">✦ '+ai+'</span>'+
+            (hu?'<span class="sg hu" title="'+hu+' point'+(hu===1?'':'s')+' a person decides">☺ '+hu+'</span>'
+               :'<span class="sg no" title="Runs without a person">no human</span>')+
+            (gt?'<span class="sg gt" title="'+gt+' gate'+(gt===1?'':'s')+' that can stop it">§ '+gt+'</span>':'')+
+          '</span>'+
+        '</span></button>';
     }).join('');
   }).join('')||'<div class="lib-group">Nothing matched</div>';
 }
@@ -2967,7 +3024,7 @@ function pickWF(k){S.wf=k;S.wfSel=null;renderWF();wfFit()}
 
 /* ---- graph ---- */
 function renderWF(){
-  renderWFLib();
+  wfRailMode(S.wfRail||'ai');
   var w=WFS[S.wf];if(!w)return;
   $('cvTitle').textContent=w.name;
   $('cvSub').textContent=w.sub;
@@ -2976,8 +3033,13 @@ function renderWF(){
   var ex=w.edges.filter(function(e){return e.k==='expr'}).length;
   var lm=w.edges.filter(function(e){return e.k==='llm'}).length;
   var au=w.nodes.filter(function(n){return n.auth}).length;
-  $('cvStats').innerHTML=[[ai,'AI steps'],[hu,'human gates'],[ex,'expression edges'],[lm,'agent judgement'],[au,'authorities']]
-    .map(function(s){return '<div><div class="stat-v">'+s[0]+'</div><div class="stat-l">'+s[1]+'</div></div>'}).join('');
+  var gt=w.nodes.filter(function(n){return n.k==='gate'}).length;
+  $('cvStats').innerHTML=
+    '<span class="cvs ai"><b>'+ai+'</b> '+(ai===1?'agent step':'agent steps')+'</span>'+
+    (hu?'<span class="cvs hu"><b>'+hu+'</b> '+(hu===1?'point a person decides':'points a person decides')+'</span>'
+       :'<span class="cvs ok">Runs without a person</span>')+
+    (gt?'<span class="cvs gt"><b>'+gt+'</b> '+(gt===1?'gate can stop it':'gates can stop it')+'</span>':'')+
+    '<span class="cvs nu"><b>'+au+'</b> governed '+(au===1?'number':'numbers')+'</span>';
   $('wfNodes').innerHTML=w.nodes.map(function(n){
     var cls='wnode '+(n.k==='human'?'human':n.k==='ai'?'ai':n.k==='term'?'term':n.k==='start'?'term':'')+(S.wfSel===n.id?' sel':'');
     var ico=n.k==='gate'?'◇':n.k==='human'?'⚑':n.k==='ai'?'✦':n.k==='start'?'▶':n.k==='term'?'⊖':'▪';
@@ -3039,9 +3101,112 @@ function drawWFWires(){
 function selWF(id){
   S.wfSel=id;
   document.querySelectorAll('#wfNodes .wnode').forEach(function(n){n.classList.toggle('sel',n.dataset.n===id)});
-  renderWFInsp(id);rpTab('det');
+  wfAiNode(id);
+}
+/* ---- Workflows rail: assistant by default, toggles to the flow list ---- */
+function wfRailMode(m){
+  S.wfRail=m||(S.wfRail==='list'?'ai':'list');
+  var ai=S.wfRail!=='list';
+  var A=$('wfRailAI'),L=$('wfListPane');
+  if(A)A.hidden=!ai; if(L)L.hidden=ai;
+  var a=$('wfSegAI'),b=$('wfSegList');
+  if(a){a.classList.toggle('on',ai);a.setAttribute('aria-selected',String(ai))}
+  if(b){b.classList.toggle('on',!ai);b.setAttribute('aria-selected',String(!ai))}
+  var n=$('wfListN');if(n)n.textContent=String(Object.keys(WFS).length);
+  var w=WFS[S.wf],sub=$('wfRailSub');
+  if(sub)sub.textContent=ai?(w?w.name:'')+(w&&w.generated?' · assembled for you':''):Object.keys(WFS).length+' flows';
+  if(ai)wfAiBrief();else renderWFLib();
+}
+function wfAiPaint(){
+  var b=$('wfAiBody');if(!b)return;
+  b.innerHTML=(WFASK.msgs||[]).map(function(m){
+    if(m.you)return '<div class="am you"><span>'+esc(m.you)+'</span></div>';
+    return '<div class="am ai"><div class="av">✦</div><div class="col"><div class="nm">Assistant</div>'+
+      '<div class="bub">'+m.ai+'</div></div></div>';
+  }).join('');
+  b.scrollTop=b.scrollHeight;
+  var g=$('wfAiSug');
+  if(g)g.innerHTML=(WFASK.sug||[]).map(function(q){
+    return '<button onclick="wfAiSend('+JSON.stringify(q).replace(/"/g,'&quot;')+')">'+esc(q)+'</button>'}).join('');
+}
+var WFASK={msgs:[],sug:[]};
+/* opening brief for the flow you are looking at */
+function wfAiBrief(){
+  var w=WFS[S.wf];if(!w)return;
+  var ai=w.nodes.filter(function(n){return n.k==='ai'}).length;
+  var hum=w.nodes.filter(function(n){return n.k==='human'}).length;
+  var gates=w.nodes.filter(function(n){return n.k==='gate'}).length;
+  WFASK.msgs=[{ai:'<b>'+esc(w.name)+'</b> — '+esc(w.sub)+'.'+
+    (w.generated?'<div class="arec"><div class="rh">✦ Assembled, not drawn</div>'+
+      '<div class="rt">I built this from steps and limits you already have.</div>'+
+      '<ul><li>Every number still comes from Governance — nothing here is invented.</li></ul></div>':'')+
+    '<div class="awhy"><div class="wl">What this flow is made of</div>'+
+    '<div class="wr"><span>Agent steps</span><b>'+ai+'</b></div>'+
+    '<div class="wr"><span>Points a person decides</span><b>'+hum+'</b></div>'+
+    '<div class="wr"><span>Gates that can stop it</span><b>'+gates+'</b></div></div>'+
+    '<div style="margin-top:9px;font-size:12px;color:var(--muted-foreground)">Click any box on the flow and I will tell you what it checks, who it can stop, and where it goes next.</div>'}];
+  WFASK.sug=['Where do cases stall most?','Who can change these gates?','What never runs without a person?'];
+  wfAiPaint();
+}
+/* clicking a node explains it here — replaces the old right-hand Details pane */
+function wfAiNode(id){
+  var w=WFS[S.wf];
+  var n=w.nodes.filter(function(x){return x.id===id})[0];if(!n)return;
+  var kind={gate:'A rule people set',ai:'The agent judges',human:'A person decides',
+    term:'Where it ends up',start:'Where it starts',step:'It just runs'}[n.k]||'Step';
+  var m='<b>'+esc(n.t)+'</b><div style="margin-top:7px">'+esc(n.d||'')+'</div>'+
+    '<div class="scard"><div class="sc-top">'+
+      '<div class="sc-av" style="background:'+(n.k==='human'||n.k==='gate'?'var(--warning)':n.k==='ai'?'var(--brand)':'var(--text-neutral)')+'">'+
+      (n.k==='human'?'☺':n.k==='gate'?'§':n.k==='ai'?'✦':'•')+'</div>'+
+      '<div class="sc-who">'+esc(kind)+'<span>'+esc(n.badge||'this step')+'</span></div></div><div class="sc-b">';
+  if(n.expr)m+='<div class="sc-evl">What it checks</div><div class="sc-ev" style="margin-bottom:10px"><span>'+esc(n.expr)+'</span></div>';
+  if(n.auth)m+='<div class="sc-evl">Who allows it</div>'+
+    '<div style="font-size:11.5px;color:var(--muted-foreground);line-height:1.5;margin-bottom:10px">'+esc(n.auth)+'</div>';
+  var outs=w.edges.filter(function(e){return e.f===id});
+  if(outs.length){
+    m+='<div class="sc-evl">Where it can go</div>';
+    outs.forEach(function(e){
+      var to=w.nodes.filter(function(x){return x.id===e.t})[0];
+      var kn=e.k==='person'?'a person decides':e.k==='llm'?'the agent judges':e.k==='loop'?'loops back':'automatic';
+      m+='<div class="sc-sys" style="margin-bottom:6px"><span class="dot" style="background:'+
+        (e.k==='person'?'#0087ce':e.k==='llm'?'#f59e0b':'var(--text-neutral)')+'"></span>'+
+        '<span><b>'+esc(e.l||'continues')+'</b> → '+esc(to?to.t:e.t)+'</span>'+
+        '<span class="vf" style="color:var(--text-neutral);font-weight:500">'+kn+'</span></div>';
+    });
+  }
+  m+='</div></div>';
+  if(n.badge&&n.expr){
+    m+='<div class="arec"><div class="rh">✦ This number is governed</div>'+
+      '<div class="rt">'+esc(n.badge)+' is read live from policy '+GOV.ver.split(' ')[0]+'.</div>'+
+      '<div class="racts"><button class="btn pr" onclick="nav(\'govern\');gvTab(\'auth\')">Change it in Governance</button></div></div>';
+  }
+  WFASK.msgs=[{ai:m}];
+  WFASK.sug=['What would have stopped this?','Who can change this gate?','Show me a case that hit it'];
+  if(S.wfRail==='list')wfRailMode('ai');
+  var sub=$('wfRailSub');if(sub)sub.textContent=WFS[S.wf].name+' · '+n.t;
+  wfAiPaint();
+}
+function wfAiSend(q){
+  q=(typeof q==='string'&&q)||$('wfAiInput').value.trim();
+  if(!q)return;
+  $('wfAiInput').value='';
+  WFASK.msgs.push({you:q});wfAiPaint();
+  setTimeout(function(){
+    var l=q.toLowerCase(),a;
+    if(/stall|slow|wait/.test(l))a='<b>The human steps hold the clock.</b> The planner decision runs a median <b>2h 08m</b> and the customer choice <b>19h</b>. Every agent step on this flow finishes in seconds.';
+    else if(/change|who can|owner/.test(l))a='<b>Only the policy owner.</b> Any gate change is replayed against 90 days in Governance, gets a version number, and takes effect on the next run — never mid-flight.';
+    else if(/unattended|without a person|never/.test(l))a='<b>Three doors never open on their own:</b> customer credit above the claim limit, vendor termination, and product substitution — the customer decides that one. No threshold opens them.';
+    else if(/case|hit it|example/.test(l))a='<b>EX-4472</b> hit this gate: a $214,000 requisition above the $150k limit. It is waiting on you now. <div class="racts" style="margin-top:9px"><button class="btn" onclick="nav(\'audit\');openCase(\'EX-4472\')">Open the case</button></div>';
+    else if(/stop|would have/.test(l))a='On this flow a case stops for one of three reasons: <b>value above a limit</b>, <b>confidence below the floor</b>, or an action on the never-alone list. Value is what usually stops it — over 90 days the PR limit held 19, the confidence floor only 11.';
+    else if(/govern/.test(l)){nav('govern');return}
+    else a='I can answer from this flow and the records behind it. Try asking where cases stall, who can change a gate, or what never runs without a person.';
+    WFASK.msgs.push({ai:a});
+    WFASK.sug=['Where do cases stall most?','Who can change these gates?','Show me a case that hit it'];
+    wfAiPaint();
+  },200);
 }
 function renderWFEmpty(){
+  if(!$('rp-det'))return;
   var w=WFS[S.wf];
   $('rp-det').innerHTML='<div class="i-title">'+esc(w.name)+'</div>'+
     '<div class="i-desc">'+esc(w.sub)+'.</div>'+
@@ -3051,6 +3216,7 @@ function renderWFEmpty(){
     'Grey edges are expressions, blue edges are a person deciding, amber edges are agent judgement.</div>';
 }
 function renderWFInsp(id){
+  if(!$('rp-det'))return;
   var w=WFS[S.wf];
   var n=w.nodes.filter(function(x){return x.id===id})[0];if(!n)return;
   var kind={gate:'Gate · a rule people set',ai:'Agent judgement',human:'A person decides',
@@ -3084,6 +3250,7 @@ function renderWFInsp(id){
   $('rp-det').innerHTML=h;
 }
 function renderWFAsk(){
+  if(!$('rp-ask'))return;
   $('rp-ask').innerHTML='<div class="i-desc" style="margin-top:0">Ask about this flow — every answer comes from the records this flow is drawn from.</div>'+
     ['Where do cases stall most?','Who can change these gates?','What never runs unattended?','How often does each gate hold something?']
     .map(function(q){return '<button class="btn w" style="margin-top:8px;justify-content:flex-start;text-align:left" onclick="wfAnswer(\''+q.replace(/'/g,"\\'")+'\')">'+q+'</button>'}).join('');
@@ -3098,6 +3265,7 @@ function wfAnswer(q){
     '<button class="btn" onclick="closeAll();nav(\'audit\')">See the records</button></div>');
 }
 function rpTab(r){
+  if(!$('rp-det'))return;
   document.querySelectorAll('.rp-tab').forEach(function(t){t.classList.toggle('on',t.dataset.r===r)});
   ['det','ask'].forEach(function(k){$('rp-'+k).classList.toggle('on',k===r)});
 }
@@ -3124,7 +3292,8 @@ function wfFit(){
   var z=Math.min(1,Math.max(.55,(c.clientWidth-48)/maxX));
   S.wfz=z;S.wfx=Math.max(12,(c.clientWidth-maxX*z)/2);S.wfy=14;wfApply();
 }
-function wfLibToggle(){var s=$('wfShell');if(!s)return;s.classList.toggle('no-lib');
+function wfLibToggle(){var s=$('wfShell');if(!s)return;var min=s.classList.toggle('no-lib');
+  var e=$('wfRailExpand');if(e)e.hidden=!min;
   setTimeout(function(){wfFit()},200)}
 function wfInspToggle(){var s=$('wfShell');if(!s)return;s.classList.toggle('no-insp');
   setTimeout(function(){wfFit()},200)}
@@ -3133,12 +3302,21 @@ function wfInspToggle(){var s=$('wfShell');if(!s)return;s.classList.toggle('no-i
   var drag=null;
   c.addEventListener('pointerdown',function(e){
     if(e.target.closest('.wnode,.zstack'))return;
-    drag={x:e.clientX,y:e.clientY,bx:S.wfx,by:S.wfy};
+    drag={x:e.clientX,y:e.clientY,bx:S.wfx,by:S.wfy,moved:false};
     c.classList.add('grabbing');try{c.setPointerCapture(e.pointerId)}catch(_){}
   });
   c.addEventListener('pointermove',function(e){if(!drag)return;
-    S.wfx=drag.bx+(e.clientX-drag.x);S.wfy=drag.by+(e.clientY-drag.y);wfApply()});
-  function end(){drag=null;c.classList.remove('grabbing')}
+    var dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+    if(Math.abs(dx)>3||Math.abs(dy)>3)drag.moved=true;
+    S.wfx=drag.bx+dx;S.wfy=drag.by+dy;wfApply()});
+  function end(){
+    if(drag&&!drag.moved&&S.wfSel){
+      S.wfSel=null;
+      document.querySelectorAll('#wfNodes .wnode').forEach(function(n){n.classList.remove('sel')});
+      var sub=$('wfRailSub');if(sub&&WFS[S.wf])sub.textContent=WFS[S.wf].name;
+      wfAiBrief();
+    }
+    drag=null;c.classList.remove('grabbing')}
   c.addEventListener('pointerup',end);c.addEventListener('pointercancel',end);
   c.addEventListener('wheel',function(e){e.preventDefault();
     var r=c.getBoundingClientRect();
