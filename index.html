@@ -283,6 +283,50 @@ button{font-family:inherit;cursor:pointer}
 .arec li::before{content:'';position:absolute;left:2px;top:8px;width:4px;height:4px;border-radius:50%;background:var(--brand);opacity:.55}
 .arec .racts{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
 .arec .racts .btn{font-size:12px;height:34px;padding:0 14px}
+/* --- step card: scannable in 5-8s --- */
+.scard{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:10px;background:var(--background)}
+.sc-top{display:flex;align-items:center;gap:9px;padding:11px 13px;border-bottom:1px solid var(--border-light);
+  background:var(--surface-grey)}
+.sc-av{width:26px;height:26px;border-radius:8px;color:#fff;font-size:11px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;background:var(--ac,var(--text-neutral))}
+.sc-who{min-width:0;font-size:12px;font-weight:600;line-height:1.25}
+.sc-who span{display:block;font-size:10.5px;font-weight:400;color:var(--text-neutral)}
+.sc-dur{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--text-neutral);
+  font-variant-numeric:tabular-nums;flex:0 0 auto}
+.sc-b{padding:12px 13px}
+/* confidence vs the floor — the one number that decides autonomy */
+.sc-conf{margin-bottom:12px}
+.sc-cl{display:flex;align-items:baseline;gap:8px;font-size:11px;color:var(--text-neutral);margin-bottom:6px}
+.sc-cl b{font-family:'Geist Mono',monospace;font-size:14px;font-weight:600;color:var(--foreground);
+  font-variant-numeric:tabular-nums}
+.sc-cl .verdict{margin-left:auto;font-size:10.5px;font-weight:600}
+.sc-cl .verdict.pass{color:var(--pill-success-fg)}
+.sc-cl .verdict.fail{color:var(--pill-warning-fg)}
+.sc-track{position:relative;height:7px;border-radius:9999px;background:var(--progress-track);overflow:visible}
+.sc-fill{height:100%;border-radius:9999px;background:var(--success);transition:width .3s}
+.sc-fill.low{background:var(--warning)}
+.sc-floor{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--foreground);opacity:.55;border-radius:2px}
+.sc-floorl{font-size:9.5px;color:var(--text-neutral);margin-top:5px;font-family:'Geist Mono',monospace}
+/* stat tiles */
+.sc-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.sc-stat{background:var(--surface-grey);border-radius:9px;padding:9px 11px}
+.sc-stat b{display:block;font-family:'Geist Mono',monospace;font-size:16px;font-weight:600;letter-spacing:-.02em;
+  line-height:1.15;font-variant-numeric:tabular-nums}
+.sc-stat span{display:block;font-size:10px;color:var(--muted-foreground);margin-top:2px;line-height:1.3}
+/* system write chip */
+.sc-sys{display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:9px;
+  padding:9px 11px;font-size:11.5px;margin-bottom:10px}
+.sc-sys .dot{width:7px;height:7px;border-radius:50%;background:var(--success);flex:0 0 auto}
+.sc-sys.pending .dot{background:var(--warning)}
+.sc-sys b{font-weight:600}
+.sc-sys .vf{margin-left:auto;font-size:10.5px;font-weight:600;color:var(--pill-success-fg)}
+.sc-sys.pending .vf{color:var(--pill-warning-fg)}
+/* evidence as chips */
+.sc-evl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-neutral);margin-bottom:6px}
+.sc-ev{display:flex;flex-wrap:wrap;gap:5px}
+.sc-ev span{font-family:'Geist Mono',monospace;font-size:10px;background:var(--secondary);
+  color:var(--muted-foreground);border-radius:6px;padding:3px 8px}
+
 /* evidence / why rows */
 .awhy{border:1px solid var(--border);border-radius:11px;padding:11px 12px;margin-top:10px;background:var(--surface-grey)}
 .awhy .wl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-neutral);margin-bottom:7px}
@@ -768,6 +812,11 @@ button{font-family:inherit;cursor:pointer}
 /* rail header — segmented control between assistant and the case list */
 .rail-hd{display:flex;align-items:center;gap:8px;padding:12px 12px 10px;border-bottom:0;background:var(--background)}
 .railseg{flex:1;min-width:0}
+.railexp{width:32px;height:32px;border:1px solid var(--border);background:var(--background);border-radius:var(--radius-md);
+  display:flex;align-items:center;justify-content:center;color:var(--muted-foreground);flex:0 0 auto;
+  transition:background .1s ease,border-color .1s ease,color .1s ease}
+.railexp:hover{background:var(--surface-hover);border-color:var(--border-strong);color:var(--foreground)}
+.railexp:focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 30%,transparent)}
 .railcol{flex:0 0 auto;width:32px;height:32px;border:1px solid var(--border);background:var(--background);
   border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:var(--muted-foreground);
   transition:background .1s ease,border-color .1s ease,color .1s ease}
@@ -808,38 +857,46 @@ button{font-family:inherit;cursor:pointer}
   border-bottom:2px solid transparent;padding:6px 4px 9px}
 .railtabs button.on{color:var(--foreground);font-weight:600;border-bottom-color:var(--brand)}
 .rail-b{flex:1;overflow-y:auto;padding:11px}
-.needsbar{display:flex;align-items:center;gap:9px;width:100%;border:1px solid #f0dcae;background:var(--pill-warning-bg);
-  border-radius:9px;padding:9px 11px;margin-bottom:11px;text-align:left;font-family:inherit;color:inherit}
-.needsbar:hover{border-color:var(--warning)}
-.needsbar .ni{width:17px;height:17px;border-radius:50%;background:var(--warning);color:#fff;font-size:10px;
-  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
-.needsbar b{display:block;font-size:12.5px;font-weight:600}
-.needsbar span{font-size:11px;color:var(--pill-warning-fg)}
-.needsbar .ch{margin-left:auto;color:var(--pill-warning-fg);font-size:13px}
-.railsearch{width:100%;font-family:inherit;font-size:12.5px;padding:8px 11px;border:1px solid var(--input);
-  border-radius:8px;outline:none;margin-bottom:9px;background:var(--background)}
-.railsearch:focus{border-color:var(--brand)}
-.railchips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+/* --- case panel: grouped by who the case is blocked on --- */
+.railsearch{width:100%;font-family:inherit;font-size:12.5px;padding:8px 12px 8px 32px;border:1px solid var(--border);
+  border-radius:9999px;background:var(--surface-grey) no-repeat 11px center;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E");
+  margin-bottom:10px;transition:border-color .12s,box-shadow .12s}
+.railsearch:focus{outline:none;border-color:var(--brand);background-color:var(--background);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 18%,transparent)}
+.railchips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:16px}
 .railchips button{border:1px solid var(--border);background:var(--background);border-radius:9999px;
-  font-size:11.5px;padding:4px 11px;color:var(--muted-foreground);display:inline-flex;align-items:center;gap:6px}
-.railchips button:hover{border-color:var(--border-strong)}
-.railchips button.on{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:600}
-.railchips button .n{font-variant-numeric:tabular-nums;opacity:.75}
-.raillab{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-neutral);
-  margin:4px 0 8px;display:flex;align-items:center;gap:8px}
-.raillab .n{margin-left:auto;font-variant-numeric:tabular-nums}
-.ccard{display:block;width:100%;border:1px solid var(--border);background:var(--background);border-radius:10px;
-  padding:11px 12px;text-align:left;margin-bottom:8px;font-family:inherit;color:inherit;box-shadow:var(--shadow-card)}
-.ccard:hover{border-color:var(--border-strong)}
-.ccard.on{border-color:var(--foreground);border-left:3px solid var(--foreground);box-shadow:var(--shadow-menu)}
-.ccard .ct1{display:flex;align-items:baseline;gap:8px;margin-bottom:3px}
-.ccard .cid2{font-family:'Geist Mono',monospace;font-size:11px;color:var(--muted-foreground)}
-.ccard .cval{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11.5px;font-weight:600;font-variant-numeric:tabular-nums}
-.ccard .cnm{font-size:13px;font-weight:600;line-height:1.3;display:block;margin-bottom:7px}
-.ccard .cft{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.ccard .ctime{margin-left:auto;font-size:10.5px;color:var(--text-neutral);font-variant-numeric:tabular-nums;display:inline-flex;align-items:center;gap:4px}
-.ccard .cwait{font-size:11px;color:var(--muted-foreground);margin-top:8px;padding-top:7px;border-top:1px solid var(--border-light);
-  display:flex;align-items:center;gap:6px}
+  font-size:11.5px;font-weight:500;padding:5px 11px;color:var(--muted-foreground);display:inline-flex;
+  align-items:center;gap:5px;transition:background .1s,border-color .1s,color .1s}
+.railchips button:hover{border-color:var(--border-strong);color:var(--foreground)}
+.railchips button.on{background:var(--primary);border-color:var(--primary);color:var(--primary-foreground);font-weight:600}
+.railchips button .n{font-family:'Geist Mono',monospace;font-size:10.5px;font-variant-numeric:tabular-nums;opacity:.7}
+.railchips button.urgent:not(.on){border-color:#f0dcae;background:var(--pill-warning-bg);color:var(--pill-warning-fg);font-weight:600}
+/* group header */
+.raillab{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--text-neutral);margin:16px 2px 8px}
+.raillab:first-child{margin-top:0}
+.raillab i{width:6px;height:6px;border-radius:50%;flex:0 0 auto}
+.raillab .n{margin-left:auto;font-family:'Geist Mono',monospace;font-variant-numeric:tabular-nums;opacity:.8}
+/* case card — an accent rail carries the state, the title leads */
+.ccard{position:relative;display:block;width:100%;text-align:left;border:1px solid var(--border);
+  background:var(--background);border-radius:10px;padding:11px 12px 11px 15px;margin-bottom:7px;overflow:hidden;
+  transition:border-color .12s,background .12s,box-shadow .12s}
+.ccard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cc,var(--border-strong))}
+.ccard:hover{border-color:var(--border-strong);background:var(--surface-grey)}
+.ccard.on{border-color:color-mix(in oklab,var(--cc) 45%,#fff);background:color-mix(in oklab,var(--cc) 6%,#fff);
+  box-shadow:0 1px 2px rgb(9 9 11/.06)}
+.ccard .cnm{display:block;font-size:13px;font-weight:600;line-height:1.35;letter-spacing:-.005em;margin-bottom:5px}
+.ccard .cmeta{display:flex;align-items:center;gap:7px;font-family:'Geist Mono',monospace;font-size:10.5px;
+  color:var(--text-neutral);font-variant-numeric:tabular-nums}
+.ccard .cmeta .cval{font-weight:600;color:var(--muted-foreground)}
+.ccard .cmeta .sep{opacity:.4}
+.ccard .cwait{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted-foreground);
+  margin-top:8px;padding-top:8px;border-top:1px solid var(--border-light)}
+.ccard .cwait b{color:var(--foreground);font-weight:600}
+.ccard .cwait.you{color:var(--pill-warning-fg)}
+.ccard .cwait.you b{color:var(--pill-warning-fg)}
+.railempty{font-size:12px;color:var(--text-neutral);text-align:center;padding:22px 10px;line-height:1.5}
 .ccard .cwait b{font-weight:600;color:var(--foreground)}
 /* canvas */
 .ct-canvas{position:relative;overflow:hidden;min-height:0;background:#fbfbfc;
@@ -1541,7 +1598,7 @@ button{font-family:inherit;cursor:pointer}
     <div class="view on" id="a-board">
       <div class="ct-shell">
         <div class="ct-head">
-          <button class="icobtn railexp" id="railExpand" onclick="ctRail()" aria-label="Show the assistant panel" title="Show the assistant panel" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/><path d="M13 9l3 3-3 3"/></svg></button>
+          <button class="railexp" id="railExpand" onclick="ctRail()" aria-label="Show the assistant panel" title="Show the assistant panel" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M9.5 4v16"/><path d="M13.5 9.5l2.5 2.5-2.5 2.5"/></svg></button>
           <span class="cid" id="ct-id">EX-4472</span>
           <h2 id="ct-title">Coverage gap across 6 DCs</h2>
           <span class="pill warn" id="ct-pill">held for decision</span>
@@ -1564,10 +1621,10 @@ button{font-family:inherit;cursor:pointer}
                   Cases <span class="n" id="railTogN">4</span></button>
               </div>
               <button class="railcol" onclick="ctRail()" aria-label="Collapse the panel" title="Collapse the panel">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/>
-                  <path d="M16 9l-3 3 3 3"/></svg>
+                  <rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M9.5 4v16"/>
+                  <path d="M15.5 9.5L13 12l2.5 2.5"/></svg>
               </button>
             </div>
             <div class="rail-sub2" id="railSub">Working on EX-4472</div>
@@ -3390,48 +3447,63 @@ function renderCTRail(){
     return;
   }
   var q=(S.ctQ||'').toLowerCase();
+  /* group by WHO the case is blocked on — the only axis that drives action */
+  function grp(k){var c=CASES[k];
+    if(k==='EX-4472'&&!S.held)return 'closed';
+    if(c.status==='held')return 'you';
+    if(c.status==='done'||c.status==='overridden')return 'closed';
+    return 'flight';}
+  function money(k){var v=(CASES[k].val||'').replace(/[$,k]/gi,'');return parseFloat(v)||0}
+  var counts={you:0,flight:0,closed:0};
+  CTORDER.forEach(function(k){counts[grp(k)]++});
   var list=CTORDER.filter(function(k){
     var c=CASES[k];
-    if(S.ctFilter!=='all'){
-      var g=c.status==='held'?'held':c.status==='done'||c.status==='overridden'?'done':'active';
-      if(g!==S.ctFilter)return false;
-    }
+    if(S.ctFilter!=='all'&&grp(k)!==S.ctFilter)return false;
     if(!q)return true;
     return (k+' '+c.title+' '+c.owner).toLowerCase().indexOf(q)>-1;
-  });
-  var counts={active:0,held:0,done:0};
-  CTORDER.forEach(function(k){var c=CASES[k];
-    counts[c.status==='held'?'held':(c.status==='done'||c.status==='overridden')?'done':'active']++});
-  if(!S.held&&counts.held>0){counts.held--;counts.done++}
-  var pend=S.held?2:1;
-  b.innerHTML='<button class="needsbar" onclick="S.ctFilter=\'held\';renderCTRail()">'+
-    '<span class="ni">!</span><span><b>Needs a person</b><span>'+pend+' decision'+(pend===1?'':'s')+' pending · 1 handoff awaiting ack</span></span>'+
-    '<span class="ch">›</span></button>'+
-    '<input class="railsearch" id="ctQ" placeholder="Search case, order, customer…" value="'+esc(S.ctQ||'')+'">'+
+  }).sort(function(a,b){return money(b)-money(a)});
+
+  var GRP=[{k:'you',l:'Needs you',c:'var(--warning)'},
+           {k:'flight',l:'In flight',c:'var(--brand)'},
+           {k:'closed',l:'Closed',c:'var(--success)'}];
+  var h='<input class="railsearch" id="ctQ" placeholder="Search case, order, customer…" value="'+esc(S.ctQ||'')+'">'+
     '<div class="railchips">'+
-      ['all','active','held','done'].map(function(f){
-        var n=f==='all'?CTORDER.length:counts[f];
-        return '<button class="'+(S.ctFilter===f?'on':'')+'" onclick="S.ctFilter=\''+f+'\';renderCTRail()">'+
-          (f==='held'?'⏸ ':'')+f.charAt(0).toUpperCase()+f.slice(1)+' <span class="n">'+n+'</span></button>';
-      }).join('')+'</div>'+
-    '<div class="raillab">Current case</div>'+caseCard(S.caseId,true)+
-    '<div class="raillab">Other cases<span class="n">'+(list.length-1>0?list.length-1:0)+'</span></div>'+
-    list.filter(function(k){return k!==S.caseId}).map(function(k){return caseCard(k,false)}).join('');
+      [{k:'all',l:'All',n:CTORDER.length}].concat(GRP.map(function(g){return {k:g.k,l:g.l,n:counts[g.k]}}))
+      .map(function(f){
+        var urgent=(f.k==='you'&&f.n>0)?' urgent':'';
+        return '<button class="'+(S.ctFilter===f.k?'on':'')+urgent+'" onclick="S.ctFilter=\''+f.k+'\';renderCTRail()">'+
+          f.l+' <span class="n">'+f.n+'</span></button>';
+      }).join('')+'</div>';
+
+  if(!list.length){
+    h+='<div class="railempty">No cases match.<br>'+
+      '<button class="linky" onclick="S.ctQ=\'\';S.ctFilter=\'all\';renderCTRail()">Clear filters</button></div>';
+  }else{
+    GRP.forEach(function(g){
+      var inG=list.filter(function(k){return grp(k)===g.k});
+      if(!inG.length)return;
+      h+='<div class="raillab"><i style="background:'+g.c+'"></i>'+g.l+'<span class="n">'+inG.length+'</span></div>'+
+        inG.map(function(k){return caseCard(k,k===S.caseId)}).join('');
+    });
+  }
+  b.innerHTML=h;
   var qi=$('ctQ');
   if(qi)qi.addEventListener('input',function(e){S.ctQ=e.target.value;renderCTRail();
     var n=$('ctQ');if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length)}});
 }
 function caseCard(k,cur){
   var c=CASES[k];
-  var held=k==='EX-4472'&&!S.held;
-  var pill=held?['ok','decided']:c.pill;
-  var icon={held:'⏸',waiting:'⧖',active:'◐',overridden:'↺',done:'✓'}[held?'done':c.status]||'';
-  return '<button class="ccard'+(cur?' on':'')+'" onclick="pickCase(\''+k+'\')">'+
-    '<div class="ct1"><span class="cid2">'+k+'</span><span class="cval">'+c.val+'</span></div>'+
+  var decided=(k==='EX-4472'&&!S.held);
+  var st=decided?'done':c.status;
+  var col={held:'var(--warning)',waiting:'#0087ce',active:'var(--brand)',
+           overridden:'var(--destructive)',done:'var(--success)'}[st]||'var(--border-strong)';
+  var waitTxt=decided?'':(st==='held'?'Waiting on <b>your decision</b>'
+    :(c.waiting?'Waiting on <b>'+esc(c.waiting)+'</b>':''));
+  return '<button class="ccard'+(cur?' on':'')+'" style="--cc:'+col+'" onclick="pickCase(\''+k+'\')">'+
     '<span class="cnm">'+esc(c.title)+'</span>'+
-    '<span class="cft"><span class="pill '+pill[0]+'">'+icon+' '+pill[1]+'</span>'+
-    '<span class="ctime">⏱ '+c.elapsed+'</span></span>'+
-    (cur&&c.waiting&&!held?'<div class="cwait">⧖ Waiting on <b>'+esc(c.waiting)+'</b></div>':'')+
+    '<span class="cmeta"><span>'+k+'</span><span class="sep">·</span>'+
+      '<span class="cval">'+esc(c.val)+'</span><span class="sep">·</span><span>'+esc(c.elapsed)+'</span></span>'+
+    (waitTxt?'<div class="cwait'+(st==='held'?' you':'')+'">'+waitTxt+'</div>':'')+
     '</button>';
 }
 function pickCase(k){S.caseId=k;S.ctStep=null;S.ctReplay=null;ASK.into='rail';renderCT();ctFit()}
@@ -3741,17 +3813,54 @@ function askStep(caseId,stepId){
   var ag=st.ag?AG[st.ag]:null;
   var who=ag?ag.n+' · '+ag.r.toLowerCase():st.k==='human'?c.owner+' · a person':st.k==='gate'?'Policy gate':'System';
   ASK.ctx={label:caseId+' · '+st.t};
-  var ev=(st.ev&&st.ev.length)?'<div class="awhy"><div class="wl">Evidence it used</div>'+
-    st.ev.map(function(e){return '<div class="wr"><span>·</span><b>'+esc(e)+'</b></div>'}).join('')+'</div>':'';
-  var meta='<div class="awhy"><div class="wl">At a glance</div>'+
-    '<div class="wr"><span>Owner</span><b>'+esc(who)+'</b></div>'+
-    (st.conf&&st.conf!=='—'?'<div class="wr"><span>Confidence</span><b>'+esc(st.conf)+'</b></div>':'')+
-    (st.dur?'<div class="wr"><span>Took</span><b>'+esc(st.dur)+'</b></div>':'')+
-    (st.act?'<div class="wr"><span>Wrote to</span><b>'+esc(st.act.sys)+' · '+(st.act.ok?'confirmed':'pending')+'</b></div>':'')+
-    '</div>';
-  var msg='<b>'+esc(st.t)+'</b> — here is what happened and why.'+
-    '<div style="margin-top:8px"><b>What it was trying to do.</b> '+esc(st.obj||'—')+'</div>'+
-    '<div style="margin-top:6px"><b>What it concluded.</b> '+esc(st.res||st.d)+'</div>'+meta+ev;
+  /* --- visual step card: agent, confidence vs floor, extracted numbers,
+         the system write, evidence as chips — scannable in a few seconds --- */
+  var acCol=ag?ag.c:(st.k==='human'||st.k==='gate'?'var(--warning)':'var(--text-neutral)');
+  var initial=ag?ag.av:(st.k==='human'?String(c.owner||'?').charAt(0):st.k==='gate'?'§':'S');
+  var role=ag?ag.r.toLowerCase():st.k==='human'?'a person':st.k==='gate'?'policy '+GOV.ver.split(' ')[0]:'system';
+  var nm=ag?ag.n:(st.k==='human'?c.owner:st.k==='gate'?'Policy gate':'System');
+
+  var card='<div class="scard"><div class="sc-top">'+
+    '<div class="sc-av" style="background:'+acCol+'">'+esc(initial)+'</div>'+
+    '<div class="sc-who">'+esc(nm)+'<span>'+esc(role)+'</span></div>'+
+    (st.dur?'<div class="sc-dur">'+esc(st.dur)+'</div>':'')+'</div><div class="sc-b">';
+
+  var cf=parseFloat(String(st.conf||'').replace('%',''));
+  if(!isNaN(cf)){
+    var pct=cf>1?cf:cf*100,floor=85,pass=pct>=floor;
+    card+='<div class="sc-conf"><div class="sc-cl">Confidence <b>'+Math.round(pct)+'%</b>'+
+      '<span class="verdict '+(pass?'pass':'fail')+'">'+(pass?'cleared the floor':'below the floor')+'</span></div>'+
+      '<div class="sc-track"><div class="sc-fill'+(pass?'':' low')+'" style="width:'+pct+'%"></div>'+
+      '<div class="sc-floor" style="left:'+floor+'%"></div></div>'+
+      '<div class="sc-floorl">floor '+floor+'%</div></div>';
+  }
+
+  var rtxt=st.res||st.d||'',nums=[],seen={};
+  var rx=/(\$[\d,.]+[kmb]?|\d+ of \d+|\d+(?:\.\d+)?%)/gi,mt;
+  while((mt=rx.exec(rtxt))!==null&&nums.length<2){
+    var v=mt[1];if(seen[v])continue;seen[v]=1;
+    var tail=rtxt.slice(mt.index+v.length).replace(/^[\s,.]+/,'').split(/[.;]/)[0];
+    nums.push([v,tail.split(' ').slice(0,4).join(' ')]);
+  }
+  if(nums.length===2){
+    card+='<div class="sc-stats">'+nums.map(function(n){
+      return '<div class="sc-stat"><b>'+esc(n[0])+'</b><span>'+esc(n[1]||'')+'</span></div>'}).join('')+'</div>';
+  }
+
+  if(st.act){
+    card+='<div class="sc-sys'+(st.act.ok?'':' pending')+'"><span class="dot"></span>'+
+      '<span><b>'+esc(st.act.sys)+'</b> · '+esc(st.act.verb)+'</span>'+
+      '<span class="vf">'+(st.act.ok?'confirmed':'pending')+'</span></div>';
+  }
+  if(st.ev&&st.ev.length){
+    card+='<div class="sc-evl">Evidence used</div><div class="sc-ev">'+
+      st.ev.map(function(e){return '<span>'+esc(e)+'</span>'}).join('')+'</div>';
+  }
+  card+='</div></div>';
+
+  var msg='<b>'+esc(st.t)+'</b>'+
+    '<div style="margin-top:7px">'+esc(st.res||st.d)+'</div>'+
+    '<div style="margin-top:6px;font-size:11.5px;color:var(--text-neutral)">Goal: '+esc(st.obj||'—')+'</div>'+card;
   var isHold=(st.k==='human'&&caseId==='EX-4472'&&S.held);
   if(isHold){
     msg+='<div class="arec"><div class="rh">✦ My recommendation</div>'+
