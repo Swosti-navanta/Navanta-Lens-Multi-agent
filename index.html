@@ -796,9 +796,10 @@ button{font-family:inherit;cursor:pointer}
 .i-empty{font-size:12.5px;line-height:1.55;color:var(--muted-foreground)}
 @media(max-width:1200px){.wf-shell{grid-template-columns:1fr;height:auto}.wf-pane{min-height:320px}}
 /* ===== case thread ===== */
-.ct-shell{display:grid;grid-template-rows:auto minmax(0,1fr);height:calc(100vh - 74px);min-height:600px;
-  border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-card);background:var(--card)}
-.ct-head{display:flex;align-items:center;gap:11px;padding:9px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap;background:var(--background)}
+.ct-shell{display:grid;grid-template-rows:auto minmax(0,1fr);gap:14px;height:calc(100vh - 74px);min-height:600px;
+  background:transparent}
+.ct-head{display:flex;align-items:center;gap:11px;padding:11px 16px;flex-wrap:wrap;background:var(--card);
+  border:1px solid var(--border);border-radius:var(--radius-xl);box-shadow:var(--shadow-card)}
 .ct-head .cid{font-family:'Geist Mono',monospace;font-size:12px;color:var(--muted-foreground)}
 .ct-head h2{font-size:14px;font-weight:600;letter-spacing:-.005em}
 .ct-facts{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted-foreground);flex-wrap:wrap;min-width:0}
@@ -812,12 +813,15 @@ button{font-family:inherit;cursor:pointer}
 .fct.tsla.late{background:var(--pill-warning-bg);border-color:#f0dcae;color:var(--pill-warning-fg)}
 .fct.tsla.late b{color:var(--pill-warning-fg)}
 .ct-head .right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.ct-body{display:grid;grid-template-columns:auto minmax(0,1fr);min-height:0;transition:grid-template-columns .18s}
+.ct-body{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;min-height:0;transition:grid-template-columns .18s}
+.ct-body.railmin{gap:0}
 .ct-body.railmin{grid-template-columns:0 minmax(0,1fr)}
 /* rail */
-.ct-rail{width:380px;border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:0;background:var(--background);transition:width .18s}
+.ct-rail{width:380px;display:flex;flex-direction:column;min-height:0;background:var(--card);
+  border:1px solid var(--border);border-radius:var(--radius-xl);box-shadow:var(--shadow-card);
+  overflow:hidden;transition:width .18s}
 /* rail header — segmented control between assistant and the case list */
-.rail-hd{display:flex;align-items:center;gap:8px;padding:12px 12px 10px;border-bottom:0;background:var(--background)}
+.rail-hd{display:flex;align-items:center;gap:8px;padding:13px 13px 10px;border-bottom:0;background:var(--card)}
 .railseg{flex:1;min-width:0}
 .railexp{width:32px;height:32px;border:1px solid var(--border);background:var(--background);border-radius:var(--radius-md);
   display:flex;align-items:center;justify-content:center;color:var(--muted-foreground);flex:0 0 auto;
@@ -843,7 +847,7 @@ button{font-family:inherit;cursor:pointer}
 .railseg .n{font-family:'Geist Mono',monospace;font-size:10.5px;font-weight:600;
   background:var(--border);color:var(--muted-foreground);border-radius:9999px;padding:1px 6px}
 .railseg button.on .n{background:var(--secondary);color:var(--foreground)}
-.rail-sub2{font-size:11px;color:var(--text-neutral);padding:0 14px 10px;background:var(--background);
+.rail-sub2{font-size:11px;color:var(--text-neutral);padding:0 14px 11px;background:var(--card);
   border-bottom:1px solid var(--border);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* assistant pane inside the rail */
 .rail-ai{flex:1;display:flex;flex-direction:column;min-height:0;background:var(--surface-grey)}
@@ -852,13 +856,13 @@ button{font-family:inherit;cursor:pointer}
 .rai-sug button{border:1px solid var(--border);background:var(--background);border-radius:9999px;
   font-size:11px;padding:5px 10px;color:var(--muted-foreground);text-align:left}
 .rai-sug button:hover{border-color:var(--brand);color:var(--brand)}
-.rai-in{display:flex;align-items:center;gap:8px;padding:11px 12px;border-top:1px solid var(--border);background:var(--background)}
+.rai-in{display:flex;align-items:center;gap:8px;padding:11px 12px;border-top:1px solid var(--border-light);background:var(--card)}
 .rai-in input{flex:1;min-width:0;border:1px solid var(--input);border-radius:9999px;font-family:inherit;
   font-size:12.5px;padding:10px 15px;transition:border-color .12s,box-shadow .12s;background:var(--surface-grey)}
 .rai-in input:focus{outline:none;border-color:var(--brand);background:var(--background);
   box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 18%,transparent)}
 .rai-in .btn{border-radius:9999px;height:36px;padding:0 16px;font-weight:600}
-.ct-rail.min{width:0;min-width:0;border-right:0;overflow:hidden;opacity:0;pointer-events:none}
+.ct-rail.min{width:0;min-width:0;border:0;overflow:hidden;opacity:0;pointer-events:none}
 .railtabs{display:flex;gap:2px;padding:9px 10px 0;border-bottom:1px solid var(--border);background:var(--background)}
 .railtabs button{flex:1;font-size:12.5px;font-weight:500;color:var(--muted-foreground);background:none;border:0;
   border-bottom:2px solid transparent;padding:6px 4px 9px}
@@ -906,8 +910,7 @@ button{font-family:inherit;cursor:pointer}
 .railempty{font-size:12px;color:var(--text-neutral);text-align:center;padding:22px 10px;line-height:1.5}
 .ccard .cwait b{font-weight:600;color:var(--foreground)}
 /* canvas */
-.ct-canvas{position:relative;overflow:hidden;min-height:0;background:#fbfbfc;
-  background-image:radial-gradient(#e2e5ea 1.1px,transparent 1.1px);background-size:20px 20px;cursor:grab;touch-action:none}
+.ct-canvas{position:relative;overflow:hidden;min-height:0;background:#fbfbfc;cursor:grab;touch-action:none;border:1px solid var(--border);border-radius:var(--radius-xl);box-shadow:var(--shadow-card);background-image:radial-gradient(#e2e5ea 1px,transparent 1px);background-size:20px 20px}
 .ct-canvas.grabbing{cursor:grabbing}
 .ct-canvas.sim{background:#fffdf5;background-image:radial-gradient(#ecdcae 1.1px,transparent 1.1px);
   box-shadow:inset 0 0 0 2px var(--warning)}
