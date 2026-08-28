@@ -761,12 +761,19 @@ button{font-family:inherit;cursor:pointer}
 .ct-facts b{font-weight:600;color:var(--foreground)}
 .ct-facts .sep{color:var(--input)}
 .ct-head .right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.ct-body{display:grid;grid-template-columns:auto minmax(0,1fr);min-height:0}
+.ct-body{display:grid;grid-template-columns:auto minmax(0,1fr);min-height:0;transition:grid-template-columns .18s}
+.ct-body.railmin{grid-template-columns:0 minmax(0,1fr)}
 /* rail */
 .ct-rail{width:380px;border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:0;background:var(--background);transition:width .18s}
 /* rail header — segmented control between assistant and the case list */
-.rail-hd{padding:12px 12px 10px;border-bottom:0;background:var(--background)}
-.railseg{width:100%;background:var(--secondary);border-radius:9999px;padding:3px;gap:2px}
+.rail-hd{display:flex;align-items:center;gap:8px;padding:12px 12px 10px;border-bottom:0;background:var(--background)}
+.railseg{flex:1;min-width:0}
+.railcol{flex:0 0 auto;width:32px;height:32px;border:1px solid var(--border);background:var(--background);
+  border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:var(--muted-foreground);
+  transition:background .1s ease,border-color .1s ease,color .1s ease}
+.railcol:hover{background:var(--surface-hover);border-color:var(--border-strong);color:var(--foreground)}
+.railcol:focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 30%,transparent)}
+.railseg{background:var(--secondary);border-radius:9999px;padding:3px;gap:2px}
 .railseg button{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;
   font-size:12.5px;font-weight:500;color:var(--muted-foreground);padding:7px 12px;border-radius:9999px;
   border:0;background:none;white-space:nowrap;transition:background .12s ease,color .12s ease,box-shadow .12s ease}
@@ -795,7 +802,7 @@ button{font-family:inherit;cursor:pointer}
 .rai-in input:focus{outline:none;border-color:var(--brand);background:var(--background);
   box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 18%,transparent)}
 .rai-in .btn{border-radius:9999px;height:36px;padding:0 16px;font-weight:600}
-.ct-rail.min{width:0;border-right:0;overflow:hidden}
+.ct-rail.min{width:0;min-width:0;border-right:0;overflow:hidden;opacity:0;pointer-events:none}
 .railtabs{display:flex;gap:2px;padding:9px 10px 0;border-bottom:1px solid var(--border);background:var(--background)}
 .railtabs button{flex:1;font-size:12.5px;font-weight:500;color:var(--muted-foreground);background:none;border:0;
   border-bottom:2px solid transparent;padding:6px 4px 9px}
@@ -1534,7 +1541,7 @@ button{font-family:inherit;cursor:pointer}
     <div class="view on" id="a-board">
       <div class="ct-shell">
         <div class="ct-head">
-          <button class="icobtn" onclick="ctRail()" aria-label="Toggle case list" title="Toggle case list"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/><rect x="3" y="4" width="6" height="16" rx="2" fill="currentColor" stroke="none"/></svg></button>
+          <button class="icobtn railexp" id="railExpand" onclick="ctRail()" aria-label="Show the assistant panel" title="Show the assistant panel" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/><path d="M13 9l3 3-3 3"/></svg></button>
           <span class="cid" id="ct-id">EX-4472</span>
           <h2 id="ct-title">Coverage gap across 6 DCs</h2>
           <span class="pill warn" id="ct-pill">held for decision</span>
@@ -1556,6 +1563,12 @@ button{font-family:inherit;cursor:pointer}
                 <button id="railSegCases" role="tab" aria-selected="false" onclick="ctRailMode('cases')">
                   Cases <span class="n" id="railTogN">4</span></button>
               </div>
+              <button class="railcol" onclick="ctRail()" aria-label="Collapse the panel" title="Collapse the panel">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/>
+                  <path d="M16 9l-3 3 3 3"/></svg>
+              </button>
             </div>
             <div class="rail-sub2" id="railSub">Working on EX-4472</div>
             <!-- assistant pane (default) -->
@@ -3933,7 +3946,10 @@ function ctPlay(){
 }
 function ctStopPlay(){if(ctTimer){clearInterval(ctTimer);ctTimer=null}var b=$('ctPlayBtn');if(b)b.textContent='▶'}
 /* ---- panels + pan/zoom ---- */
-function ctRail(){$('ctRailEl').classList.toggle('min')}
+function ctRail(){var r=$('ctRailEl');if(!r)return;var min=r.classList.toggle('min');
+  var body=r.parentElement;if(body)body.classList.toggle('railmin',min);
+  var e=$('railExpand');if(e)e.hidden=!min;
+  setTimeout(function(){ctFit()},200)}
 function ctInsp(){var e=$('ctInspEl');if(e)e.classList.toggle('min')}
 function ctApply(){
   var st=$('ctStage');if(!st)return;
