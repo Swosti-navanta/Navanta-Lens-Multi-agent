@@ -84,11 +84,14 @@ button{font-family:inherit;cursor:pointer}
 .pill.nu{background:var(--pill-neutral-bg);color:var(--pill-neutral-fg)}
 .pill.br{background:var(--surface-accent);color:var(--brand)}
 .btn{border:1px solid var(--border);background:var(--background);color:var(--foreground);
-  font-size:12.5px;font-weight:500;height:32px;padding:0 14px;border-radius:var(--radius-md);
-  display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
-.btn:hover{background:var(--surface-hover)}
+  font-size:12.5px;font-weight:500;height:34px;padding:0 15px;border-radius:var(--radius-md);
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;
+  transition:background .1s ease,border-color .1s ease,box-shadow .1s ease,transform .1s ease}
+.btn:hover{background:var(--surface-hover);border-color:var(--border-strong)}
+.btn:active{transform:scale(.985)}
+.btn:focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 30%,transparent)}
 .btn.pr{background:var(--primary);border-color:var(--primary);color:var(--primary-foreground)}
-.btn.pr:hover{background:#000}
+.btn.pr:hover{background:#000;border-color:#000}
 .btn.dng{border-color:#fecaca;color:var(--destructive)}
 .btn.dng:hover{background:var(--pill-danger-bg)}
 .btn.sm{height:26px;padding:0 10px;font-size:11.5px}
@@ -253,25 +256,33 @@ button{font-family:inherit;cursor:pointer}
   font-size:12.5px;padding:9px 11px}
 .ask-in input:focus{outline:none;border-color:var(--brand)}
 /* message bubbles */
-.am{margin-bottom:13px;font-size:12.5px;line-height:1.6}
+.am{margin-bottom:16px;font-size:12.5px;line-height:1.6;animation:amrise .22s cubic-bezier(.2,.8,.2,1)}
+@keyframes amrise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .am.you{display:flex;justify-content:flex-end}
-.am.you span{background:var(--primary);color:#fff;border-radius:13px 13px 3px 13px;padding:8px 13px;max-width:85%}
-.am.ai .who{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:600;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--text-neutral);margin-bottom:5px}
-.am.ai .who i{width:14px;height:14px;border-radius:5px;background:var(--gradient-brand)}
+.am.you span{background:var(--primary);color:var(--primary-foreground);border-radius:14px 14px 4px 14px;
+  padding:9px 14px;max-width:86%;box-shadow:var(--shadow-card);letter-spacing:-.005em}
+.am.ai{display:flex;gap:9px}
+.am.ai .av{width:24px;height:24px;border-radius:7px;background:var(--gradient-brand);color:#fff;font-size:11px;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;margin-top:1px}
+.am.ai .who{display:none}
+.am.ai .col{min-width:0;flex:1}
+.am.ai .nm{font-size:10.5px;font-weight:600;letter-spacing:.04em;color:var(--text-neutral);margin-bottom:3px}
 .am.ai .bub{color:var(--foreground)}
 .am.ai .bub b{font-weight:600}
-.am.ai .bub .mono{font-family:'Geist Mono',monospace;font-size:11.5px}
+.am.ai .bub .mono{font-family:'Geist Mono',monospace;font-size:11.5px;background:var(--secondary);
+  border-radius:5px;padding:1px 5px}
 /* the recommendation block — the heart of the assistant */
-.arec{border:1px solid color-mix(in oklab,var(--brand) 26%,#fff);background:var(--surface-accent);
-  border-radius:12px;padding:12px 13px;margin-top:10px}
-.arec .rh{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:600;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--brand);margin-bottom:7px}
-.arec .rt{font-size:13.5px;font-weight:600;letter-spacing:-.005em;line-height:1.3}
-.arec ul{margin:8px 0 0;padding-left:16px}
-.arec li{font-size:12px;line-height:1.55;color:var(--muted-foreground);margin-bottom:3px}
-.arec .racts{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
-.arec .racts .btn{font-size:12px;padding:6px 12px}
+.arec{border:1px solid color-mix(in oklab,var(--brand) 24%,#fff);
+  background:linear-gradient(180deg,color-mix(in oklab,var(--brand) 7%,#fff),color-mix(in oklab,var(--brand) 3.5%,#fff));
+  border-radius:12px;padding:13px 14px;margin-top:12px;box-shadow:0 1px 2px rgb(100 64 182/.06)}
+.arec .rh{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--brand);margin-bottom:8px}
+.arec .rt{font-size:13.5px;font-weight:600;letter-spacing:-.01em;line-height:1.35;color:var(--brand-deep)}
+.arec ul{margin:9px 0 0;padding-left:2px;list-style:none}
+.arec li{position:relative;padding-left:16px;font-size:12px;line-height:1.55;color:var(--muted-foreground);margin-bottom:4px}
+.arec li::before{content:'';position:absolute;left:2px;top:8px;width:4px;height:4px;border-radius:50%;background:var(--brand);opacity:.55}
+.arec .racts{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.arec .racts .btn{font-size:12px;height:34px;padding:0 14px}
 /* evidence / why rows */
 .awhy{border:1px solid var(--border);border-radius:11px;padding:11px 12px;margin-top:10px;background:var(--surface-grey)}
 .awhy .wl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-neutral);margin-bottom:7px}
@@ -771,11 +782,12 @@ button{font-family:inherit;cursor:pointer}
 .rai-sug button{border:1px solid var(--border);background:var(--background);border-radius:9999px;
   font-size:11px;padding:5px 10px;color:var(--muted-foreground);text-align:left}
 .rai-sug button:hover{border-color:var(--brand);color:var(--brand)}
-.rai-in{display:flex;gap:7px;padding:10px 12px;border-top:1px solid var(--border);background:var(--background)}
+.rai-in{display:flex;align-items:center;gap:8px;padding:11px 12px;border-top:1px solid var(--border);background:var(--background)}
 .rai-in input{flex:1;min-width:0;border:1px solid var(--input);border-radius:9999px;font-family:inherit;
-  font-size:12.5px;padding:9px 13px}
-.rai-in input:focus{outline:none;border-color:var(--brand)}
-.rai-in .btn{border-radius:9999px}
+  font-size:12.5px;padding:10px 15px;transition:border-color .12s,box-shadow .12s;background:var(--surface-grey)}
+.rai-in input:focus{outline:none;border-color:var(--brand);background:var(--background);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 18%,transparent)}
+.rai-in .btn{border-radius:9999px;height:36px;padding:0 16px;font-weight:600}
 .ct-rail.min{width:0;border-right:0;overflow:hidden}
 .railtabs{display:flex;gap:2px;padding:9px 10px 0;border-bottom:1px solid var(--border);background:var(--background)}
 .railtabs button{flex:1;font-size:12.5px;font-weight:500;color:var(--muted-foreground);background:none;border:0;
@@ -3626,7 +3638,8 @@ function ctAiPaint(){
   var b=$('ctAiBody');if(!b)return;
   b.innerHTML=(ASK.msgs||[]).map(function(m){
     if(m.you)return '<div class="am you"><span>'+esc(m.you)+'</span></div>';
-    return '<div class="am ai"><div class="who"><i></i>Assistant</div><div class="bub">'+m.ai+'</div></div>';
+    return '<div class="am ai"><div class="av">✦</div><div class="col"><div class="nm">Assistant</div>'+
+      '<div class="bub">'+m.ai+'</div></div></div>';
   }).join('');
   b.scrollTop=b.scrollHeight;
   var s=$('ctAiSug');
@@ -3687,7 +3700,8 @@ function askPaint(){
   var b=$('askBody');if(!b)return;
   b.innerHTML=ASK.msgs.map(function(m){
     if(m.you)return '<div class="am you"><span>'+esc(m.you)+'</span></div>';
-    return '<div class="am ai"><div class="who"><i></i>Assistant</div><div class="bub">'+m.ai+'</div></div>';
+    return '<div class="am ai"><div class="av">✦</div><div class="col"><div class="nm">Assistant</div>'+
+      '<div class="bub">'+m.ai+'</div></div></div>';
   }).join('');
   b.scrollTop=b.scrollHeight;
   var sug=$('askSug');
